@@ -15,6 +15,9 @@ display.setStatusBar( display.HiddenStatusBar )
 -- seed the random number generator
 math.randomseed( os.time() )
 
+
 -- go to the menu screen
--- composer.gotoScene( "menu" )
+--composer.gotoScene( "menu" )
 composer.gotoScene( "mapa" )
+
+

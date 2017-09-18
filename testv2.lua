@@ -14,11 +14,20 @@ physics.start()
 --------------
 -- Declaração das variáveis
 --------------
+-- necessária para fixar joystick na tela
+local uiGroup
+
 local map
 
 local character
 
-local joystick = { tiled, screen, up, down, left, right }
+local joystick
+-- setas do joystick
+local joystickRight
+local joystickLeft
+local joystickDown
+local joystickUp
+local joystickScreen
 
 -- contador de passos que será mostrado na tela
 local stepsCount = 0
@@ -93,35 +102,36 @@ local function defineSteps( event )
   local offset
 
   if ( "began" == phase ) then
-    display.currentStage:setFocus( joystick.screen )
+    display.currentStage:setFocus( joystickScreen )
 
     --calcula offset inicial
-    joystick.screen.touchOffsetY = event.y - joystick.screen.y
+    joystickScreen.touchOffsetY = event.y - joystickScreen.y
   
   elseif ( "moved" == phase ) then
-    if (event.y >= joystick.screen.y ) then
-      -- Calcula novo offset à medida que o toque do jogador sobe ou desce na tela do joystick
-      offset = (event.y - joystick.screen.y)
+    if (event.y >= joystickScreen.y ) then
+      --calcula novo offset à medida que jogador sobe ou desce na tela do joystick
+      offset = (event.y - joystickScreen.y)
 
-      -- Caso o novo offset seja maior, o número de passos aumenta
-      if ( offset > joystick.screen.touchOffsetY ) then 
+      -- caso o novo offset seja maior, o número de passos aumenta
+      if ( offset > joystickScreen.touchOffsetY ) then 
         
-        -- o 3000 garante que o contador de passos não irá aumentar rápido demais
+        -- o 3000 garante que o contador de passos não irá aumentar
+        -- rápido demais
         stepsCount = stepsCount - offset/3000
 
-        -- o offset deve ser atualizado para a próxima chamada do "moved"
-        joystick.screen.touchOffsetY = offset
+        -- o offset deve ser atualizado para a próxima chamada do "move"
+        joystickScreen.touchOffsetY = offset
       else 
         stepsCount = stepsCount + offset/1700
 
       end
 
-      -- Verifica se o número de passos não está negativo  
+      -- verifica se o número de passos não está negativo  
       if ( stepsCount >= 0) then
         stepsText.text = math.floor(stepsCount)
       else
 
-        -- Zera os passos caso esteja
+        -- zera os passos caso esteja
         stepsCount = 0
         stepsText.text = 0
 
@@ -135,13 +145,16 @@ local function defineSteps( event )
 end
 
 -- Recalcula posição do personagem 
--- Cada passo é equivalente a 1 tileSize)
+-- Cada passo é equivalente a 16px (um tileSize)
 local function moveCharacter( direction, steps ) 
-  local moveOffset = tilesSize * steps
+  local moveOffset = tilesSize*steps
   local newMapPosition
-  local charMovementDuration = 0
-  local finalCharPosX, finalCharPosY = character.x, character.y
-  local finalMapPosX, finalMapPosY = map.x, map.y 
+  local finalCharacterPosition
+  local movementDuration = 0
+  local finalCharPosX = character.x
+  local finalCharPosY = character.y
+  local finalMapPosX = map.x 
+  local finalMapY = map.y 
  
   if ( ( direction == "left" ) or ( direction == "up" ) ) then
     moveOffset = - moveOffset
@@ -152,9 +165,8 @@ local function moveCharacter( direction, steps )
 
     -- não deixa personagem sair da tela pelo lado esquerdo
     if ( newMapPosition > 0 ) then
-
       if ( (character.x + moveOffset ) > tilesSize ) then 
-        finalCharPosX = character.x + moveOffset
+        finalCharPosX = character.x + moveOffset - tilesSize
         finalMapPosX = 0
         moveOffset = - moveOffset - tilesSize
       else
@@ -180,7 +192,7 @@ local function moveCharacter( direction, steps )
     else 
       finalCharPosX = character.x + moveOffset
       finalMapPosX = newMapPosition
-      moveOffset = tilesSize * steps - tilesSize
+      moveOffset = tilesSize*steps - tilesSize
     end 
 
   elseif ( (direction == "up" ) or (direction == "down") ) then
@@ -212,7 +224,7 @@ local function moveCharacter( direction, steps )
     else 
       finalCharPosY = character.y + moveOffset
       finalMapPosY = newMapPosition
-      moveOffset  = tilesSize * steps
+      moveOffset  = tilesSize*steps
     end
 
   else 
@@ -220,13 +232,10 @@ local function moveCharacter( direction, steps )
     return -1
   end
 
-  -- Vira personagem quando a direção da esquerda/direita muda 
-  if ( ( direction == "left" ) and ( character.xScale ~= -1  ) ) then character.xScale = -1
-  elseif ( ( direction == "right" ) and ( character.xScale == -1 ) ) then character.xScale = 1 end
-
-  charMovementDuration = moveOffset/tilesSize * stepDuration 
-  transition.to( map, {time = charMovementDuration, delay = delayMovement, x = finalMapPosX, y = finalMapPosY } )
-  transition.to( character, {time = charMovementDuration, delay = delayMovement, x = finalCharPosX, y =  finalCharPosY } )
+  movementDuration = moveOffset/tilesSize * stepDuration + delayMovement*4 
+  print("real: " .. movementDuration)
+  transition.to( map, {time = movementDuration, delay = delayMovement, x = finalMapPosX, y = finalMapPosY } )
+  transition.to( character, {time = movementDuration, delay = delayMovement, x = finalCharPosX, y =  finalCharPosY } )
   
 end
 
@@ -269,36 +278,40 @@ function scene:create( event )
   -- garantir que o joystick não irá se mover quando o mapa
   -- sair de lugar
   local joystickData = json.decodeFile(system.pathForFile("imgs/tiles/joystick.json", system.ResourceDirectory))  -- load from json export
-  joystick.tiled = tiled.new(joystickData, "imgs/tiles")
+  joystick = tiled.new(joystickData, "imgs/tiles")
 
   -- posiciona joystick no canto direito da tela
-  joystick.tiled.x, joystick.tiled.y = display.contentHeight, display.contentCenterY
+  joystick.x, joystick.y = display.contentHeight, display.contentCenterY
   
   --@TODO: TIRAR ISSO QUANDO ACABAREM OS TESTES COM A TELA
   local dragable = require "com.ponywolf.plugins.dragable"
   map = dragable.new(map)
 
 
-  -- Atribuição das referências para os objetos
-  -- lembrar: o myName (para os listeners) de cada objeto foi definido
-  -- no próprio tiled
+  -- atribuição das referências para os objetos
   character = map:findObject("character")
+  character.myName = "character"
 
-  joystick.right = joystick.tiled:findObject("right") 
+  joystickRight = joystick:findObject("right") 
+  joystickRight.myName = "right"
 
-  joystick.left = joystick.tiled:findObject("left") 
+  joystickLeft = joystick:findObject("left") 
+  joystickLeft.myName = "left"
 
-  joystick.down = joystick.tiled:findObject("down") 
+  joystickDown = joystick:findObject("down") 
+  joystickDown.myName = "down"
 
-  joystick.up = joystick.tiled:findObject("up") 
+  joystickUp = joystick:findObject("up") 
+  joystickUp.myName = "up"
 
-  joystick.screen = joystick.tiled:findObject("screen")
+  joystickScreen = joystick:findObject("joystickScreen")
 
-  stepsText = display.newText( joystick.tiled, stepsCount, joystick.screen.x, joystick.screen.y, "DS-DIGIT.ttf", 50 )
+  stepsCount = 0
+  stepsText = display.newText( joystick, 0, joystickScreen.x, joystickScreen.y, "DS-DIGIT.ttf", 50 )
   stepsText:setFillColor( 0, 0, 0 )
 
-  okButton = display.newRect( joystick.tiled, joystick.screen.x + 55, joystick.screen.y + 55, 60, 30 )
-  local okText = display.newText( joystick.tiled, "OK", joystick.screen.x + 55, joystick.screen.y + 55, system.nativeFont, 30 )
+  okButton = display.newRect( joystick, joystickScreen.x + 55, joystickScreen.y + 55, 60, 30 )
+  local okText = display.newText( joystick, "OK", joystickScreen.x + 55, joystickScreen.y + 55, system.nativeFont, 30 )
   okButton:setFillColor( 0, 0, 0 )
 end
 
@@ -311,12 +324,12 @@ function scene:show( event )
 
   if ( phase == "will" ) then
     -- criar os listeners para mover o character por meio do joystick
-    joystick.right:addEventListener( "tap", defineDirection )
-    joystick.left:addEventListener( "tap", defineDirection )
-    joystick.down:addEventListener( "tap", defineDirection )
-    joystick.up:addEventListener( "tap", defineDirection )
+    joystickRight:addEventListener( "tap", defineDirection )
+    joystickLeft:addEventListener( "tap", defineDirection )
+    joystickDown:addEventListener( "tap", defineDirection )
+    joystickUp:addEventListener( "tap", defineDirection )
 
-    joystick.screen:addEventListener( "touch", defineSteps )
+    joystickScreen:addEventListener( "touch", defineSteps )
   elseif ( phase == "did" ) then
     okButton:addEventListener( "tap", executeInstructions )
   end
