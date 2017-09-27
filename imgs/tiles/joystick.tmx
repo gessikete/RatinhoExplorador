@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="8" height="8" tilewidth="16" tileheight="16" nextobjectid="22">
+ <tileset firstgid="1" name="joystick" tilewidth="156" tileheight="156" tilecount="1" columns="0">
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <tile id="0">
+   <image width="156" height="156" source="joystick.png"/>
+  </tile>
+ </tileset>
+ <objectgroup name="joystick">
+  <object id="1" name="joystick" gid="1" x="-3.75" y="131.375" width="134" height="134"/>
+  <object id="13" name="up" x="92.75" y="31.375">
+   <properties>
+    <property name="myName" value="up"/>
+   </properties>
+   <polygon points="0,0 0,0.375 -57.125,0.75 -63.25,-1.125 -45.375,-17.375 -34.5,-27.125 -31.625,-29.125 -27.375,-29.125 -11,-17.25 0.125,-7 2.5,-4.5"/>
+  </object>
+  <object id="16" name="down" x="95.875" y="100.875">
+   <properties>
+    <property name="myName" value="down"/>
+   </properties>
+   <polygon points="0,0 -14.375,12.25 -29.25,23.75 -33.75,24.125 -35.625,23.75 -53.625,9.625 -65.5,-1.5 -62.75,-5.5 -3.5,-5.125"/>
+  </object>
+  <object id="18" name="left" x="29.875" y="98.875">
+   <properties>
+    <property name="myName" value="left"/>
+   </properties>
+   <polygon points="0,0 3.375,-4.625 3.375,-27.75 4.375,-65.375 -1.25,-67.375 -8.375,-61.375 -23.5,-44.375 -28.875,-36.75 -29,-32.75 -24.5,-26.125 -16.25,-15.75 -10.25,-9.25"/>
+  </object>
+  <object id="19" name="right" x="95.75" y="27.75">
+   <properties>
+    <property name="myName" value="right"/>
+   </properties>
+   <polygon points="0,0 -2.75,5.375 -3.375,7.125 -2.625,46 -2.625,66.5 1.5,72.75 15,58.875 24.75,47.375 28.125,42.875 29.25,39.375 29.625,34.875 29.125,33.125 21.875,23.25 15.125,14.625"/>
+  </object>
+  <object id="20" name="screen" x="34.75" y="33.5" width="56.625" height="61.375"/>
+ </objectgroup>
+</map>
