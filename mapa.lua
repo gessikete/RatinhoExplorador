@@ -68,8 +68,8 @@ local function setMap( )
   map.initialY = map.y
 
   --@TODO: TIRAR ISSO QUANDO ACABAREM OS TESTES COM A TELA
-  local dragable = require "com.ponywolf.plugins.dragable"
-  map = dragable.new(map)
+  --local dragable = require "com.ponywolf.plugins.dragable"
+  --map = dragable.new(map)
 end
 
 local function setCharacter( )
@@ -79,6 +79,10 @@ local function setCharacter( )
   -- lembrar: o myName (para os listeners) foi definido
   -- no próprio tiled
   character = map:findObject("character")
+
+  local start = map:findObject("start")
+  character.x = start.x 
+  character.y = start.y
 
   -- Objeto invisível que vai colidir com os objetos de colisão
   -- @TODO: mudar posição e tamanho do rope quando substituirmos a imagem do personagem
@@ -98,10 +102,12 @@ local function setCamera( )
   camera:add( map, 2 )
 
   layer = camera:layer(1)
+
+  local mapX, mapY = map:localToContent( 0, 0 )
   layer:setCameraOffset( -180, 0 )
 
   layer = camera:layer(2)
-  layer:setCameraOffset( -180, 130 )
+  layer:setCameraOffset( -180, - mapY )
 
   camera:setBounds( 32, 415, 150, 630 )
   camera:setFocus(character)
@@ -111,8 +117,8 @@ end
 local function setGamePanel( )
   local gamePanelData = json.decodeFile(system.pathForFile("imgs/tiles/gamePanel.json", system.ResourceDirectory))  -- load from json export
   gamePanel.tiled = tiled.new(gamePanelData, "imgs/tiles")
-  gamePanel.tiled.x = gamePanel.tiled.x + 400
-  gamePanel.tiled.y = gamePanel.tiled.y + 24
+  gamePanel.tiled.x = display.contentWidth - gamePanel.tiled.designedWidth + tilesSize/2
+  gamePanel.tiled.y = 0
 
   -- Cria referências para os quadros de instruções e suas setas
   local instructionsLayer = gamePanel.tiled:findLayer("instructions")
