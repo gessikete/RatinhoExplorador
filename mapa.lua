@@ -80,10 +80,6 @@ local function setCharacter( )
   -- no próprio tiled
   character = map:findObject("character")
 
-  local start = map:findObject("start")
-  character.x = start.x 
-  character.y = start.y
-
   -- Objeto invisível que vai colidir com os objetos de colisão
   -- @TODO: mudar posição e tamanho do rope quando substituirmos a imagem do personagem
   rope = display.newRect( map:findLayer("character"), character.x, character.y + 4, 25, 20 )
