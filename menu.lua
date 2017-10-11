@@ -3,15 +3,17 @@ local composer = require( "composer" )
 
 local scene = composer.newScene()
 
--- -----------------------------------------------------------------------------------
--- Code outside of the scene event functions below will only be executed ONCE unless
--- the scene is removed entirely (not recycled) via "composer.removeScene()"
--- -----------------------------------------------------------------------------------
-local function gotoMapa()
-	composer.gotoScene( "mapa", { time = 800, effect = "crossFade" } )
-end
+local tiled = require "com.ponywolf.ponytiled"
 
+local json = require "json"
 
+local scenesTransitions = require "scenesTransitions"
+
+local menu
+
+local newGameButton
+
+local playButton
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -23,18 +25,19 @@ function scene:create( event )
 	local sceneGroup = self.view
 	-- Code here runs when the scene is first created but has not yet appeared on screen
 
-	local background = display.newImageRect( sceneGroup, "background.png", 760, 430 )
-	background.x = display.contentCenterX
-	background.y = display.contentCenterY
+	display.setDefault("magTextureFilter", "nearest")
+  	display.setDefault("minTextureFilter", "nearest")
+	local menuData = json.decodeFile(system.pathForFile("tiled/menu.json", system.ResourceDirectory))  -- load from json export
 
-	local title = display.newImageRect( sceneGroup, "title.png", 500, 80 )
-	title.x = display.contentCenterX
-	title.y = display.contentCenterY-100
+	menu = tiled.new(menuData, "tiled")
 
-	local playButton = display.newText( sceneGroup, "Jogar", display.contentCenterX, display.contentCenterY, native.systemFont, 54 )
-	playButton:setFillColor(  1, 1, 1, 1  )
+	newGameButton = menu:findObject("new game")
+	playButton = menu:findObject("play")
 
-	playButton:addEventListener( "tap", gotoMapa )
+	sceneGroup:insert( menu )
+
+	playButton:addEventListener( "tap", scenesTransitions.gotoChooseGameFile )
+	newGameButton:addEventListener( "tap", scenesTransitions.gotoNewGame )
 end
 
 
@@ -45,11 +48,10 @@ function scene:show( event )
 	local phase = event.phase
 
 	if ( phase == "will" ) then
-		-- Code here runs when the scene is still off screen (but is about to come on screen)
+		
 
 	elseif ( phase == "did" ) then
-		-- Code here runs when the scene is entirely on screen
-
+		
 	end
 end
 
@@ -65,7 +67,6 @@ function scene:hide( event )
 
 	elseif ( phase == "did" ) then
 		-- Code here runs immediately after the scene goes entirely off screen
-
 	end
 end
 
