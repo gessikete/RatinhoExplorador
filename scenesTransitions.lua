@@ -8,6 +8,10 @@ function M.gotoMenu( )
 	composer.gotoScene( "menu", { time = 800, effect = "crossFade" } )
 end
 
+function M.gotoHouse( )
+	composer.gotoScene( "house", { time = 800, effect = "crossFade" } )
+end
+
 function M.gotoMap( )
 	composer.gotoScene( "map", { time = 4000 } )
 end

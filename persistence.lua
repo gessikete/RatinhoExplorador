@@ -2,6 +2,8 @@ module(..., package.seeall)
 
 local GBCDataCabinet = require("plugin.GBCDataCabinet")
 
+local json = require("json")
+
 local M = { }
 
 GBCDataCabinet.createCabinet( "currentFileName"  )
@@ -9,6 +11,22 @@ GBCDataCabinet.createCabinet( "currentFileName"  )
 function M.filesNames( )
 	if ( GBCDataCabinet.load( "files" ) == true ) then
 		return GBCDataCabinet.get( "files", "names" )
+	end
+end
+
+function defaultFile( )
+	local default = { character = { steppingX, steppingY } }
+	
+	default.character.steppingX = 128
+	default.character.steppingY = 80
+	default.miniGame = "map" 
+
+	return default
+end
+
+function M.startingPoint( miniGame )
+	if ( miniGame == "map" ) then 
+		return 128, 80
 	end
 end
 
@@ -24,8 +42,10 @@ function M.newGameFile( newFileName )
 	table.insert( files,  newFileName )
 
 	GBCDataCabinet.createCabinet( newFileName )
+	GBCDataCabinet.set( newFileName, "gameStatus", defaultFile( ) )
 
 	GBCDataCabinet.save( "files" )
+	GBCDataCabinet.save( newFileName )
 
 	M.setCurrentFileName( newFileName )
 
@@ -35,17 +55,18 @@ function M.newGameFile( newFileName )
 	--M.deleteFiles()
 end
 
-function M.saveGameFile( data )
+function M.saveGameFile( gameStatus )
 	local fileName = M.getCurrentFileName()
 
-	GBCDataCabinet.set( fileName, "data", data )
+	GBCDataCabinet.set( fileName, "gameStatus", gameStatus )
 	GBCDataCabinet.save( fileName )
 end
 
 function M.loadGameFile( )
 	local fileName = M.getCurrentFileName()
 	GBCDataCabinet.load(fileName)
-	return GBCDataCabinet.get( fileName, "data" )
+	--print(GBCDataCabinet.get( fileName, "gameStatus" ))
+	return GBCDataCabinet.get( fileName, "gameStatus" )
 end
 
 function M.setCurrentFileName( fileName )
@@ -68,6 +89,10 @@ function M.deleteFiles( )
 	end
 
 	GBCDataCabinet.save( "files" )
+end
+
+function M.addInstructionsTable( direction, steps )
+
 end
 
 return M
