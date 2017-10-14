@@ -15,6 +15,11 @@ display.setStatusBar( display.HiddenStatusBar )
 -- seed the random number generator
 math.randomseed( os.time() )
 
+
 -- go to the menu screen
--- composer.gotoScene( "menu" )
-composer.gotoScene( "mapa" )
+composer.gotoScene( "house" )
+--composer.gotoScene( "menu" )
+--composer.gotoScene( "map" )
+--composer.gotoScene( "newGame" )
+--composer.gotoScene( "chooseGameFile" )
+
