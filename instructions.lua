@@ -2,10 +2,12 @@ module(..., package.seeall)
 
 local M = { }
 
-local slowStep = 70
+local slowStep = 400
 
 function M.new( tilesSize, character, markedPath )
   local instructionsTable = { executing = 1, last = 0,  direction = { }, steps = { } }
+  local stopListeners
+  local restartListeners
 
   function instructionsTable:add ( direction, steps )
     self.last = self.last + 1
@@ -25,6 +27,10 @@ function M.new( tilesSize, character, markedPath )
     self.steps = { }
   end
 
+  function M:setGamePanelListeners( stop, restart )
+    stopListeners = stop
+    restartListeners = restart
+  end
 
   -- -----------------------------------------------------------------------------------
   -- Funções relacionadas ao movimento do personagem
@@ -73,6 +79,11 @@ function M.new( tilesSize, character, markedPath )
     if ( instructionsTable ~= nil ) then
       -- Condição de parada (fila de instruções vazia)
       if ( instructionsTable.last < instructionsTable.executing)  then
+        -- Reestabelece os listeners do painel de instruções
+        if ( restartListeners ) then 
+          restartListeners( )
+        else print( "Listener nulo (instructions.lua)" )
+        end
         return 0
       end
       local movementDuration = instructionsTable.steps[instructionsTable.executing] * slowStep
@@ -85,6 +96,11 @@ function M.new( tilesSize, character, markedPath )
   end
 
   function M.executeInstructions ( )
+    -- Pausa os listeners do painel de instruções
+    if ( stopListeners ) then 
+      stopListeners( )
+    else print( "Listener nulo (instructions.lua)" )
+    end
     -- Desmarca caminho anterior
     unmarkPath( markedPath )
 

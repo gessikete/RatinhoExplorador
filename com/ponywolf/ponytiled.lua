@@ -91,7 +91,7 @@ function M.new(data, dir)
         table.insert( frames, gid, element )
       end
     end
-    print ("LOADED:", dir .. tileset.image)
+    --print ("LOADED:", dir .. tileset.image)
     return graphics.newImageSheet(dir .. tileset.image, options )
   end
 

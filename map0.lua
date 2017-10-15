@@ -548,7 +548,7 @@ local function removeGamePanel( )
   gamePanel.tiled = nil
 end
 
-local function cleanScene( )
+local function destroyScene( )
   removeMap( )
   removeGamePanel( )
 
@@ -571,7 +571,7 @@ local function loadGameFile( )
 
   gameFile = persistence.loadGameFile( )
   if ( gameFile ~= nil ) then 
-    local startingPointX, startingPointY = persistence.startingPoint( gameFile.miniGame )
+    local startingPointX, startingPointY = persistence.startingPoint( gameFile.currentMiniGame )
     local stepsX = math.ceil( ( gameFile.character.steppingX - startingPointX ) / tilesSize )
     local stepsY = math.ceil( ( gameFile.character.steppingY - startingPointY ) / tilesSize )
     local time
@@ -650,7 +650,7 @@ function scene:hide( event )
     transition.cancel()
   elseif ( phase == "did" ) then
     saveGameState()
-    cleanScene()
+    destroyScene()
     composer.removeScene( "map" )
   end
 end

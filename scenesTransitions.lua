@@ -4,6 +4,9 @@ local composer = require( "composer" )
 
 local M = { }
 
+-- -----------------------------------------------------------------------------------
+-- Todas as funções de transição
+-- -----------------------------------------------------------------------------------
 function M.gotoMenu( )
 	composer.gotoScene( "menu", { time = 800, effect = "crossFade" } )
 end

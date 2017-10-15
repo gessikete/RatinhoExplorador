@@ -10,9 +10,10 @@ local scene = composer.newScene()
 
 local scenesTransitions = require "scenesTransitions"
 
+local fitScreen = require "fitScreen"
+
 -- -----------------------------------------------------------------------------------
--- Code outside of the scene event functions below will only be executed ONCE unless
--- the scene is removed entirely (not recycled) via "composer.removeScene()"
+-- Declaração das variáveis
 -- -----------------------------------------------------------------------------------
 local goBackButton
 
@@ -20,15 +21,48 @@ local chooseGameFile
 
 local gameFiles = { box = { }, text = { } }
 
-
+-- -----------------------------------------------------------------------------------
+-- Funções
+-- -----------------------------------------------------------------------------------
+-- Transfere controle para o gamefile escolhido
 local function loadGameFile( event )
-	persistence.setCurrentFileName( event.target.myName )
-	scenesTransitions.gotoMap( )
-end
--- -----------------------------------------------------------------------------------
--- Scene event functions
--- -----------------------------------------------------------------------------------
+	local fileName = event.target.myName
+	local gameFile 
+	
+	persistence.setCurrentFileName( fileName ) 
+	gameFile = persistence.loadGameFile( )
 
+	print( "-------------------------------------------------------------------" )
+	print( "ARQUIVO ESCOLHIDO: " .. fileName )
+
+	-- Verifica em qual minigame o jogo estava quando foi salvo
+	if ( gameFile.currentMiniGame == "map" ) then
+		scenesTransitions.gotoMap( )
+	elseif ( gameFile.currentMiniGame == "house" ) then
+		scenesTransitions.gotoHouse( )
+	end 
+end
+
+-- Remove os objetos
+local function destroyScene( )
+  	chooseGameFile:removeSelf( )
+	chooseGameFile = nil
+
+	for k, v in pairs( gameFiles.box ) do
+		gameFiles.box[k]:removeEventListener( "tap", loadGameFile )
+		gameFiles.box[k] = nil 
+	end
+
+	for k, v in pairs( gameFiles.text ) do
+		gameFiles.text[k] = nil 
+	end
+
+	gameFiles = nil 
+end
+
+-- -----------------------------------------------------------------------------------
+-- Cenas
+-- -----------------------------------------------------------------------------------
 -- create()
 function scene:create( event )
 	local sceneGroup = self.view
@@ -58,6 +92,8 @@ function scene:create( event )
 
 	goBackButton = chooseGameFile:findObject("goBackButton")
 
+	fitScreen:fitBackground(chooseGameFile)
+
 	sceneGroup:insert( chooseGameFile )
 end
 
@@ -82,8 +118,7 @@ function scene:hide( event )
 
 	if ( phase == "will" ) then
 	elseif ( phase == "did" ) then
-		chooseGameFile:removeSelf( )
-		chooseGameFile = nil 
+		destroyScene( )
 		composer.removeScene( "chooseGameFile" )
 	end
 end

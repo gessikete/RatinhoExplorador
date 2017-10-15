@@ -15,6 +15,7 @@ local newGameButton
 
 local playButton
 
+local fitScreen = require "fitScreen"
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
 -- -----------------------------------------------------------------------------------
@@ -33,8 +34,11 @@ function scene:create( event )
 
 	newGameButton = menu:findObject("new game")
 	playButton = menu:findObject("play")
+	title = menu:findObject("title")
 
 	sceneGroup:insert( menu )
+
+	fitScreen:fitMenu( menu, newGameButton, playButton, title )
 
 	playButton:addEventListener( "tap", scenesTransitions.gotoChooseGameFile )
 	newGameButton:addEventListener( "tap", scenesTransitions.gotoNewGame )

@@ -2,8 +2,6 @@ module(..., package.seeall)
 
 local GBCDataCabinet = require("plugin.GBCDataCabinet")
 
-local json = require("json")
-
 local M = { }
 
 GBCDataCabinet.createCabinet( "currentFileName"  )
@@ -17,17 +15,45 @@ end
 function defaultFile( )
 	local default = { character = { steppingX, steppingY } }
 	
-	default.character.steppingX = 128
-	default.character.steppingY = 80
-	default.miniGame = "map" 
+	default.character.steppingX = 144
+	default.character.steppingY = 96
+	default.currentMiniGame = "map" 
 
 	return default
 end
 
-function M.startingPoint( miniGame )
-	if ( miniGame == "map" ) then 
-		return 128, 80
+function M.startingPoint( currentMiniGame )
+	if ( currentMiniGame == "map" ) then 
+		return 144, 96
+	elseif ( currentMiniGame == "house" ) then 
+		return 368, 144
 	end
+end
+
+-- Informa onde o character irá se posicionar dependendo de onde ele saiu/entrou no último minigame
+function M.goBackPoint( currentMiniGame, previousMiniGameFile )
+	local houseExitX, houseExitY = 368, 144
+	local houseMapExitX, houseMapExitY = 144, 96 
+	local houseEntranceX, houseEntranceY = 16, 304  
+	local houseMapEntranceX, houseMapEntranceY = 80, 160
+
+	if ( currentMiniGame == previousMiniGameFile.currentMiniGame ) then
+		return previousMiniGameFile.character.steppingX, previousMiniGameFile.character.steppingY
+	elseif ( currentMiniGame == "map" ) then 
+		if ( previousMiniGameFile.currentMiniGame == "house" ) then 
+			if ( previousMiniGameFile.character.steppingX == houseExitX ) then 
+				return houseMapExitX, houseMapExitY
+			else 
+				return houseMapEntranceX, houseMapEntranceY
+			end 
+		end
+	elseif ( currentMiniGame == "house" ) then
+		if ( previousMiniGameFile.character.steppingX == houseMapExitX ) then
+			return houseExitX, houseExitY
+		else
+			return houseEntranceX, houseEntranceY
+		end 
+	end 
 end
 
 function M.newGameFile( newFileName )
@@ -65,7 +91,6 @@ end
 function M.loadGameFile( )
 	local fileName = M.getCurrentFileName()
 	GBCDataCabinet.load(fileName)
-	--print(GBCDataCabinet.get( fileName, "gameStatus" ))
 	return GBCDataCabinet.get( fileName, "gameStatus" )
 end
 

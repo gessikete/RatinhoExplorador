@@ -15,6 +15,7 @@ function M.new( map )
 	end
 
 	function M:setSensors( )
+		print( "PREPARANDO SENSORES" )
 	  	-- Referências para os tiles do caminho
 	  	local pathLayer = map:findLayer("path")
 	  	local sensorsLayer = map:findLayer("sensors")

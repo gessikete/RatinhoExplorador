@@ -10,6 +10,8 @@ local json = require "json"
 local persistence = require "persistence"
 
 local scenesTransitions = require "scenesTransitions"
+
+local fitScreen = require "fitScreen"
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -63,6 +65,8 @@ function scene:create( event )
 	playButton:addEventListener( "tap", createFile )
 
 	native.setKeyboardFocus( textField )
+
+	--fitScreen:fitBackground( newGame )
 end
 
 
@@ -75,18 +79,6 @@ function scene:show( event )
 	if ( phase == "will" ) then
 	
 	elseif ( phase == "did" ) then
-		--[[print(textField)
-		textField = native.newTextField( 3*display.contentCenterX/4, display.contentCenterY/2, display.contentWidth/2, 30 )
-
-		textField.inputType = "default"
-		textField.string = " "
-		sceneGroup:insert( textField )
-
-		textField:addEventListener( "userInput", textListener )
-		playButton:addEventListener( "tap", createFile )
-
-		native.setKeyboardFocus( textField )
-		sceneGroup:insert( textField )]]
 	end
 end
 

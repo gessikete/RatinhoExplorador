@@ -6,27 +6,34 @@ local tiled = require "com.ponywolf.ponytiled"
 
 local scenesTransitions = require "scenesTransitions"
 
+local fitScreen = require "fitScreen"
+
+-- -----------------------------------------------------------------------------------
+-- Declaração das variáveis
+-- -----------------------------------------------------------------------------------
 local tilesSize = 32
 
 local M = { }
 
+-- -----------------------------------------------------------------------------------
+-- Funções
+-- -----------------------------------------------------------------------------------
 function M.new( executeInstructions )
   	local gamePanelData
   	local instructions = { boxes = { }, upArrows = { }, downArrows = { }, leftArrows = { }, rightArrows = { }, shownArrow = { }, shownInstruction = { }, texts = { }, shownBox = -1 }
   	local stepsButton = { shownButton, listener }
   	local directionButtons = { up, down, left, right }
 
+  	-- Carrega o arquivo tiled
   	gamePanelData = json.decodeFile(system.pathForFile("tiled/gamePanel.json", system.ResourceDirectory))  -- load from json export
-  	gamePanel.tiled = tiled.new(gamePanelData, "tiled")
-  	gamePanel.tiled.x = display.contentWidth - gamePanel.tiled.designedWidth + tilesSize/2
-  	gamePanel.tiled.y = 0
+  	gamePanel = tiled.new(gamePanelData, "tiled")
 
   	-- Cria referências para os quadros de instruções e suas setas
-  	local instructionsLayer = gamePanel.tiled:findLayer("instructions")
-  	local upArrowsLayer = gamePanel.tiled:findLayer("upArrows")
-  	local downArrowsLayer = gamePanel.tiled:findLayer("downArrows")
-  	local leftArrowsLayer = gamePanel.tiled:findLayer("leftArrows")
-  	local rightArrowsLayer = gamePanel.tiled:findLayer("rightArrows")
+  	local instructionsLayer = gamePanel:findLayer("instructions")
+  	local upArrowsLayer = gamePanel:findLayer("upArrows")
+  	local downArrowsLayer = gamePanel:findLayer("downArrows")
+  	local leftArrowsLayer = gamePanel:findLayer("leftArrows")
+  	local rightArrowsLayer = gamePanel:findLayer("rightArrows")
 
   	for i = 1, instructionsLayer.numChildren do
     	instructions.boxes[i - 1] = instructionsLayer[i]
@@ -37,32 +44,36 @@ function M.new( executeInstructions )
   	end
 
   	-- Botão que aumenta o número de passos
-  	stepsButton["left"] = gamePanel.tiled:findObject("leftStepsButton") 
-  	stepsButton["up"] = gamePanel.tiled:findObject("upStepsButton") 
-  	stepsButton["right"] = gamePanel.tiled:findObject("rightStepsButton") 
-  	stepsButton["down"] = gamePanel.tiled:findObject("downStepsButton") 
-  	stepsButton.listener = gamePanel.tiled:findObject("listenerStepsButton")
+  	stepsButton["left"] = gamePanel:findObject("leftStepsButton") 
+  	stepsButton["up"] = gamePanel:findObject("upStepsButton") 
+  	stepsButton["right"] = gamePanel:findObject("rightStepsButton") 
+  	stepsButton["down"] = gamePanel:findObject("downStepsButton") 
+  	stepsButton.listener = gamePanel:findObject("listenerStepsButton")
 
   	-- Setas que definem a direção
-  	directionButtons.right = gamePanel.tiled:findObject("directionRight") 
-  	directionButtons.left = gamePanel.tiled:findObject("directionLeft") 
-  	directionButtons.down = gamePanel.tiled:findObject("directionDown") 
-  	directionButtons.up = gamePanel.tiled:findObject("directionUp") 
+  	directionButtons.right = gamePanel:findObject("directionRight") 
+  	directionButtons.left = gamePanel:findObject("directionLeft") 
+  	directionButtons.down = gamePanel:findObject("directionDown") 
+  	directionButtons.up = gamePanel:findObject("directionUp") 
 
- 	instructionsPanel = gamePanel.tiled:findObject("instructionsPanel")
+ 	instructionsPanel = gamePanel:findObject("instructionsPanel")
 
-  	okButton = gamePanel.tiled:findObject("okButton")
+  	okButton = gamePanel:findObject("okButton")
 
-  	goBackButton = gamePanel.tiled:findObject("goBackButton")
+  	goBackButton = gamePanel:findObject("goBackButton")
 
+  	fitScreen:fitGamePanel( gamePanel, goBackButton )
 
-	 -- É o listener para quando o jogador aperta uma seta
+  	-- -----------------------------------------------------------------------------------
+	-- Listeners do game panel
+	-- -----------------------------------------------------------------------------------
+	-- É o listener para quando o jogador aperta uma seta
 	-- Também adiciona a instrução na fila
 	local function defineDirection( event )
 	 	local direction = event.target.myName
 	  
 	  	if ( instructionsTable.executing ~= 1 ) then 
-	    	M:hideInstructions( )
+	    	hideInstructions( )
 	    	instructionsTable:reset( ) 
 	  	end
 
@@ -78,7 +89,7 @@ function M.new( executeInstructions )
 	  	showInstruction( direction )
 	end
 
-		-- Aumenta quantidade de passos da instrução e também muda seu 
+	-- Aumenta quantidade de passos da instrução e também muda seu 
 	-- valor na caixa de instrução
 	local function addStep( event )
 	  stepsCount = stepsCount + 1
@@ -96,7 +107,7 @@ function M.new( executeInstructions )
 	  local phase = event.phase
 	  local xInstructionsPanel, yInstructionsPanel = instructionsPanel:localToContent( 0, instructionsPanel.height/2 )
 
-	  if ( phase == "befgan" ) then
+	  if ( phase == "began" ) then
 	    instructionsPanel.touchOffsetY = event.y 
 	  elseif ( phase == "moved" ) then
 	    if ( ( instructionsPanel.touchOffsetY - event.y ) < -tilesSize ) then 
@@ -132,8 +143,26 @@ function M.new( executeInstructions )
     	instructionsPanel:addEventListener( "touch", scrollInstructionsPanel )
   	end
 
+  	function M.stopListeners( )
+  		directionButtons.right:removeEventListener( "tap", defineDirection )
+		directionButtons.left:removeEventListener( "tap", defineDirection )
+		directionButtons.down:removeEventListener( "tap", defineDirection )
+		directionButtons.up:removeEventListener( "tap", defineDirection )
+
+		okButton:removeEventListener( "tap", executeInstructions )
+		stepsButton.listener:removeEventListener( "tap", addStep )
+
+		goBackButton:removeEventListener( "tap", scenesTransitions.gotoMenu )
+  	end
+
+  	function M.restartListeners( )
+  		M:addDirectionListeners( )
+  		M:addButtonsListeners( )
+  		stepsButton.listener:addEventListener( "tap", addStep )
+  	end
+
   	function M:destroy( )
-  		gamePanel.tiled:removeSelf( ) 
+  		gamePanel:removeSelf( ) 
 
 		directionButtons.right:removeEventListener( "tap", defineDirection )
 		directionButtons.left:removeEventListener( "tap", defineDirection )
@@ -179,7 +208,7 @@ function M.new( executeInstructions )
 
 		instructionsPanel = nil 
 
-		gamePanel.tiled = nil
+		gamePanel = nil
   	end
 
 	-- -----------------------------------------------------------------------------------
@@ -220,7 +249,7 @@ function M.new( executeInstructions )
 
 	-- Verifica se as instruções podem ser movidas para baixo/cima e chama
 	-- moveInstruction
-	function M:scrollInstruction ( direction )
+	function scrollInstruction ( direction )
 	  if ( instructions.shownBox ~= -1 ) then
 	    local firstBox = 0
 	    local lastBox = instructions.shownBox
@@ -234,7 +263,7 @@ function M.new( executeInstructions )
 	end
 
 	-- Esconde as instruções após a execução
-	function M:hideInstructions( )
+	function hideInstructions( )
 	  local boxNum = instructions.shownBox
 
 	  if ( instructions.shownBox ~= -1 ) then
@@ -259,7 +288,7 @@ function M.new( executeInstructions )
 	    box.alpha = 1
 	    arrow[boxNum].alpha = 1
 	    instructions.shownArrow[boxNum] = arrow[boxNum]
-	    instructions.texts[boxNum] = display.newText( gamePanel.tiled, boxNum + 1 .. ".  " .. stepsCount, box.x - 10, box.y, system.nativeFont, 16)
+	    instructions.texts[boxNum] = display.newText( gamePanel, boxNum + 1 .. ".  " .. stepsCount, box.x - 10, box.y, system.nativeFont, 16)
 	    instructions.shownInstruction[boxNum] = instructionsTable.last 
 	  else 
 	    local boxNum = instructions.shownBox
@@ -276,8 +305,7 @@ function M.new( executeInstructions )
 	  end
 	end
 
-
-	return gamePanel.tiled
+	return gamePanel
 end
 
 return M
