@@ -40,36 +40,70 @@ local ropeJoint
 local tilesSize = 32
 
 local stepDuration = 50
--- -----------------------------------------------------------------------------------
--- Code outside of the scene event functions below will only be executed ONCE unless
--- the scene is removed entirely (not recycled) via "composer.removeScene()"
--- -----------------------------------------------------------------------------------
+
 local house
 
--- Trata dos tipos de colisão
+-- -----------------------------------------------------------------------------------
+-- Funções de criação
+-- -----------------------------------------------------------------------------------
+local function setHouse( )
+  display.setDefault("magTextureFilter", "nearest")
+    display.setDefault("minTextureFilter", "nearest")
+    local houseTiledData = json.decodeFile(system.pathForFile("tiled/house.json", system.ResourceDirectory))
+
+    house = tiled.new(houseTiledData, "tiled")
+
+    fitScreen:fitDefault( house )
+end
+
+local function setCharacter( )
+  local rope 
+    local ropeJoint
+
+    -- lembrar: o myName (para os listeners) foi definido
+    -- no próprio tiled
+    character = house:findObject("character")
+
+    -- Objeto invisível que vai colidir com os objetos de colisão
+    -- @TODO: mudar posição e tamanho do rope quando substituirmos a imagem do personagem
+    rope = display.newRect( house:findLayer("character"), character.x, character.y + 4, 25, 20 )
+    physics.addBody( rope ) 
+    rope.gravityScale = 0 
+    rope.myName = "rope"
+    rope.isVisible = false
+    ropeJoint = physics.newJoint( "rope", rope, character, 0, 0 )
+end
+
+-- -----------------------------------------------------------------------------------
+-- Listeners
+-- -----------------------------------------------------------------------------------
+-- Trata dos tipos de colisão da casa
 local function onCollision( event )
   phase = event.phase
   local obj1 = event.object1
   local obj2 = event.object2
 
   if ( event.phase == "began" ) then
+    -- Volta para o mapa quando o personagem chega na saída/entrada da casa
     if ( ( ( obj1.myName == "exit" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "exit" ) ) ) then 
       transition.cancel( )
       timer.performWithDelay( stepDuration, scenesTransitions.gotoMap )
-    -- Colisão entre o personagem e os sensores dos tiles do caminho
-	elseif ( ( ( obj1.myName == "entrace" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "entrance" ) ) ) then 
+
+	  elseif ( ( ( obj1.myName == "entrace" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "entrance" ) ) ) then 
       transition.cancel( )
       timer.performWithDelay( stepDuration, scenesTransitions.gotoMap )
+
+    -- Colisão entre o personagem e os sensores dos tiles do caminho
     elseif ( ( obj1.myName == "character" ) and ( obj2.myName ~= "collision" ) ) then 
       character.steppingX = obj1.x 
       character.steppingY = obj1.y 
       path:showTile( obj2.myName )
-      --table.insert( markedPath, path[obj2.myName] )
+
     elseif ( ( obj2.myName == "character" ) and ( obj1.myName ~= "collision" ) ) then 
       character.steppingX = obj1.x 
       character.steppingY = obj1.y 
       path:showTile( obj1.myName )
-      --table.insert( markedPath, path[obj1.myName] )
+
     -- Colisão com os demais objetos e o personagem (rope nesse caso)
     elseif ( ( ( obj1.myName == "collision" ) and ( obj2.myName == "rope" ) ) or ( ( obj1.myName == "rope" ) and ( obj2.myName == "collision" ) ) ) then 
       transition.cancel( )
@@ -78,37 +112,9 @@ local function onCollision( event )
   return true 
 end
 
-local function setHouse( )
-	display.setDefault("magTextureFilter", "nearest")
-  	display.setDefault("minTextureFilter", "nearest")
-  	local houseTiledData = json.decodeFile(system.pathForFile("tiled/house.json", system.ResourceDirectory))
-
-  	house = tiled.new(houseTiledData, "tiled")
-
-  	fitScreen:fitDefault( house )
-  	--local dragable = require "com.ponywolf.plugins.dragable"
-  	--house = dragable.new(house)
-end
-
-
-local function setCharacter( )
-	local rope 
-  	local ropeJoint
-
-  	-- lembrar: o myName (para os listeners) foi definido
-  	-- no próprio tiled
-  	character = house:findObject("character")
-
-  	-- Objeto invisível que vai colidir com os objetos de colisão
-  	-- @TODO: mudar posição e tamanho do rope quando substituirmos a imagem do personagem
-  	rope = display.newRect( house:findLayer("character"), character.x, character.y + 4, 25, 20 )
-  	physics.addBody( rope ) 
-  	rope.gravityScale = 0 
-  	rope.myName = "rope"
-  	rope.isVisible = false
-  	ropeJoint = physics.newJoint( "rope", rope, character, 0, 0 )
-end
-
+-- -----------------------------------------------------------------------------------
+-- Remoções para limpar a tela
+-- -----------------------------------------------------------------------------------
 local function destroyHouse( )
   house:removeSelf( )
   house = nil 
@@ -121,10 +127,11 @@ local function destroyScene( )
 
   Runtime:removeEventListener( "collision", onCollision )
 end
--- -----------------------------------------------------------------------------------
--- Scene event functions
--- -----------------------------------------------------------------------------------
 
+
+-- -----------------------------------------------------------------------------------
+-- Cenas
+-- -----------------------------------------------------------------------------------
 -- create()
 function scene:create( event )
 	local sceneGroup = self.view
@@ -160,7 +167,7 @@ function scene:show( event )
 
 	elseif ( phase == "did" ) then
 		gamePanel:addButtonsListeners( )
-    	gamePanel:addInstructionPanelListeners( )
+    gamePanel:addInstructionPanelListeners( )
 	end
 end
 
@@ -176,7 +183,7 @@ function scene:hide( event )
 		gameState:save( character.steppingX, character.steppingY )
 		destroyScene( )
 	elseif ( phase == "did" ) then
-    	composer.removeScene( "house" )
+    composer.removeScene( "house" )
 	end
 end
 

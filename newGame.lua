@@ -12,21 +12,28 @@ local persistence = require "persistence"
 local scenesTransitions = require "scenesTransitions"
 
 local fitScreen = require "fitScreen"
+
+
 -- -----------------------------------------------------------------------------------
--- Code outside of the scene event functions below will only be executed ONCE unless
--- the scene is removed entirely (not recycled) via "composer.removeScene()"
+-- Declaração das variáveis
 -- -----------------------------------------------------------------------------------
 local textField
 local playButton
 
+-- -----------------------------------------------------------------------------------
+-- Funções
+-- -----------------------------------------------------------------------------------
+-- Cria um novo arquivo de jogo 
 local function createFile( )	
 	if ( ( textField.text ~= nil ) and ( not tostring(textField.text):find("^%s*$") ) ) then 
-		--print(textField.text)
 		persistence.newGameFile(textField.text)
 		scenesTransitions.gotoMap()
 	end
 end
  
+-- -----------------------------------------------------------------------------------
+-- Listeners
+-- -----------------------------------------------------------------------------------
 local function textListener( event )
  
     if ( event.phase == "began" ) then
@@ -37,10 +44,11 @@ local function textListener( event )
     elseif ( event.phase == "editing" ) then
     end
 end
--- -----------------------------------------------------------------------------------
--- Scene event functions
--- -----------------------------------------------------------------------------------
 
+
+-- -----------------------------------------------------------------------------------
+-- Cenas
+-- -----------------------------------------------------------------------------------
 -- create()
 function scene:create( event )
 	local sceneGroup = self.view

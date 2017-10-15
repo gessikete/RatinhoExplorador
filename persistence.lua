@@ -2,16 +2,24 @@ module(..., package.seeall)
 
 local GBCDataCabinet = require("plugin.GBCDataCabinet")
 
+-- -----------------------------------------------------------------------------------
+-- Declaração das variáveis
+-- -----------------------------------------------------------------------------------
 local M = { }
 
 GBCDataCabinet.createCabinet( "currentFileName"  )
 
+-- -----------------------------------------------------------------------------------
+-- Funções referentes à persistência dos arquivos
+-- -----------------------------------------------------------------------------------
+-- Retorna uma lista com os nomes dos arquivos de jogo salvos
 function M.filesNames( )
 	if ( GBCDataCabinet.load( "files" ) == true ) then
 		return GBCDataCabinet.get( "files", "names" )
 	end
 end
 
+-- Retorna um arquivo de jogo com os valores "default" de um jogo novo
 function defaultFile( )
 	local default = { character = { steppingX, steppingY } }
 	
@@ -22,6 +30,80 @@ function defaultFile( )
 	return default
 end
 
+-- Cria um jogo novo
+function M.newGameFile( newFileName )
+	local files = { }
+
+	-- Verifica se a lista de jogos salvos existe. Caso não exista, ela é criada 
+	if ( GBCDataCabinet.load( "files" ) == false ) then
+		GBCDataCabinet.createCabinet( "files" )
+		GBCDataCabinet.set( "files", "names", files )
+	end
+
+	files = GBCDataCabinet.get( "files", "names" )
+
+	-- Insere um novo nome da lista de jogos salvos
+	table.insert( files,  newFileName )
+
+	-- Cria um cabinet para o novo jogo e já adiciona um estado de jogo default
+	GBCDataCabinet.createCabinet( newFileName )
+	GBCDataCabinet.set( newFileName, "gameStatus", defaultFile( ) )
+
+	-- Salva a lista com os nomes dos arquivos e o novo cabinet do jogo
+	GBCDataCabinet.save( "files" )
+	GBCDataCabinet.save( newFileName )
+
+	-- Define o nome do jogo atual para ser acessado pelas cenas
+	M.setCurrentFileName( newFileName )
+
+
+	--M.deleteFiles()
+end
+
+-- Salva o estado atual do jogo
+function M.saveGameFile( gameStatus )
+	local fileName = M.getCurrentFileName()
+
+	GBCDataCabinet.set( fileName, "gameStatus", gameStatus )
+	GBCDataCabinet.save( fileName )
+end
+
+-- Retorna um arquivo salvo
+function M.loadGameFile( )
+	local fileName = M.getCurrentFileName()
+	GBCDataCabinet.load(fileName)
+	return GBCDataCabinet.get( fileName, "gameStatus" )
+end
+
+-- Define nome do arquivo atual que será acessado pelas cenas
+function M.setCurrentFileName( fileName )
+	GBCDataCabinet.set( "currentFileName", "name", fileName )
+	GBCDataCabinet.save( "currentFileName" )
+end
+
+-- Retorna arquivo atual
+function M.getCurrentFileName( )
+	return GBCDataCabinet.get( "currentFileName", "name" )
+end
+
+-- Deleta os arquivos de jogo
+function M.deleteFiles( )
+	local files
+	GBCDataCabinet.load( "files" )
+
+	files = GBCDataCabinet.get( "files", "names" )
+	for i = #files, 1, -1 do
+		GBCDataCabinet.deleteCabinet(files[i], true)
+		table.remove( files )
+	end
+
+	GBCDataCabinet.save( "files" )
+end
+
+-- -----------------------------------------------------------------------------------
+-- Funções referentes à persistência dos estados do jogo
+-- -----------------------------------------------------------------------------------
+-- Retorna o ponto inicial do minijogo atual
 function M.startingPoint( currentMiniGame )
 	if ( currentMiniGame == "map" ) then 
 		return 144, 96
@@ -30,7 +112,8 @@ function M.startingPoint( currentMiniGame )
 	end
 end
 
--- Informa onde o character irá se posicionar dependendo de onde ele saiu/entrou no último minigame
+-- Informa onde o character irá se posicionar dependendo de onde ele entrou/saiu ou pausou
+-- o jogo anteriormente
 function M.goBackPoint( currentMiniGame, previousMiniGameFile )
 	local houseExitX, houseExitY = 368, 144
 	local houseMapExitX, houseMapExitY = 144, 96 
@@ -54,66 +137,6 @@ function M.goBackPoint( currentMiniGame, previousMiniGameFile )
 			return houseEntranceX, houseEntranceY
 		end 
 	end 
-end
-
-function M.newGameFile( newFileName )
-	local files = { }
-
-	if ( GBCDataCabinet.load( "files" ) == false ) then
-		GBCDataCabinet.createCabinet( "files" )
-		GBCDataCabinet.set( "files", "names", files )
-	end
-
-	files = GBCDataCabinet.get( "files", "names" )
-	table.insert( files,  newFileName )
-
-	GBCDataCabinet.createCabinet( newFileName )
-	GBCDataCabinet.set( newFileName, "gameStatus", defaultFile( ) )
-
-	GBCDataCabinet.save( "files" )
-	GBCDataCabinet.save( newFileName )
-
-	M.setCurrentFileName( newFileName )
-
-	for i = 1, #files do
-		print( i .. ": " .. files[i] )
-	end
-	--M.deleteFiles()
-end
-
-function M.saveGameFile( gameStatus )
-	local fileName = M.getCurrentFileName()
-
-	GBCDataCabinet.set( fileName, "gameStatus", gameStatus )
-	GBCDataCabinet.save( fileName )
-end
-
-function M.loadGameFile( )
-	local fileName = M.getCurrentFileName()
-	GBCDataCabinet.load(fileName)
-	return GBCDataCabinet.get( fileName, "gameStatus" )
-end
-
-function M.setCurrentFileName( fileName )
-	GBCDataCabinet.set( "currentFileName", "name", fileName )
-	GBCDataCabinet.save( "currentFileName" )
-end
-
-function M.getCurrentFileName( )
-	return GBCDataCabinet.get( "currentFileName", "name" )
-end
-
-function M.deleteFiles( )
-	local files
-	GBCDataCabinet.load( "files" )
-
-	files = GBCDataCabinet.get( "files", "names" )
-	for i = #files, 1, -1 do
-		GBCDataCabinet.deleteCabinet(files[i], true)
-		table.remove( files )
-	end
-
-	GBCDataCabinet.save( "files" )
 end
 
 function M.addInstructionsTable( direction, steps )

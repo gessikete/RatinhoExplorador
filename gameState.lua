@@ -60,6 +60,7 @@ function M.new(  currentMiniGame, character, onCollision )
 		print( "CARREGANDO MINIGAME: " .. currentMiniGame )
 
 	  	if ( gameFile ~= nil ) then 
+	  		-- Apresenta uma imagem de carregamento enquanto o personagem é posicionado
 		    if ( gameFile.currentMiniGame == loadingMiniGame ) then 
 		      local defaultLoadingData = json.decodeFile(system.pathForFile("tiled/loading.json", system.ResourceDirectory))  -- load from json export
 		      loadingScreen = tiled.new(defaultLoadingData, "tiled")
@@ -74,6 +75,7 @@ function M.new(  currentMiniGame, character, onCollision )
 	    		fitScreen:fitMap( loadingScreen )
 		    end
 
+		    -- Calcula onde o personagem deverá ser posicionado de acordo com o ponto inicial
 		    local startingPointX, startingPointY = persistence.startingPoint( loadingMiniGame )
 		    local goBackPointX, goBackPointY = persistence.goBackPoint( loadingMiniGame, gameFile )
 		    local stepsX = math.ceil( ( goBackPointX - startingPointX ) / tilesSize )
@@ -86,7 +88,10 @@ function M.new(  currentMiniGame, character, onCollision )
 		    end  
 
 		    print( "PREPARANDO PERSONAGEM" )
+		    -- Reposiciona o personagem
 		    transition.to( character, {time = time, x = character.x + stepsX * tilesSize, y =  character.y + stepsY * tilesSize, onComplete = timer.performWithDelay( time, finishedLoading ) } )
+		    
+		    -- Atualiza onde o character está "pisando"
 		    character.steppingX = goBackPointX
 		    character.steppingY = goBackPointY
 		else 

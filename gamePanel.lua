@@ -16,7 +16,7 @@ local tilesSize = 32
 local M = { }
 
 -- -----------------------------------------------------------------------------------
--- Funções
+-- Funções do painel de instruções
 -- -----------------------------------------------------------------------------------
 function M.new( executeInstructions )
   	local gamePanelData

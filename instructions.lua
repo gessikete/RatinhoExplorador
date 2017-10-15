@@ -1,20 +1,30 @@
 module(..., package.seeall)
 
+-- -----------------------------------------------------------------------------------
+-- Declaração das variáveis
+-- -----------------------------------------------------------------------------------
 local M = { }
 
 local slowStep = 400
 
+-- -----------------------------------------------------------------------------------
+-- Funções referentes às instruções
+-- -----------------------------------------------------------------------------------
+
+-- Retorna a lista das instruções
 function M.new( tilesSize, character, markedPath )
   local instructionsTable = { executing = 1, last = 0,  direction = { }, steps = { } }
   local stopListeners
   local restartListeners
 
+  -- Adiciona uma instrução à lista
   function instructionsTable:add ( direction, steps )
     self.last = self.last + 1
     self.direction[self.last] = direction
     self.steps[self.last] = steps
   end
 
+  -- Reseta a lista para o estado inicial
   function instructionsTable:reset ( )
     for i = self.executing, self.last do
       table.remove( self.direction, i )
@@ -27,15 +37,16 @@ function M.new( tilesSize, character, markedPath )
     self.steps = { }
   end
 
+  -- Recebe os listeners dos botões (para evitar que o jogador adicione instruções ou volte para o menu durante a execução)
   function M:setGamePanelListeners( stop, restart )
     stopListeners = stop
     restartListeners = restart
   end
 
   -- -----------------------------------------------------------------------------------
-  -- Funções relacionadas ao movimento do personagem
+  -- Funções relacionadas ao movimento do personagem (i.e., execução de instruções)
   -- -----------------------------------------------------------------------------------
-  -- Cada passo é equivalente a 1 tileSize
+  -- Move o personagem de acordo com a instrução atual
   local function moveCharacter( direction, steps, stepDuration ) 
     local moveOffset = tilesSize * steps
     local finalCharPosX, finalCharPosY = character.x, character.y
@@ -75,6 +86,7 @@ function M.new( tilesSize, character, markedPath )
     end
   end
 
+  -- Executa uma instrução
   local function executeSingleInstruction ( )
     if ( instructionsTable ~= nil ) then
       -- Condição de parada (fila de instruções vazia)
@@ -95,8 +107,9 @@ function M.new( tilesSize, character, markedPath )
     end 
   end
 
+  -- Executa todas as instruções na lista
   function M.executeInstructions ( )
-    -- Pausa os listeners do painel de instruções
+    -- Pausa os listeners do painel de instruções, para impedir adição de instruções
     if ( stopListeners ) then 
       stopListeners( )
     else print( "Listener nulo (instructions.lua)" )
@@ -108,6 +121,9 @@ function M.new( tilesSize, character, markedPath )
     executeSingleInstruction( )
   end
 
+  -- -----------------------------------------------------------------------------------
+-- Liberação de memória
+-- -------------------------------------------------------------------------------------
   function M:destroyInstructionsTable( )
     for k0, v0 in pairs( instructionsTable ) do
       if ( type(v0) == "table" ) then 

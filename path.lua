@@ -1,19 +1,28 @@
 module(..., package.seeall)
 
+-- -----------------------------------------------------------------------------------
+-- Declaração das variáveis
+-- -----------------------------------------------------------------------------------
 local persistence = require "persistence"
 
 local M = { }
 
+-- -----------------------------------------------------------------------------------
+-- Funções referentes ao caminho
+-- -----------------------------------------------------------------------------------
+-- Retorna o caminho marcado (quando o personagem anda)
 function M.new( map )
 	local path = { }
 	local markedPath = { }
 	local sensors = { x = { } }
 
+	-- Mostra um tile quando o personagem anda sobre ele
 	function M:showTile( k )
 		table.insert( markedPath, path[k] )
 		path[k].alpha = 1
 	end
 
+	-- Estabelece os sensores
 	function M:setSensors( )
 		print( "PREPARANDO SENSORES" )
 	  	-- Referências para os tiles do caminho
@@ -51,6 +60,9 @@ function M.new( map )
 	  	end 
 	end
 
+	-- -----------------------------------------------------------------------------------
+	-- Liberação de memória
+	-- -----------------------------------------------------------------------------------
 	function M:destroy ( )
 		for k, v in pairs( path ) do
    			path[k] = nil 
