@@ -13,18 +13,19 @@ GBCDataCabinet.createCabinet( "currentFileName"  )
 -- Funções referentes à persistência dos arquivos
 -- -----------------------------------------------------------------------------------
 -- Retorna uma lista com os nomes dos arquivos de jogo salvos
-function M.filesNames( )
+function M.filesNames()
 	if ( GBCDataCabinet.load( "files" ) == true ) then
 		return GBCDataCabinet.get( "files", "names" )
 	end
 end
 
 -- Retorna um arquivo de jogo com os valores "default" de um jogo novo
-function defaultFile( )
-	local default = { character = { steppingX, steppingY } }
+function defaultFile()
+	local default = { character = { steppingX, steppingY, flipped } }
 	
-	default.character.steppingX = 144
-	default.character.steppingY = 96
+
+	default.character.flipped = false
+	default.character.steppingX, default.character.steppingY = M.startingPoint( "map" )
 	default.currentMiniGame = "map" 
 
 	return default
@@ -47,7 +48,7 @@ function M.newGameFile( newFileName )
 
 	-- Cria um cabinet para o novo jogo e já adiciona um estado de jogo default
 	GBCDataCabinet.createCabinet( newFileName )
-	GBCDataCabinet.set( newFileName, "gameStatus", defaultFile( ) )
+	GBCDataCabinet.set( newFileName, "gameState", defaultFile() )
 
 	-- Salva a lista com os nomes dos arquivos e o novo cabinet do jogo
 	GBCDataCabinet.save( "files" )
@@ -61,18 +62,18 @@ function M.newGameFile( newFileName )
 end
 
 -- Salva o estado atual do jogo
-function M.saveGameFile( gameStatus )
+function M.saveGameFile( gameState )
 	local fileName = M.getCurrentFileName()
 
-	GBCDataCabinet.set( fileName, "gameStatus", gameStatus )
+	GBCDataCabinet.set( fileName, "gameState", gameState )
 	GBCDataCabinet.save( fileName )
 end
 
 -- Retorna um arquivo salvo
-function M.loadGameFile( )
+function M.loadGameFile()
 	local fileName = M.getCurrentFileName()
 	GBCDataCabinet.load(fileName)
-	return GBCDataCabinet.get( fileName, "gameStatus" )
+	return GBCDataCabinet.get( fileName, "gameState" )
 end
 
 -- Define nome do arquivo atual que será acessado pelas cenas
@@ -82,12 +83,12 @@ function M.setCurrentFileName( fileName )
 end
 
 -- Retorna arquivo atual
-function M.getCurrentFileName( )
+function M.getCurrentFileName()
 	return GBCDataCabinet.get( "currentFileName", "name" )
 end
 
 -- Deleta os arquivos de jogo
-function M.deleteFiles( )
+function M.deleteFiles()
 	local files
 	GBCDataCabinet.load( "files" )
 
@@ -108,33 +109,35 @@ function M.startingPoint( currentMiniGame )
 	if ( currentMiniGame == "map" ) then 
 		return 144, 96
 	elseif ( currentMiniGame == "house" ) then 
-		return 368, 144
+		return 48, 304
 	end
 end
 
 -- Informa onde o character irá se posicionar dependendo de onde ele entrou/saiu ou pausou
 -- o jogo anteriormente
 function M.goBackPoint( currentMiniGame, previousMiniGameFile )
-	local houseExitX, houseExitY = 368, 144
+	local houseExitX, houseExitY = 304, 208
 	local houseMapExitX, houseMapExitY = 144, 96 
-	local houseEntranceX, houseEntranceY = 16, 304  
+	local houseEntranceX, houseEntranceY = 48, 304  
 	local houseMapEntranceX, houseMapEntranceY = 80, 160
+	local flipped = false 
 
 	if ( currentMiniGame == previousMiniGameFile.currentMiniGame ) then
-		return previousMiniGameFile.character.steppingX, previousMiniGameFile.character.steppingY
+		return previousMiniGameFile.character.steppingX, previousMiniGameFile.character.steppingY, previousMiniGameFile.character.flipped
 	elseif ( currentMiniGame == "map" ) then 
 		if ( previousMiniGameFile.currentMiniGame == "house" ) then 
 			if ( previousMiniGameFile.character.steppingX == houseExitX ) then 
-				return houseMapExitX, houseMapExitY
+				return houseMapExitX, houseMapExitY, flipped
 			else 
-				return houseMapEntranceX, houseMapEntranceY
+				return houseMapEntranceX, houseMapEntranceY, flipped
 			end 
 		end
 	elseif ( currentMiniGame == "house" ) then
 		if ( previousMiniGameFile.character.steppingX == houseMapExitX ) then
-			return houseExitX, houseExitY
+			flipped = true 
+			return houseExitX, houseExitY, flipped
 		else
-			return houseEntranceX, houseEntranceY
+			return houseEntranceX, houseEntranceY, flipped
 		end 
 	end 
 end

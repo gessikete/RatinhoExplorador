@@ -23,7 +23,7 @@ function M.new( map )
 	end
 
 	-- Estabelece os sensores
-	function M:setSensors( )
+	function M:setSensors()
 		print( "PREPARANDO SENSORES" )
 	  	-- Referências para os tiles do caminho
 	  	local pathLayer = map:findLayer("path")
@@ -63,7 +63,7 @@ function M.new( map )
 	-- -----------------------------------------------------------------------------------
 	-- Liberação de memória
 	-- -----------------------------------------------------------------------------------
-	function M:destroy ( )
+	function M:destroy()
 		for k, v in pairs( path ) do
    			path[k] = nil 
   		end

@@ -14,8 +14,8 @@ local slowStep = 400
 -- Retorna a lista das instruções
 function M.new( tilesSize, character, markedPath )
   local instructionsTable = { executing = 1, last = 0,  direction = { }, steps = { } }
-  local stopListeners
-  local restartListeners
+  local stopExecutionListeners
+  local restartExecutionListeners
 
   -- Adiciona uma instrução à lista
   function instructionsTable:add ( direction, steps )
@@ -25,7 +25,7 @@ function M.new( tilesSize, character, markedPath )
   end
 
   -- Reseta a lista para o estado inicial
-  function instructionsTable:reset ( )
+  function instructionsTable:reset ()
     for i = self.executing, self.last do
       table.remove( self.direction, i )
       table.remove( self.steps, i )
@@ -39,8 +39,8 @@ function M.new( tilesSize, character, markedPath )
 
   -- Recebe os listeners dos botões (para evitar que o jogador adicione instruções ou volte para o menu durante a execução)
   function M:setGamePanelListeners( stop, restart )
-    stopListeners = stop
-    restartListeners = restart
+    stopExecutionListeners = stop
+    restartExecutionListeners = restart
   end
 
   -- -----------------------------------------------------------------------------------
@@ -87,13 +87,13 @@ function M.new( tilesSize, character, markedPath )
   end
 
   -- Executa uma instrução
-  local function executeSingleInstruction ( )
+  local function executeSingleInstruction()
     if ( instructionsTable ~= nil ) then
       -- Condição de parada (fila de instruções vazia)
       if ( instructionsTable.last < instructionsTable.executing)  then
         -- Reestabelece os listeners do painel de instruções
-        if ( restartListeners ) then 
-          restartListeners( )
+        if ( restartExecutionListeners ) then 
+          restartExecutionListeners()
         else print( "Listener nulo (instructions.lua)" )
         end
         return 0
@@ -108,32 +108,34 @@ function M.new( tilesSize, character, markedPath )
   end
 
   -- Executa todas as instruções na lista
-  function M.executeInstructions ( )
+  function M.executeInstructions()
     -- Pausa os listeners do painel de instruções, para impedir adição de instruções
-    if ( stopListeners ) then 
-      stopListeners( )
+    if ( stopExecutionListeners ) then 
+      stopExecutionListeners()
     else print( "Listener nulo (instructions.lua)" )
     end
     -- Desmarca caminho anterior
     unmarkPath( markedPath )
 
     -- Executa as instruções uma a uma
-    executeSingleInstruction( )
+    executeSingleInstruction()
   end
 
   -- -----------------------------------------------------------------------------------
 -- Liberação de memória
 -- -------------------------------------------------------------------------------------
-  function M:destroyInstructionsTable( )
-    for k0, v0 in pairs( instructionsTable ) do
-      if ( type(v0) == "table" ) then 
-        for k1, v1 in pairs(v0) do
-          table.remove( v0, k1 )
+  function M:destroyInstructionsTable()
+    if (instructionsTable ) then
+      for k0, v0 in pairs( instructionsTable ) do
+        if ( type(v0) == "table" ) then 
+          for k1, v1 in pairs(v0) do
+            table.remove( v0, k1 )
+          end
         end
+        instructionsTable[k0] = nil 
       end
-      instructionsTable[k0] = nil 
+      instructionsTable = nil 
     end
-    instructionsTable = nil 
   end
 
   return instructionsTable

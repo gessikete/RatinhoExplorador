@@ -4,7 +4,7 @@ local json = require "json"
 
 local tiled = require "com.ponywolf.ponytiled"
 
-local scenesTransitions = require "scenesTransitions"
+local sceneTransition = require "sceneTransition"
 
 local fitScreen = require "fitScreen"
 
@@ -62,7 +62,7 @@ function M.new( executeInstructions )
 
   	goBackButton = gamePanel:findObject("goBackButton")
 
-  	fitScreen:fitGamePanel( gamePanel, goBackButton )
+  	fitScreen.fitGamePanel( gamePanel, goBackButton )
 
   	-- -----------------------------------------------------------------------------------
 	-- Listeners do game panel
@@ -73,8 +73,8 @@ function M.new( executeInstructions )
 	 	local direction = event.target.myName
 	  
 	  	if ( instructionsTable.executing ~= 1 ) then 
-	    	hideInstructions( )
-	    	instructionsTable:reset( ) 
+	    	hideInstructions()
+	    	instructionsTable:reset() 
 	  	end
 
 	  	if ( stepsButton.shownButton ~= nil ) then
@@ -110,40 +110,42 @@ function M.new( executeInstructions )
 	  if ( phase == "began" ) then
 	    instructionsPanel.touchOffsetY = event.y 
 	  elseif ( phase == "moved" ) then
-	    if ( ( instructionsPanel.touchOffsetY - event.y ) < -tilesSize ) then 
-	      scrollInstruction( "down" )
-	      instructionsPanel.touchOffsetY = event.y 
-	    elseif ( ( instructionsPanel.touchOffsetY - event.y ) > tilesSize ) then
-	      scrollInstruction( "up" )
-	      instructionsPanel.touchOffsetY = event.y
-	    end
+	  	if ( instructionsPanel.touchOffsetY ) then 
+		    if ( ( instructionsPanel.touchOffsetY - event.y ) < -tilesSize ) then 
+		      scrollInstruction( "down" )
+		      instructionsPanel.touchOffsetY = event.y 
+		    elseif ( ( instructionsPanel.touchOffsetY - event.y ) > tilesSize ) then
+		      scrollInstruction( "up" )
+		      instructionsPanel.touchOffsetY = event.y
+		    end
+		end 
 	  end
 	  return true
 	end
 
-	function M:removeGoBackButton( )
-		goBackButton:removeEventListener( "tap", scenesTransitions.gotoMenu )
+	function M:removeGoBackButton()
+		goBackButton:removeEventListener( "tap", sceneTransition.gotoMenu )
   		goBackButton = nil
 	end
 
-  	function M:addDirectionListeners( )
+  	function M:addDirectionListeners()
   		directionButtons.right:addEventListener( "tap", defineDirection )
 	    directionButtons.left:addEventListener( "tap", defineDirection )
 	    directionButtons.down:addEventListener( "tap", defineDirection )
 	    directionButtons.up:addEventListener( "tap", defineDirection )
   	end
 
-  	function M:addButtonsListeners( )
+  	function M:addButtonsListeners()
   		okButton:addEventListener( "tap", executeInstructions )
-    	goBackButton:addEventListener( "tap", scenesTransitions.gotoMenu )
+    	goBackButton:addEventListener( "tap", sceneTransition.gotoMenu )
   	end
 
-  	function M:addInstructionPanelListeners( )
+  	function M:addInstructionPanelListeners()
   		stepsButton.listener:addEventListener( "tap", addStep )
     	instructionsPanel:addEventListener( "touch", scrollInstructionsPanel )
   	end
 
-  	function M.stopListeners( )
+  	function M.stopExecutionListeners()
   		directionButtons.right:removeEventListener( "tap", defineDirection )
 		directionButtons.left:removeEventListener( "tap", defineDirection )
 		directionButtons.down:removeEventListener( "tap", defineDirection )
@@ -152,22 +154,35 @@ function M.new( executeInstructions )
 		okButton:removeEventListener( "tap", executeInstructions )
 		stepsButton.listener:removeEventListener( "tap", addStep )
 
-		goBackButton:removeEventListener( "tap", scenesTransitions.gotoMenu )
+		goBackButton:removeEventListener( "tap", sceneTransition.gotoMenu )
   	end
 
-  	function M.restartListeners( )
-  		M:addDirectionListeners( )
-  		M:addButtonsListeners( )
+  	function M:stopAllListeners( )
+  		instructionsPanel:removeEventListener( "touch", scrollInstructionsPanel )
+  		directionButtons.right:removeEventListener( "tap", defineDirection )
+		directionButtons.left:removeEventListener( "tap", defineDirection )
+		directionButtons.down:removeEventListener( "tap", defineDirection )
+		directionButtons.up:removeEventListener( "tap", defineDirection )
+
+		okButton:removeEventListener( "tap", executeInstructions )
+		stepsButton.listener:removeEventListener( "tap", addStep )
+  	end
+
+  	function M.restartExecutionListeners()
+  		M:addDirectionListeners()
+  		M:addButtonsListeners()
   		stepsButton.listener:addEventListener( "tap", addStep )
   	end
 
-  	function M:destroy( )
-  		gamePanel:removeSelf( ) 
+  	function M:destroy() 
+  		gamePanel:removeSelf()
 
 		directionButtons.right:removeEventListener( "tap", defineDirection )
 		directionButtons.left:removeEventListener( "tap", defineDirection )
 		directionButtons.down:removeEventListener( "tap", defineDirection )
 		directionButtons.up:removeEventListener( "tap", defineDirection )
+
+		stepsButton.listener:removeEventListener( "tap", addStep )
 
 		okButton:removeEventListener( "tap", executeInstructions )
 		stepsButton.listener:removeEventListener( "tap", addStep )
@@ -189,9 +204,6 @@ function M.new( executeInstructions )
 			directionButtons[k] = nil 
 		end
 		directionButtons = nil
-
-		-- remove listener
-		stepsButton.listener:removeEventListener( "tap", addStep )
 
 		-- remove fila de instruções
 		for k0, v0 in pairs( instructionsTable ) do
@@ -263,7 +275,7 @@ function M.new( executeInstructions )
 	end
 
 	-- Esconde as instruções após a execução
-	function hideInstructions( )
+	function hideInstructions()
 	  local boxNum = instructions.shownBox
 
 	  if ( instructions.shownBox ~= -1 ) then

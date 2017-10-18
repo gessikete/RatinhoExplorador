@@ -2834,8 +2834,6 @@
                  "name":"character",
                  "properties":
                     {
-                     "bodyType":"dynamic",
-                     "gravityScale":"0",
                      "isFixedRotation":"true",
                      "myName":"character",
                      "steppingX":"0",
@@ -2843,15 +2841,13 @@
                     },
                  "propertytypes":
                     {
-                     "bodyType":"string",
-                     "gravityScale":"string",
                      "isFixedRotation":"string",
                      "myName":"string",
                      "steppingX":"string",
                      "steppingY":"string"
                     },
                  "rotation":0,
-                 "type":"physics",
+                 "type":"",
                  "visible":true,
                  "width":36,
                  "x":126,

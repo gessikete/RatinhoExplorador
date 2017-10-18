@@ -7,23 +7,23 @@ local M = { }
 -- -----------------------------------------------------------------------------------
 -- Todas as funções de transição
 -- -----------------------------------------------------------------------------------
-function M.gotoMenu( )
+function M.gotoMenu()
 	composer.gotoScene( "menu", { time = 800, effect = "crossFade" } )
 end
 
-function M.gotoHouse( )
+function M.gotoHouse()
 	composer.gotoScene( "house", { time = 800, effect = "crossFade" } )
 end
 
-function M.gotoMap( )
+function M.gotoMap()
 	composer.gotoScene( "map", { time = 4000 } )
 end
 
-function M.gotoNewGame( )
+function M.gotoNewGame()
 	composer.gotoScene( "newGame", { time = 800, effect = "crossFade" } )
 end
 
-function M.gotoChooseGameFile( )
+function M.gotoChooseGameFile()
 	composer.gotoScene( "chooseGameFile", { time = 800, effect = "crossFade" } )
 end
 

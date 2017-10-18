@@ -1,4 +1,3 @@
-
 local composer = require( "composer" )
 
 local scene = composer.newScene()
@@ -7,7 +6,7 @@ local tiled = require "com.ponywolf.ponytiled"
 
 local json = require "json"
 
-local scenesTransitions = require "scenesTransitions"
+local sceneTransition = require "sceneTransition"
 
 -- -----------------------------------------------------------------------------------
 -- Declaração das variáveis
@@ -42,10 +41,10 @@ function scene:create( event )
 
 	sceneGroup:insert( menu )
 
-	fitScreen:fitMenu( menu, newGameButton, playButton, title )
+	fitScreen.fitMenu( menu, newGameButton, playButton, title )
 
-	playButton:addEventListener( "tap", scenesTransitions.gotoChooseGameFile )
-	newGameButton:addEventListener( "tap", scenesTransitions.gotoNewGame )
+	playButton:addEventListener( "tap", sceneTransition.gotoChooseGameFile )
+	newGameButton:addEventListener( "tap", sceneTransition.gotoNewGame )
 end
 
 

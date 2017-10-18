@@ -8,7 +8,7 @@ local persistence = require "persistence"
 
 local scene = composer.newScene()
 
-local scenesTransitions = require "scenesTransitions"
+local sceneTransition = require "sceneTransition"
 
 local fitScreen = require "fitScreen"
 
@@ -30,22 +30,22 @@ local function loadGameFile( event )
 	local gameFile 
 	
 	persistence.setCurrentFileName( fileName ) 
-	gameFile = persistence.loadGameFile( )
+	gameFile = persistence.loadGameFile()
 
 	print( "-------------------------------------------------------------------" )
 	print( "ARQUIVO ESCOLHIDO: " .. fileName )
 
 	-- Verifica em qual minigame o jogo estava quando foi salvo
 	if ( gameFile.currentMiniGame == "map" ) then
-		scenesTransitions.gotoMap( )
+		timer.performWithDelay( 400, sceneTransition.gotoMap )
 	elseif ( gameFile.currentMiniGame == "house" ) then
-		scenesTransitions.gotoHouse( )
+		timer.performWithDelay( 400, sceneTransition.gotoHouse )
 	end 
 end
 
 -- Remove os objetos
-local function destroyScene( )
-  	chooseGameFile:removeSelf( )
+local function destroyScene()
+  	chooseGameFile:removeSelf()
 	chooseGameFile = nil
 
 	for k, v in pairs( gameFiles.box ) do
@@ -92,7 +92,7 @@ function scene:create( event )
 
 	goBackButton = chooseGameFile:findObject("goBackButton")
 
-	fitScreen:fitBackground(chooseGameFile)
+	fitScreen.fitBackground(chooseGameFile)
 
 	sceneGroup:insert( chooseGameFile )
 end
@@ -104,7 +104,7 @@ function scene:show( event )
 	local phase = event.phase
 
 	if ( phase == "will" ) then
-		goBackButton:addEventListener( "tap", scenesTransitions.gotoMenu )
+		goBackButton:addEventListener( "tap", sceneTransition.gotoMenu )
 	elseif ( phase == "did" ) then
 
 	end
@@ -118,7 +118,7 @@ function scene:hide( event )
 
 	if ( phase == "will" ) then
 	elseif ( phase == "did" ) then
-		destroyScene( )
+		destroyScene()
 		composer.removeScene( "chooseGameFile" )
 	end
 end
@@ -127,7 +127,7 @@ end
 -- destroy()
 function scene:destroy( event )
 	local sceneGroup = self.view
-	goBackButton:removeEventListener( "tap", scenesTransitions.gotoMenu )
+	goBackButton:removeEventListener( "tap", sceneTransition.gotoMenu )
 	goBackButton = nil
 end
 

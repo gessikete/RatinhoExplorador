@@ -6,7 +6,7 @@ local M = { }
 -- -----------------------------------------------------------------------------------
 -- Ajustes das imagens dependendo do tamanho da tela 
 -- -----------------------------------------------------------------------------------
-function M:fitDefault( screen )
+function M.fitDefault( screen )
 	if (  display.actualContentWidth > 512 ) then 
   		screen.x = screen.x - 44
   	elseif (  display.actualContentWidth == 512 ) then
@@ -15,7 +15,7 @@ function M:fitDefault( screen )
   	screen.y = screen.y - 32
 end
 
-function M:fitGamePanel( gamePanel, goBackButton )
+function M.fitGamePanel( gamePanel, goBackButton )
 	if ( display.actualContentWidth > 512 ) then
 	  	gamePanel.x = gamePanel.x + ( display.actualContentWidth - gamePanel.designedWidth ) - 32
 	  	goBackButton.x = goBackButton.x - 64
@@ -23,7 +23,7 @@ function M:fitGamePanel( gamePanel, goBackButton )
   		gamePanel.y = gamePanel.y - 5
 end
 
-function M:fitBackground( background )
+function M.fitBackground( background )
 	if (  display.actualContentWidth > 512 ) then 
   		background.x = background.x - 45
   	elseif (  display.actualContentWidth == 512 ) then
@@ -32,7 +32,7 @@ function M:fitBackground( background )
   	--background.y = background.y - 32
 end
 
-function M:fitMenu( background, newGameButton, playButton, title )
+function M.fitMenu( background, newGameButton, playButton, title )
 	if (  display.actualContentWidth > 512 ) then 
   		background.x = background.x - 45
   	elseif (  display.actualContentWidth == 512 ) then
@@ -46,7 +46,7 @@ function M:fitMenu( background, newGameButton, playButton, title )
   	end
 end
 
-function M:fitMap( map )
+function M.fitMap( map )
 	map.x = -28
 	map.y =  -40
 end

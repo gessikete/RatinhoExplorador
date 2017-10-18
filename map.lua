@@ -12,7 +12,7 @@ local json = require "json"
 
 local persistence = require "persistence"
 
-local scenesTransitions = require "scenesTransitions"
+local sceneTransition = require "sceneTransition"
 
 local gamePanel = require "gamePanel"
 
@@ -22,7 +22,7 @@ local gameState = require "gameState"
 
 local path = require "path"
 
-local fitScreen = require "fitScreen"
+local gameScene = require "gameScene"
 
 physics.start()
 
@@ -48,38 +48,9 @@ local tilesSize = 32
 -- -----------------------------------------------------------------------------------
 -- Funções de criação
 -- -----------------------------------------------------------------------------------
-local function setMap( )
-  -- Cria mapa a partir do arquivo JSON exportado pelo tiled
-  display.setDefault("magTextureFilter", "nearest")
-  display.setDefault("minTextureFilter", "nearest")
-  local maptiledData = json.decodeFile(system.pathForFile("tiled/newmap.json", system.ResourceDirectory))
-
-  map = tiled.new(maptiledData, "tiled")
-
-  --@TODO: TIRAR ISSO QUANDO ACABAREM OS TESTES COM A TELA
-  --local dragable = require "com.ponywolf.plugins.dragable"
-  --map = dragable.new(map)
-
-end
-
-local function setCharacter( )
-  -- lembrar: o myName (para os listeners) foi definido
-  -- no próprio tiled
-  character = map:findObject("character")
-
-  -- Objeto invisível que vai colidir com os objetos de colisão
-  -- @TODO: mudar posição e tamanho do rope quando substituirmos a imagem do personagem
-  rope = display.newRect( map:findLayer("character"), character.x, character.y + 4, 25, 20 )
-  physics.addBody( rope ) 
-  rope.gravityScale = 0 
-  rope.myName = "rope"
-  rope.isVisible = false
-  ropeJoint = physics.newJoint( "rope", rope, character, 0, 0 )
-end
-
 -- Prepara a câmera para se mover de acordo com os movimentos do personagem
 -- @TODO: Mudar os parâmetros de setCameraOffset e setBounds quando trocarmos o mapa 
-local function setCamera( )
+local function setCamera()
   local layer
   camera:add( character, 1 )
   camera:add( map, 2 )
@@ -95,7 +66,7 @@ local function setCamera( )
   camera:setBounds( 170, 300, 150, 312 )
   camera:setFocus(character)
   camera:track()
-  camera:toBack( )
+  camera:toBack()
 end
 
 -- -----------------------------------------------------------------------------------
@@ -109,13 +80,14 @@ local function onCollision( event )
 
   if ( event.phase == "began" ) then
     if ( ( ( obj1.myName == "house" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "house" ) ) ) then 
-      transition.cancel( )
-      timer.performWithDelay( stepDuration, scenesTransitions.gotoHouse )
-      return true 
+      transition.cancel()
+      instructions:destroyInstructionsTable()
+      gamePanel:stopAllListeners()
+      timer.performWithDelay( 400, sceneTransition.gotoHouse ) 
     -- Colisão entre o personagem e os sensores dos tiles do caminho
     elseif ( ( obj1.myName == "character" ) and ( obj2.myName ~= "collision" ) ) then 
-      character.steppingX = obj1.x 
-      character.steppingY = obj1.y 
+      character.steppingX = obj2.x 
+      character.steppingY = obj2.y 
       path:showTile( obj2.myName )
     elseif ( ( obj2.myName == "character" ) and ( obj1.myName ~= "collision" ) ) then 
       character.steppingX = obj1.x 
@@ -123,7 +95,7 @@ local function onCollision( event )
       path:showTile( obj1.myName )
     -- Colisão com os demais objetos e o personagem (rope nesse caso)
     elseif ( ( ( obj1.myName == "collision" ) and ( obj2.myName == "rope" ) ) or ( ( obj1.myName == "rope" ) and ( obj2.myName == "collision" ) ) ) then 
-      transition.cancel( )
+      transition.cancel()
     end
   end
   return true 
@@ -132,26 +104,28 @@ end
 -- -----------------------------------------------------------------------------------
 -- Remoções para limpar a tela
 -- -----------------------------------------------------------------------------------
-local function destroyMap( )
-  map:removeSelf( )
-  ropeJoint:removeSelf( )
-  rope:removeSelf( )
-  camera:destroy( )
+local function destroyMap()
+  camera:destroy()
+  camera = nil 
+  map:removeSelf()
+  ropeJoint:removeSelf()
+  rope:removeSelf()
 
   map = nil 
   character = nil 
   ropeJoint = nil 
   rope = nil 
 
-  path:destroy( )
+  path:destroy()
 end
 
-local function destroyScene( )
-  instructions:destroyInstructionsTable( )
-  destroyMap( )
-  gamePanel:destroy( )
-
+local function destroyScene()
   Runtime:removeEventListener( "collision", onCollision )
+  gamePanel:destroy()
+
+  instructions:destroyInstructionsTable()
+
+  destroyMap()
 end
 
 -- -----------------------------------------------------------------------------------
@@ -160,21 +134,11 @@ end
 -- create()
 function scene:create( event )
   sceneGroup = self.view
-  local markedPath
 
-  setMap( )
-  setCharacter( ) 
-
-  gameState.new( "map", character, onCollision )
-  gameState:load( )
-  markedPath = path.new( map )
-  path:setSensors( )
-
-  instructionsTable = instructions.new( tilesSize, character, markedPath )
+  map, character, rope, ropeJoint, gamePanel, gameState, path, instructions, instructionsTable = gameScene:set( "map", onCollision )
 
   sceneGroup:insert( map )
-  sceneGroup:insert( gamePanel.new( instructions.executeInstructions ) )
-  instructions:setGamePanelListeners( gamePanel.stopListeners, gamePanel.restartListeners )
+  sceneGroup:insert( gamePanel.tiled )
 end
 
 -- show()
@@ -184,14 +148,14 @@ function scene:show( event )
 
   if ( phase == "will" ) then
     setCamera()
-    gamePanel:addDirectionListeners( )
+    gamePanel:addDirectionListeners()
 
   elseif ( phase == "did" ) then
-    
-    --Runtime:addEventListener( "collision", onCollision )
-    gamePanel:addButtonsListeners( )
-    gamePanel:addInstructionPanelListeners( )
+    gamePanel:addButtonsListeners()
+    gamePanel:addInstructionPanelListeners()
 
+
+  
     --instructionsTable.direction = {"right","down","right","down","right","right","up","left","right","down","left","down","left","down","left","up","right","up","left","up","right"}
     --instructionsTable.steps = {5,6,6,2,3,6,6,5,5,6,2,9,7,3,13,6,3,8,4,6,3}
     --instructionsTable.last = 21
@@ -206,11 +170,10 @@ end
 function scene:hide( event )
   local sceneGroup = self.view
   local phase = event.phase
-
   if ( phase == "will" ) then
-    transition.cancel( )
-    gameState:save( character.steppingX, character.steppingY )
-    destroyScene( )
+    physics.stop( )
+    gameState:save()
+    destroyScene()
   elseif ( phase == "did" ) then
     composer.removeScene( "map" )
   end
@@ -218,9 +181,9 @@ end
 
 -- destroy()
 function scene:destroy( event )
-
+ 
   local sceneGroup = self.view
-  --gamePanel:removeGoBackButton( )
+  --gamePanel:removeGoBackButton()
 end
 
 -- -----------------------------------------------------------------------------------

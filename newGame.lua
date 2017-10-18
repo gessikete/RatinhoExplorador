@@ -9,7 +9,7 @@ local json = require "json"
 
 local persistence = require "persistence"
 
-local scenesTransitions = require "scenesTransitions"
+local sceneTransition = require "sceneTransition"
 
 local fitScreen = require "fitScreen"
 
@@ -24,10 +24,10 @@ local playButton
 -- Funções
 -- -----------------------------------------------------------------------------------
 -- Cria um novo arquivo de jogo 
-local function createFile( )	
+local function createFile()	
 	if ( ( textField.text ~= nil ) and ( not tostring(textField.text):find("^%s*$") ) ) then 
 		persistence.newGameFile(textField.text)
-		scenesTransitions.gotoMap()
+		sceneTransition.gotoMap()
 	end
 end
  
