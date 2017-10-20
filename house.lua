@@ -116,77 +116,97 @@ local function setPuzzle()
   end
 end
 
+local function getQuadrant( dx, dy )
+  if ( ( dx > 0) and ( dy > 0 ) ) then
+    return 2
+  elseif ( ( dx > 0 ) and ( dy < 0 ) ) then
+    return 1
+  elseif ( ( dx < 0 ) and ( dy > 0 ) ) then
+    return 3
+  elseif ( ( dx < 0 ) and ( dy < 0 ) ) then
+    return 4
+  end
+end
+
 local function l( event )
   local circle = event.target
   local phase = event.phase
   local centerX, centerY = circle:localToContent( 0, 0 )
 
-
-  --print("circle.x: " .. centerX .. "; event.x: " .. event.x )
-  --print("circle.y: " .. centerY .. "; event.y: " .. event.y )
   if ( "began" == phase ) then
     display.currentStage:setFocus( circle )
 
     local dx = event.x - centerX
     local dy = event.y - centerY 
-    circle.dx = dx
-    circle.dy = dy 
-    adjustment = math.atan2( dy, dx ) * 180 / math.pi - circle.rotation
-    --circle.touchOffsetX = event.x - circle.x
-    print( "dx: " .. dx .. ", dy: " .. dy ) 
+    local radius = math.sqrt( math.pow( dx, 2 ) + math.pow( dy, 2 ) )
+    local ds, dt = ( circle.radius * dx ) / radius, ( circle.radius * dy ) / radius
+
+    adjustment = math.atan2( dt, ds ) * 180 / math.pi - circle.rotation
+
+    circle.quadrant = getQuadrant( ds, dt )
   
   elseif ( "moved" == phase ) then
-    local dx = event.x - centerX 
-    local dy = event.y - centerY
+    if ( adjustment ) then 
+      local dx = event.x - centerX 
+      local dy = event.y - centerY
+      local radius = math.sqrt( math.pow( dx, 2 ) + math.pow( dy, 2 ) )
+      local ds, dt = ( circle.radius * dx ) / radius, ( circle.radius * dy ) / radius
+      local quadrant = getQuadrant( dx, dy )
 
-    --if ( circle.dx < dx ) and ( circle.dy > dy ) then 
-      --sentido horário
+      if ( quadrant ~= circle.quadrant ) then
+        if ( ( circle.quadrant == 4 ) and ( quadrant == 1 ) ) then 
+          circle.steps = circle.steps + 0.5
 
-    --elseif ( ) then
+          p5 = display.newCircle( house, circle.x + ds, circle.y + dt, 5 )
+          p5:setFillColor( 0.1, 0.9, 1 )
+        elseif ( ( circle.quadrant == 1 ) and ( quadrant == 4 ) ) then 
+          if ( circle.steps > 0 ) then
+            circle.steps = circle.steps - 0.5
 
-    --end 
+            p5 = display.newCircle( house, circle.x + ds, circle.y + dt, 5 )
+            p5:setFillColor( 0.7, 0.3, 0.6 )
+          end
+        elseif ( quadrant > circle.quadrant ) then 
+          circle.steps = circle.steps + 0.5
 
-    print( "-----------------------" ) 
-    --print( "circle.dx: " .. circle.dx .. ", circle.dy: " .. circle.dy ) 
-    --print( "dx: " .. dx .. ", dy: " .. dy ) 
-    print( "-----------------------" )
-    
-    --print( circle.dif + ( ( math.atan2( dy, dx ) * 180 / math.pi ) - adjustment ) )
-    --circle.rotation = ( math.atan2( dy, dx ) * 180 / math.pi ) - adjustment
-    --circle.rotation = 180
-    --print("rotation: " .. circle.rotation)
+          p5 = display.newCircle( house, circle.x + ds, circle.y + dt, 5 )
+          p5:setFillColor( 0.1, 0.9, 1 )
+        elseif ( quadrant < circle.quadrant ) then 
+          if ( circle.steps > 0 ) then
+            circle.steps = circle.steps - 0.5
 
-    --circle.x = event.x - circle.touchOffsetX
+            p5 = display.newCircle( house, circle.x + ds, circle.y + dt, 5 )
+            p5:setFillColor( 0.7, 0.3, 0.6 )
+          end
+        end 
+      end
+
+      circle.quadrant = quadrant
+
+      if ( circle.steps > 0 ) then
+        circle.rotation = ( math.atan2( dt, ds ) * 180 / math.pi ) - adjustment 
+      end
+ 
+      t.text = math.floor(circle.steps)
+    end 
   
   elseif ( "ended" == phase or "cancelled" == phase ) then
       display.currentStage:setFocus( nil )
   end
 
-  return true -- prevents touch propagation to underlying objects
+  return true 
 end
 
 local function c( )
-  ue  = house:findObject("ue")
+  bikeWheel  = house:findObject("bikeWheel")
+  bikeWheel.radius = bikeWheel.width/2
+  bikeWheel.quadrant = 1
+  bikeWheel.steps = 0
 
-  p = display.newCircle( house:findLayer("ue"), ue.x, ue.y, 5 )
-  p:setFillColor( 0.2, 1, 0.9 )
+  t = display.newText( house, bikeWheel.steps, display.contentCenterX, display.contentCenterY, system.nativeFontBold, 30 )
+  t:setFillColor( 0, 0, 0 )
 
-  --branco
-  p1 = display.newCircle( house:findLayer("ue"), ue.x, ue.y + ue.height/2, 5 )
-
-  -- preto
-  p2 = display.newCircle( house:findLayer("ue"), ue.x, ue.y - ue.height/2, 5 )
-  p2:setFillColor( 0, 0, 0 )
-
-  -- roxo
-  p3 = display.newCircle( house:findLayer("ue"), ue.x + ue.width/2, ue.y, 5 )
-  p3:setFillColor( 0.7, 0.3, 0.6 )
-
-  -- azul
-  p4 = display.newCircle( house:findLayer("ue"), ue.x - ue.width/2, ue.y, 5 )
-  p4:setFillColor( 0.1, 0.9, 1 )
-
-  ue:addEventListener( "touch", l )
+  bikeWheel:addEventListener( "touch", l )
 end
 
 -- -----------------------------------------------------------------------------------
