@@ -25,9 +25,9 @@ local playButton
 -- -----------------------------------------------------------------------------------
 -- Cria um novo arquivo de jogo 
 local function createFile()	
-	if ( ( textField.text ~= nil ) and ( not tostring(textField.text):find("^%s*$") ) ) then 
+	if ( ( textField.text ~= nil ) and ( not tostring( textField.text ):find( "^%s*$" ) ) ) then 
 		persistence.newGameFile(textField.text)
-		sceneTransition.gotoMap()
+		sceneTransition.gotoHouse()
 	end
 end
  

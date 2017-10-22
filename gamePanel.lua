@@ -8,6 +8,10 @@ local sceneTransition = require "sceneTransition"
 
 local fitScreen = require "fitScreen"
 
+local physics = require "physics"
+
+physics.start()
+
 -- -----------------------------------------------------------------------------------
 -- Declaração das variáveis
 -- -----------------------------------------------------------------------------------
@@ -15,14 +19,17 @@ local tilesSize = 32
 
 local M = { }
 
+
+
+
 -- -----------------------------------------------------------------------------------
 -- Funções do painel de instruções
 -- -----------------------------------------------------------------------------------
 function M.new( executeInstructions )
   	local gamePanelData
-  	local instructions = { boxes = { }, upArrows = { }, downArrows = { }, leftArrows = { }, rightArrows = { }, shownArrow = { }, shownInstruction = { }, texts = { }, shownBox = -1 }
-  	local stepsButton = { shownButton, listener }
+  	local instructions = { selectedBox = {}, boxes = { }, upArrows = { }, downArrows = { }, leftArrows = { }, rightArrows = { }, shownArrow = { }, shownInstruction = { }, texts = { }, shownBox = -1 }
   	local directionButtons = { up, down, left, right }
+  	local bikeWheel 
 
   	-- Carrega o arquivo tiled
   	gamePanelData = json.decodeFile(system.pathForFile("tiled/gamePanel.json", system.ResourceDirectory))  -- load from json export
@@ -30,6 +37,7 @@ function M.new( executeInstructions )
 
   	-- Cria referências para os quadros de instruções e suas setas
   	local instructionsLayer = gamePanel:findLayer("instructions")
+  	local selectedInstructionLayer = gamePanel:findLayer("selectedInstruction")
   	local upArrowsLayer = gamePanel:findLayer("upArrows")
   	local downArrowsLayer = gamePanel:findLayer("downArrows")
   	local leftArrowsLayer = gamePanel:findLayer("leftArrows")
@@ -37,24 +45,38 @@ function M.new( executeInstructions )
 
   	for i = 1, instructionsLayer.numChildren do
     	instructions.boxes[i - 1] = instructionsLayer[i]
+    	instructions.selectedBox[i - 1] = selectedInstructionLayer[i]
+
     	instructions.upArrows[i - 1] = upArrowsLayer[i]
     	instructions.downArrows[i - 1] = downArrowsLayer[i]
     	instructions.leftArrows[i - 1] = leftArrowsLayer[i]
     	instructions.rightArrows[i - 1] = rightArrowsLayer[i]
   	end
 
-  	-- Botão que aumenta o número de passos
-  	stepsButton["left"] = gamePanel:findObject("leftStepsButton") 
-  	stepsButton["up"] = gamePanel:findObject("upStepsButton") 
-  	stepsButton["right"] = gamePanel:findObject("rightStepsButton") 
-  	stepsButton["down"] = gamePanel:findObject("downStepsButton") 
-  	stepsButton.listener = gamePanel:findObject("listenerStepsButton")
+  	instructions.boxes[0].alpha = 1
+
+  	-- Roda da bicicleta que aumenta o número de passos
+  	bikeWheel  = gamePanel:findObject("bikeWheel")
+  	bikeWheel.radius = bikeWheel.width/2
+  	bikeWheel.quadrant = 1
+  	bikeWheel.steps = 1
 
   	-- Setas que definem a direção
   	directionButtons.right = gamePanel:findObject("directionRight") 
+  	directionButtons.right.originalX = directionButtons.right.x 
+  	directionButtons.right.originalY = directionButtons.right.y 
+
   	directionButtons.left = gamePanel:findObject("directionLeft") 
+  	directionButtons.left.originalX = directionButtons.left.x 
+  	directionButtons.left.originalY = directionButtons.left.y 
+
   	directionButtons.down = gamePanel:findObject("directionDown") 
+  	directionButtons.down.originalX = directionButtons.down.x 
+  	directionButtons.down.originalY = directionButtons.down.y 
+
   	directionButtons.up = gamePanel:findObject("directionUp") 
+  	directionButtons.up.originalX = directionButtons.up.x 
+  	directionButtons.up.originalY = directionButtons.up.y 
 
  	instructionsPanel = gamePanel:findObject("instructionsPanel")
 
@@ -67,32 +89,9 @@ function M.new( executeInstructions )
   	-- -----------------------------------------------------------------------------------
 	-- Listeners do game panel
 	-- -----------------------------------------------------------------------------------
-	-- É o listener para quando o jogador aperta uma seta
-	-- Também adiciona a instrução na fila
-	local function defineDirection( event )
-	 	local direction = event.target.myName
-	  
-	  	if ( instructionsTable.executing ~= 1 ) then 
-	    	hideInstructions()
-	    	instructionsTable:reset() 
-	  	end
-
-	  	if ( stepsButton.shownButton ~= nil ) then
-	    	stepsButton.shownButton.alpha = 0 
-	  	end
-	  	stepsButton[direction].alpha = 1
-	  	stepsButton.shownButton = stepsButton[direction]
-
-	  	-- Instrução começa com um passo para a direção escolhida
-	  	stepsCount = 1
-	  	instructionsTable:add( direction, stepsCount )
-	  	showInstruction( direction )
-	end
-
-	-- Aumenta quantidade de passos da instrução e também muda seu 
-	-- valor na caixa de instrução
-	local function addStep( event )
-	  stepsCount = stepsCount + 1
+	-- Atualiza quantidade de passos de acordo com giro da roda da bicicleta
+	local function updateSteps( circle )
+	  stepsCount = math.floor(circle.steps)
 	  instructionsTable.steps[instructionsTable.last] = stepsCount
 
 	  for i = 0, instructions.shownBox do 
@@ -100,6 +99,149 @@ function M.new( executeInstructions )
 	      instructions.texts[i].text = instructionsTable.last .. ".  " .. stepsCount
 	    end
 	  end  
+	end
+
+	local function getQuadrant( dx, dy )
+	  	if ( ( dx > 0) and ( dy > 0 ) ) then
+	    	return 2
+	  	elseif ( ( dx > 0 ) and ( dy < 0 ) ) then
+	    	return 1
+	  	elseif ( ( dx < 0 ) and ( dy > 0 ) ) then
+	    	return 3
+	  	elseif ( ( dx < 0 ) and ( dy < 0 ) ) then
+	    	return 4
+	  	end
+	end
+
+	local function spinBikeWheel( event )
+		local circle = event.target
+		local phase = event.phase
+		local centerX, centerY = circle:localToContent( 0, 0 )
+
+		if ( "began" == phase ) then
+		    display.currentStage:setFocus( circle )
+
+		    local dx = event.x - centerX
+		    local dy = event.y - centerY 
+		    local radius = math.sqrt( math.pow( dx, 2 ) + math.pow( dy, 2 ) )
+		    local ds, dt = ( circle.radius * dx ) / radius, ( circle.radius * dy ) / radius
+
+		    adjustment = math.atan2( dt, ds ) * 180 / math.pi - circle.rotation
+
+		    circle.quadrant = getQuadrant( ds, dt )
+		  
+		elseif ( "moved" == phase ) then
+		    if ( adjustment ) then 
+		      	local dx = event.x - centerX 
+		      	local dy = event.y - centerY
+		      	local radius = math.sqrt( math.pow( dx, 2 ) + math.pow( dy, 2 ) )
+		      	local ds, dt = ( circle.radius * dx ) / radius, ( circle.radius * dy ) / radius
+		      	local quadrant = getQuadrant( dx, dy )
+
+		      	if ( quadrant ~= circle.quadrant ) then
+		      	  	if ( ( circle.quadrant == 4 ) and ( quadrant == 1 ) ) then 
+		      	    	circle.steps = circle.steps + 0.5
+		      		elseif ( ( circle.quadrant == 1 ) and ( quadrant == 4 ) ) then 
+		      	    	if ( circle.steps > 0 ) then
+		      	      		circle.steps = circle.steps - 0.5
+		      	    	end
+		      	  	elseif ( quadrant > circle.quadrant ) then 
+		      	    	circle.steps = circle.steps + 0.5
+		      	  	elseif ( quadrant < circle.quadrant ) then 
+		      	    	if ( circle.steps > 0 ) then
+		      	      		circle.steps = circle.steps - 0.5
+		      	    	end
+		      	  	end 
+		      	end
+
+		      	circle.quadrant = quadrant
+
+		      	if ( circle.steps > 0 ) then
+		      	  circle.rotation = ( math.atan2( dt, ds ) * 180 / math.pi ) - adjustment 
+		      	end
+		 
+		      	updateSteps( circle )
+		    end 
+		  
+		elseif ( "ended" == phase or "cancelled" == phase ) then
+			display.currentStage:setFocus( nil )
+		end
+
+		return true 
+	end
+
+	-- É o listener para quando o jogador aperta uma seta
+	-- Também adiciona a instrução na fila
+	local function createInstruction( event )
+		local phase = event.phase
+	 	local direction = event.target.myName
+	  	local directionButton = event.target
+	  	local box, boxX, boxY 
+	  	local selectedBox
+
+	  	if ( instructions.shownBox < #instructions.boxes ) then
+	  		box, boxX, boxY = instructions.boxes[ instructions.shownBox + 1 ], instructions.boxes[ instructions.shownBox + 1 ]:localToContent( 0, 0 )
+	  		selectedBox = instructions.selectedBox[ instructions.shownBox + 1 ]
+	  	else
+	  		box, boxX, boxY = instructions.boxes[ #instructions.boxes ], instructions.boxes[ #instructions.boxes ]:localToContent( 0, 0 )
+	  		selectedBox = instructions.selectedBox[ #instructions.boxes ]
+	  	end
+
+	  	--print("shown:" .. instructions.shownBox .. ", #: " .. #instructions.boxes)
+
+	  	if ( "began" == phase ) then
+			display.currentStage:setFocus( directionButton )
+			directionButton:toFront( )
+
+			directionButton.touchOffsetX = event.x - directionButton.x
+			directionButton.touchOffsetY = event.y - directionButton.y
+
+			bikeWheel.steps = 1
+			bikeWheel.rotation = 0
+
+			if ( instructionsTable.executing ~= 1 ) then 
+			   	hideInstructions()
+			   	instructionsTable:reset() 
+			end
+
+			if ( ( instructions.shownBox >= #instructions.boxes ) and ( instructions.texts[instructions.shownBox].text ~= " " ) ) then
+				moveInstruction( 0,  instructions.shownBox, 1, true )
+			end
+	
+		elseif ( ( "moved" == phase ) and ( directionButton.touchOffsetX ) ) then
+			directionButton.x = event.x - directionButton.touchOffsetX
+			directionButton.y = event.y - directionButton.touchOffsetY
+
+			if ( ( event.x > boxX - box.width/2 ) and ( event.x < boxX + box.width/2 ) 
+			and ( event.y > boxY - box.height/2 ) and ( event.y < boxY + box.height/2 ) ) then
+				selectedBox.alpha = 1
+			else
+				selectedBox.alpha = 0
+			end
+
+		elseif ( ( "ended" == phase ) or ( "cancelled" == phase ) and ( directionButton.touchOffsetX ) ) then
+			if ( ( event.x > boxX - box.width/2 ) and ( event.x < boxX + box.width/2 ) 
+			and ( event.y > boxY - box.height/2 ) and ( event.y < boxY + box.height/2 ) ) then
+				directionButton.x = directionButton.originalX
+				directionButton.y = directionButton.originalY
+
+			  	-- Instrução começa com um passo para a direção escolhida
+			  	stepsCount = 1
+			  	instructionsTable:add( direction, stepsCount )
+			  	showInstruction( direction )
+
+			  	if ( instructionsTable.last == 1 ) then 
+			  		bikeWheel:addEventListener( "touch", spinBikeWheel )
+				end
+
+			  	selectedBox.alpha = 0
+			else
+				transition.to( directionButton, { time = 400, x = directionButton.originalX, y = directionButton.originalY } )
+		  	end
+	    	display.currentStage:setFocus( nil )
+		end
+
+	  	return true 
 	end
 
 	-- Faz o scroll das instruções
@@ -111,13 +253,13 @@ function M.new( executeInstructions )
 	    instructionsPanel.touchOffsetY = event.y 
 	  elseif ( phase == "moved" ) then
 	  	if ( instructionsPanel.touchOffsetY ) then 
-		    if ( ( instructionsPanel.touchOffsetY - event.y ) < -tilesSize ) then 
-		      scrollInstruction( "down" )
-		      instructionsPanel.touchOffsetY = event.y 
-		    elseif ( ( instructionsPanel.touchOffsetY - event.y ) > tilesSize ) then
-		      scrollInstruction( "up" )
-		      instructionsPanel.touchOffsetY = event.y
-		    end
+			if ( ( instructionsPanel.touchOffsetY - event.y ) < -tilesSize ) then 
+				scrollInstruction( "down" )
+				instructionsPanel.touchOffsetY = event.y 
+			elseif ( ( instructionsPanel.touchOffsetY - event.y ) > tilesSize ) then
+				scrollInstruction( "up" )
+				instructionsPanel.touchOffsetY = event.y
+			end
 		end 
 	  end
 	  return true
@@ -129,10 +271,10 @@ function M.new( executeInstructions )
 	end
 
   	function M:addDirectionListeners()
-  		directionButtons.right:addEventListener( "tap", defineDirection )
-	    directionButtons.left:addEventListener( "tap", defineDirection )
-	    directionButtons.down:addEventListener( "tap", defineDirection )
-	    directionButtons.up:addEventListener( "tap", defineDirection )
+  		directionButtons.right:addEventListener( "touch", createInstruction )
+	    directionButtons.left:addEventListener( "touch", createInstruction )
+	    directionButtons.down:addEventListener( "touch", createInstruction )
+	    directionButtons.up:addEventListener( "touch", createInstruction )
   	end
 
   	function M:addButtonsListeners()
@@ -141,61 +283,61 @@ function M.new( executeInstructions )
   	end
 
   	function M:addInstructionPanelListeners()
-  		stepsButton.listener:addEventListener( "tap", addStep )
     	instructionsPanel:addEventListener( "touch", scrollInstructionsPanel )
   	end
 
   	function M.stopExecutionListeners()
-  		directionButtons.right:removeEventListener( "tap", defineDirection )
-		directionButtons.left:removeEventListener( "tap", defineDirection )
-		directionButtons.down:removeEventListener( "tap", defineDirection )
-		directionButtons.up:removeEventListener( "tap", defineDirection )
+  		directionButtons.right:removeEventListener( "touch", createInstruction )
+		directionButtons.left:removeEventListener( "touch", createInstruction )
+		directionButtons.down:removeEventListener( "touch", createInstruction )
+		directionButtons.up:removeEventListener( "touch", createInstruction )
 
 		okButton:removeEventListener( "tap", executeInstructions )
-		stepsButton.listener:removeEventListener( "tap", addStep )
+
+		bikeWheel:removeEventListener( "touch", spinBikeWheel )
 
 		goBackButton:removeEventListener( "tap", sceneTransition.gotoMenu )
   	end
 
   	function M:stopAllListeners( )
   		instructionsPanel:removeEventListener( "touch", scrollInstructionsPanel )
-  		directionButtons.right:removeEventListener( "tap", defineDirection )
-		directionButtons.left:removeEventListener( "tap", defineDirection )
-		directionButtons.down:removeEventListener( "tap", defineDirection )
-		directionButtons.up:removeEventListener( "tap", defineDirection )
+  		directionButtons.right:removeEventListener( "touch", createInstruction )
+		directionButtons.left:removeEventListener( "touch", createInstruction )
+		directionButtons.down:removeEventListener( "touch", createInstruction )
+		directionButtons.up:removeEventListener( "touch", createInstruction )
 
 		okButton:removeEventListener( "tap", executeInstructions )
-		stepsButton.listener:removeEventListener( "tap", addStep )
+
+		bikeWheel:removeEventListener( "touch", spinBikeWheel )
   	end
 
   	function M.restartExecutionListeners()
   		M:addDirectionListeners()
   		M:addButtonsListeners()
-  		stepsButton.listener:addEventListener( "tap", addStep )
+
   	end
 
   	function M:destroy() 
   		gamePanel:removeSelf()
 
-		directionButtons.right:removeEventListener( "tap", defineDirection )
-		directionButtons.left:removeEventListener( "tap", defineDirection )
-		directionButtons.down:removeEventListener( "tap", defineDirection )
-		directionButtons.up:removeEventListener( "tap", defineDirection )
+		directionButtons.right:removeEventListener( "touch", createInstruction )
+		directionButtons.left:removeEventListener( "touch", createInstruction )
+		directionButtons.down:removeEventListener( "touch", createInstruction )
+		directionButtons.up:removeEventListener( "touch", createInstruction )
 
-		stepsButton.listener:removeEventListener( "tap", addStep )
+		bikeWheel:removeEventListener( "touch", spinBikeWheel )
 
 		okButton:removeEventListener( "tap", executeInstructions )
-		stepsButton.listener:removeEventListener( "tap", addStep )
 		instructionsPanel:removeEventListener( "touch", scrollInstructionsPanel )
 
 		-- remove instruções
 		for k0, v0 in pairs( instructions ) do
-		    if ( type(v0) == "table" ) then 
-		      for k1, v1 in pairs(v0) do
-		        table.remove( v0, k1 )
-		      end
-		    end
-		    instructions[k0] = nil 
+			if ( type(v0) == "table" ) then 
+				for k1, v1 in pairs(v0) do
+				table.remove( v0, k1 )
+				end
+			end
+			instructions[k0] = nil 
 		end
 		instructions = nil 
 
@@ -205,18 +347,20 @@ function M.new( executeInstructions )
 		end
 		directionButtons = nil
 
-		-- remove fila de instruções
+		-- remove tabela de instruções
 		for k0, v0 in pairs( instructionsTable ) do
-		    if ( type(v0) == "table" ) then 
-		      for k1, v1 in pairs(v0) do
-		        table.remove( v0, k1 )
-		      end
-		      instructionsTable[k0] = nil 
-		    end
+			if ( type(v0) == "table" ) then 
+				for k1, v1 in pairs(v0) do
+					table.remove( v0, k1 )
+				end
+				instructionsTable[k0] = nil 
+			end
 		end
 		instructionsTable = nil 
 
 		okButton = nil  
+
+		bikeWheel = nil
 
 		instructionsPanel = nil 
 
@@ -245,17 +389,25 @@ function M.new( executeInstructions )
 
 	-- Move as instruções mostradas na tela da caixa firstBox até lastBox
 	-- Direction = 1 significa mover para cima e -1 para baixo.
-	function moveInstruction( firstBox, lastBox, direction )
+	function moveInstruction( firstBox, lastBox, direction, isLastBoxEmpty )
+		
 	  for i = firstBox, lastBox do
-	    local instructionIndex  = instructions.shownInstruction[i] + direction
-	    local steps = instructionsTable.steps[ instructionIndex ]
-	    local arrow = findInstructionArrow( instructionIndex )
-	    instructions.shownArrow[i].alpha = 0
+	  	local instructionIndex  = instructions.shownInstruction[i] + direction
 
-	    instructions.shownArrow[i] = arrow[i]
-	    arrow[i].alpha = 1 
-	    instructions.texts[i].text = instructionIndex .. ".  " .. steps
-	    instructions.shownInstruction[i] = instructions.shownInstruction[i] + direction
+	  	if ( ( i < instructions.shownBox ) or ( isLastBoxEmpty == false ) ) then 
+		    local instructionIndex  = instructions.shownInstruction[i] + direction
+		    local steps = instructionsTable.steps[ instructionIndex ]
+		    local arrow = findInstructionArrow( instructionIndex )
+		    instructions.shownArrow[i].alpha = 0
+
+		    instructions.shownArrow[i] = arrow[i]
+		    arrow[i].alpha = 1 
+		    instructions.texts[i].text = instructionIndex .. ".  " .. steps
+		    instructions.shownInstruction[i] = instructions.shownInstruction[i] + direction
+		else 
+			instructions.shownArrow[i].alpha = 0
+			instructions.texts[i].text = " "
+		end
 	  end
 	end
 
@@ -264,12 +416,13 @@ function M.new( executeInstructions )
 	function scrollInstruction ( direction )
 	  if ( instructions.shownBox ~= -1 ) then
 	    local firstBox = 0
+
 	    local lastBox = instructions.shownBox
 	    
 	    if ( ( direction == "down" ) and ( instructions.shownInstruction[0] > 1 ) ) then 
-	        moveInstruction( firstBox, lastBox, -1 )
+	        moveInstruction( firstBox, lastBox, -1, false )
 	    elseif ( ( direction == "up" ) and ( instructions.shownInstruction[instructions.shownBox] < instructionsTable.last ) ) then 
-	        moveInstruction( firstBox, lastBox, 1 )
+	        moveInstruction( firstBox, lastBox, 1, false )
 	    end 
 	  end
 	end
@@ -278,14 +431,20 @@ function M.new( executeInstructions )
 	function hideInstructions()
 	  local boxNum = instructions.shownBox
 
-	  if ( instructions.shownBox ~= -1 ) then
-	    for i = 0, boxNum do
-	      display.remove(instructions.texts[i])
-	      instructions.shownArrow[i].alpha = 0
-	      instructions.boxes[i].alpha = 0
-	      instructions.shownBox = -1
-	    end
-	  end 
+	  	if ( instructions.shownBox ~= -1 ) then
+		    for i = 0, boxNum do
+		      display.remove(instructions.texts[i])
+		      instructions.shownArrow[i].alpha = 0
+		      instructions.boxes[i].alpha = 0
+		      instructions.shownBox = -1
+		    end
+	  	end 
+
+	  	for i = boxNum, #instructions.boxes do
+	  		instructions.boxes[i].alpha = 0
+	  	end 
+
+	  	instructions.boxes[0].alpha = 1
 	end
 
 	-- Mostra as instruções à medida que são feitas
@@ -297,17 +456,18 @@ function M.new( executeInstructions )
 	    local box = instructions.boxes[boxNum]
 
 	    instructions.shownBox = boxNum
-	    box.alpha = 1
-	    arrow[boxNum].alpha = 1
+	    if ( ( boxNum + 1 ) < #instructions.boxes + 1 ) then 
+	    	instructions.boxes[ boxNum + 1 ].alpha = 1
+		end
+		
+	    arrow[ boxNum ].alpha = 1
 	    instructions.shownArrow[boxNum] = arrow[boxNum]
-	    instructions.texts[boxNum] = display.newText( gamePanel, boxNum + 1 .. ".  " .. stepsCount, box.x - 10, box.y, system.nativeFont, 16)
+	    instructions.texts[boxNum] = display.newText( gamePanel:findLayer("instructions"), boxNum + 1 .. ".  " .. stepsCount, box.x - 10, box.y, system.nativeFont, 16)
 	    instructions.shownInstruction[boxNum] = instructionsTable.last 
 	  else 
 	    local boxNum = instructions.shownBox
 	    -- Verifica se a última instrução sendo mostrada na tela foi a feita anteriormente (se não for, houve scroll)
 	    if ( ( instructionsTable.last - 1 ) == instructions.shownInstruction[boxNum] ) then 
-	      moveInstruction( 0,  boxNum - 1, 1 )
-
 	      instructions.shownArrow[boxNum].alpha = 0
 	      instructions.shownArrow[boxNum] = arrow[boxNum]
 	      instructions.shownArrow[boxNum].alpha = 1

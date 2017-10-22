@@ -1,13 +1,35 @@
 { "height":23,
  "layers":[
         {
-         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 23, 23],
+         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25],
          "height":23,
          "name":"background",
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
          "width":32,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"bikeWheel",
+         "objects":[
+                {
+                 "gid":23,
+                 "height":81,
+                 "id":108,
+                 "name":"bikeWheel",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":81,
+                 "x":393,
+                 "y":178
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -66,8 +88,8 @@
                  "type":"",
                  "visible":true,
                  "width":70,
-                 "x":396,
-                 "y":63
+                 "x":400,
+                 "y":242
                 }, 
                 {
                  "gid":1,
@@ -86,8 +108,8 @@
                  "type":"",
                  "visible":true,
                  "width":70,
-                 "x":396,
-                 "y":90
+                 "x":400,
+                 "y":269
                 }, 
                 {
                  "gid":1,
@@ -106,8 +128,8 @@
                  "type":"",
                  "visible":true,
                  "width":70,
-                 "x":396,
-                 "y":117
+                 "x":400,
+                 "y":296
                 }, 
                 {
                  "gid":1,
@@ -126,28 +148,8 @@
                  "type":"",
                  "visible":true,
                  "width":70,
-                 "x":396,
-                 "y":144
-                }, 
-                {
-                 "gid":1,
-                 "height":24,
-                 "id":8,
-                 "name":"",
-                 "properties":
-                    {
-                     "alpha":0
-                    },
-                 "propertytypes":
-                    {
-                     "alpha":"int"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":70,
-                 "x":396,
-                 "y":171
+                 "x":400,
+                 "y":323
                 }, 
                 {
                  "gid":1,
@@ -166,216 +168,8 @@
                  "type":"",
                  "visible":true,
                  "width":70,
-                 "x":396,
-                 "y":36
-                }],
-         "opacity":1,
-         "type":"objectgroup",
-         "visible":true,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "draworder":"topdown",
-         "name":"directions",
-         "objects":[
-                {
-                 "gid":17,
-                 "height":30,
-                 "id":78,
-                 "name":"directionLeft",
-                 "properties":
-                    {
-                     "myName":"left"
-                    },
-                 "propertytypes":
-                    {
-                     "myName":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":30,
-                 "x":392,
-                 "y":286
-                }, 
-                {
-                 "gid":16,
-                 "height":30,
-                 "id":80,
-                 "name":"directionDown",
-                 "properties":
-                    {
-                     "myName":"down"
-                    },
-                 "propertytypes":
-                    {
-                     "myName":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":30,
-                 "x":419,
-                 "y":311
-                }, 
-                {
-                 "gid":19,
-                 "height":30,
-                 "id":81,
-                 "name":"directionUp",
-                 "properties":
-                    {
-                     "myName":"up"
-                    },
-                 "propertytypes":
-                    {
-                     "myName":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":30,
-                 "x":419,
-                 "y":261
-                }, 
-                {
-                 "gid":18,
-                 "height":30,
-                 "id":82,
-                 "name":"directionRight",
-                 "properties":
-                    {
-                     "myName":"right"
-                    },
-                 "propertytypes":
-                    {
-                     "myName":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":30,
-                 "x":445,
-                 "y":286
-                }],
-         "opacity":1,
-         "type":"objectgroup",
-         "visible":true,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "draworder":"topdown",
-         "name":"stepsButton",
-         "objects":[
-                {
-                 "gid":12,
-                 "height":36,
-                 "id":57,
-                 "name":"leftStepsButton",
-                 "properties":
-                    {
-                     "alpha":"0",
-                     "myName":"left"
-                    },
-                 "propertytypes":
-                    {
-                     "alpha":"string",
-                     "myName":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":36,
-                 "x":417,
-                 "y":222
-                }, 
-                {
-                 "gid":15,
-                 "height":36,
-                 "id":59,
-                 "name":"downStepsButton",
-                 "properties":
-                    {
-                     "alpha":"0",
-                     "myName":"down"
-                    },
-                 "propertytypes":
-                    {
-                     "alpha":"string",
-                     "myName":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":36,
-                 "x":417,
-                 "y":222
-                }, 
-                {
-                 "gid":13,
-                 "height":36,
-                 "id":60,
-                 "name":"rightStepsButton",
-                 "properties":
-                    {
-                     "alpha":"0",
-                     "myName":"right"
-                    },
-                 "propertytypes":
-                    {
-                     "alpha":"string",
-                     "myName":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":36,
-                 "x":417,
-                 "y":222
-                }, 
-                {
-                 "gid":14,
-                 "height":36,
-                 "id":61,
-                 "name":"upStepsButton",
-                 "properties":
-                    {
-                     "alpha":"0",
-                     "myName":"up"
-                    },
-                 "propertytypes":
-                    {
-                     "alpha":"string",
-                     "myName":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":36,
-                 "x":417,
-                 "y":222
-                }, 
-                {
-                 "ellipse":true,
-                 "height":36,
-                 "id":77,
-                 "name":"listenerStepsButton",
-                 "properties":
-                    {
-                     "isHitTestable":"true"
-                    },
-                 "propertytypes":
-                    {
-                     "isHitTestable":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":false,
-                 "width":36,
-                 "x":417,
-                 "y":186
+                 "x":400,
+                 "y":215
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -406,7 +200,7 @@
                  "visible":false,
                  "width":71,
                  "x":400,
-                 "y":21
+                 "y":191
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -435,8 +229,8 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":451,
-                 "y":28
+                 "x":455,
+                 "y":207
                 }, 
                 {
                  "gid":4,
@@ -455,8 +249,8 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":451,
-                 "y":55
+                 "x":455,
+                 "y":234
                 }, 
                 {
                  "gid":4,
@@ -475,8 +269,8 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":451,
-                 "y":82
+                 "x":455,
+                 "y":261
                 }, 
                 {
                  "gid":4,
@@ -495,8 +289,8 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":451,
-                 "y":109
+                 "x":455,
+                 "y":288
                 }, 
                 {
                  "gid":4,
@@ -515,28 +309,8 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":451,
-                 "y":136
-                }, 
-                {
-                 "gid":4,
-                 "height":12,
-                 "id":46,
-                 "name":"",
-                 "properties":
-                    {
-                     "alpha":0
-                    },
-                 "propertytypes":
-                    {
-                     "alpha":"int"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":12,
-                 "x":451,
-                 "y":163
+                 "x":455,
+                 "y":315
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -565,8 +339,8 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":451,
-                 "y":28
+                 "x":455,
+                 "y":207
                 }, 
                 {
                  "gid":3,
@@ -585,8 +359,8 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":451,
-                 "y":55
+                 "x":455,
+                 "y":234
                 }, 
                 {
                  "gid":3,
@@ -605,8 +379,8 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":451,
-                 "y":82
+                 "x":455,
+                 "y":261
                 }, 
                 {
                  "gid":3,
@@ -625,8 +399,8 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":451,
-                 "y":109
+                 "x":455,
+                 "y":288
                 }, 
                 {
                  "gid":3,
@@ -645,28 +419,8 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":451,
-                 "y":136
-                }, 
-                {
-                 "gid":3,
-                 "height":12,
-                 "id":40,
-                 "name":"",
-                 "properties":
-                    {
-                     "alpha":0
-                    },
-                 "propertytypes":
-                    {
-                     "alpha":"int"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":12,
-                 "x":451,
-                 "y":163
+                 "x":455,
+                 "y":315
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -695,8 +449,8 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":451,
-                 "y":28
+                 "x":455,
+                 "y":207
                 }, 
                 {
                  "gid":5,
@@ -715,8 +469,8 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":451,
-                 "y":55
+                 "x":455,
+                 "y":234
                 }, 
                 {
                  "gid":5,
@@ -735,8 +489,8 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":451,
-                 "y":82
+                 "x":455,
+                 "y":261
                 }, 
                 {
                  "gid":5,
@@ -755,8 +509,8 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":451,
-                 "y":109
+                 "x":455,
+                 "y":288
                 }, 
                 {
                  "gid":5,
@@ -775,28 +529,8 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":451,
-                 "y":136
-                }, 
-                {
-                 "gid":5,
-                 "height":12,
-                 "id":32,
-                 "name":"",
-                 "properties":
-                    {
-                     "alpha":0
-                    },
-                 "propertytypes":
-                    {
-                     "alpha":"int"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":12,
-                 "x":451,
-                 "y":163
+                 "x":455,
+                 "y":315
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -825,8 +559,8 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":451,
-                 "y":28
+                 "x":455,
+                 "y":207
                 }, 
                 {
                  "gid":2,
@@ -845,8 +579,8 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":451,
-                 "y":55
+                 "x":455,
+                 "y":234
                 }, 
                 {
                  "gid":2,
@@ -865,8 +599,8 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":451,
-                 "y":82
+                 "x":455,
+                 "y":261
                 }, 
                 {
                  "gid":2,
@@ -885,8 +619,8 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":451,
-                 "y":109
+                 "x":455,
+                 "y":288
                 }, 
                 {
                  "gid":2,
@@ -905,28 +639,298 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":451,
-                 "y":136
-                }, 
+                 "x":455,
+                 "y":315
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"selectedInstruction",
+         "objects":[
                 {
-                 "gid":2,
-                 "height":12,
-                 "id":26,
+                 "gid":24,
+                 "height":24,
+                 "id":113,
                  "name":"",
                  "properties":
                     {
-                     "alpha":0
+                     "alpha":"0"
                     },
                  "propertytypes":
                     {
-                     "alpha":"int"
+                     "alpha":"string"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":12,
-                 "x":451,
-                 "y":163
+                 "width":70,
+                 "x":400,
+                 "y":215
+                }, 
+                {
+                 "gid":24,
+                 "height":24,
+                 "id":114,
+                 "name":"",
+                 "properties":
+                    {
+                     "alpha":"0"
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":70,
+                 "x":400,
+                 "y":242
+                }, 
+                {
+                 "gid":24,
+                 "height":24,
+                 "id":115,
+                 "name":"",
+                 "properties":
+                    {
+                     "alpha":"0"
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":70,
+                 "x":400,
+                 "y":269
+                }, 
+                {
+                 "gid":24,
+                 "height":24,
+                 "id":116,
+                 "name":"",
+                 "properties":
+                    {
+                     "alpha":"0"
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":70,
+                 "x":400,
+                 "y":296
+                }, 
+                {
+                 "gid":24,
+                 "height":24,
+                 "id":117,
+                 "name":"",
+                 "properties":
+                    {
+                     "alpha":"0"
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":70,
+                 "x":400,
+                 "y":323
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"non-draggable",
+         "objects":[
+                {
+                 "gid":17,
+                 "height":30,
+                 "id":109,
+                 "name":"",
+                 "properties":
+                    {
+                     "myName":"left"
+                    },
+                 "propertytypes":
+                    {
+                     "myName":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":30,
+                 "x":393,
+                 "y":66
+                }, 
+                {
+                 "gid":16,
+                 "height":30,
+                 "id":110,
+                 "name":"",
+                 "properties":
+                    {
+                     "myName":"down"
+                    },
+                 "propertytypes":
+                    {
+                     "myName":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":30,
+                 "x":420,
+                 "y":91
+                }, 
+                {
+                 "gid":19,
+                 "height":30,
+                 "id":111,
+                 "name":"",
+                 "properties":
+                    {
+                     "myName":"up"
+                    },
+                 "propertytypes":
+                    {
+                     "myName":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":30,
+                 "x":420,
+                 "y":41
+                }, 
+                {
+                 "gid":18,
+                 "height":30,
+                 "id":112,
+                 "name":"",
+                 "properties":
+                    {
+                     "myName":"right"
+                    },
+                 "propertytypes":
+                    {
+                     "myName":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":30,
+                 "x":446,
+                 "y":66
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"directions",
+         "objects":[
+                {
+                 "gid":17,
+                 "height":30,
+                 "id":78,
+                 "name":"directionLeft",
+                 "properties":
+                    {
+                     "myName":"left"
+                    },
+                 "propertytypes":
+                    {
+                     "myName":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":30,
+                 "x":393,
+                 "y":66
+                }, 
+                {
+                 "gid":16,
+                 "height":30,
+                 "id":80,
+                 "name":"directionDown",
+                 "properties":
+                    {
+                     "myName":"down"
+                    },
+                 "propertytypes":
+                    {
+                     "myName":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":30,
+                 "x":420,
+                 "y":91
+                }, 
+                {
+                 "gid":19,
+                 "height":30,
+                 "id":81,
+                 "name":"directionUp",
+                 "properties":
+                    {
+                     "myName":"up"
+                    },
+                 "propertytypes":
+                    {
+                     "myName":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":30,
+                 "x":420,
+                 "y":41
+                }, 
+                {
+                 "gid":18,
+                 "height":30,
+                 "id":82,
+                 "name":"directionRight",
+                 "properties":
+                    {
+                     "myName":"right"
+                    },
+                 "propertytypes":
+                    {
+                     "myName":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":30,
+                 "x":446,
+                 "y":66
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -934,7 +938,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":108,
+ "nextobjectid":118,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",
@@ -952,8 +956,8 @@
          "margin":0,
          "name":"instructions",
          "spacing":0,
-         "tilecount":15,
-         "tileheight":36,
+         "tilecount":17,
+         "tileheight":250,
          "tiles":
             {
              "0":
@@ -1034,6 +1038,18 @@
                  "imageheight":32,
                  "imagewidth":64
                 },
+             "22":
+                {
+                 "image":"images\/game panel\/bikeWheel.png",
+                 "imageheight":250,
+                 "imagewidth":250
+                },
+             "23":
+                {
+                 "image":"images\/game panel\/selectedInstruction.png",
+                 "imageheight":24,
+                 "imagewidth":64
+                },
              "3":
                 {
                  "image":"images\/game panel\/rightInstruction.png",
@@ -1047,11 +1063,11 @@
                  "imagewidth":32
                 }
             },
-         "tilewidth":64
+         "tilewidth":250
         }, 
         {
          "columns":1,
-         "firstgid":23,
+         "firstgid":25,
          "image":"images\/game panel\/black.png",
          "imageheight":32,
          "imagewidth":32,

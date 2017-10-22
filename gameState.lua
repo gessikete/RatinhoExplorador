@@ -69,6 +69,8 @@ function M.new(  currentMiniGame, character, onCollision )
 			character.flipped = flipped
 	  		character.steppingX = goBackPointX
 	  		character.steppingY = goBackPointY
+
+	  		gameFile.currentMiniGame = currentMiniGame
 	  	end  
 
 	  	 -- Retira imagem de carregamento (uma vez que a transição para o último ponto salvo se finalizou)

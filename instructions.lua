@@ -37,6 +37,12 @@ function M.new( tilesSize, character, markedPath )
     self.steps = { }
   end
 
+  function instructionsTable:isEmpty( )
+    if ( ( self.executing == 1 ) and ( self.last == 0 ) ) then return true
+    else return false  
+    end 
+  end
+
   -- Recebe os listeners dos botões (para evitar que o jogador adicione instruções ou volte para o menu durante a execução)
   function M:setGamePanelListeners( stop, restart )
     stopExecutionListeners = stop
@@ -90,7 +96,7 @@ function M.new( tilesSize, character, markedPath )
   local function executeSingleInstruction()
     if ( instructionsTable ~= nil ) then
       -- Condição de parada (fila de instruções vazia)
-      if ( instructionsTable.last < instructionsTable.executing)  then
+      if ( instructionsTable.last < instructionsTable.executing )  then
         -- Reestabelece os listeners do painel de instruções
         if ( restartExecutionListeners ) then 
           restartExecutionListeners()

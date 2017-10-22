@@ -77,13 +77,13 @@ local function onCollision( event )
   phase = event.phase
   local obj1 = event.object1
   local obj2 = event.object2
-
+ 
   if ( event.phase == "began" ) then
     if ( ( ( obj1.myName == "house" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "house" ) ) ) then 
       transition.cancel()
       instructions:destroyInstructionsTable()
       gamePanel:stopAllListeners()
-      timer.performWithDelay( 400, sceneTransition.gotoHouse ) 
+      timer.performWithDelay( 800, sceneTransition.gotoHouse ) 
     -- Colisão entre o personagem e os sensores dos tiles do caminho
     elseif ( ( obj1.myName == "character" ) and ( obj2.myName ~= "collision" ) ) then 
       character.steppingX = obj2.x 
@@ -134,6 +134,8 @@ end
 -- create()
 function scene:create( event )
   sceneGroup = self.view
+
+  --persistence.setCurrentFileName("ana")
 
   map, character, rope, ropeJoint, gamePanel, gameState, path, instructions, instructionsTable = gameScene:set( "map", onCollision )
 

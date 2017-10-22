@@ -25,8 +25,8 @@ function defaultFile()
 	
 
 	default.character.flipped = false
-	default.character.steppingX, default.character.steppingY = M.startingPoint( "map" )
-	default.currentMiniGame = "map" 
+	default.character.steppingX, default.character.steppingY = M.startingPoint( "house" )
+	default.currentMiniGame = "house" 
 
 	return default
 end
@@ -109,7 +109,7 @@ function M.startingPoint( currentMiniGame )
 	if ( currentMiniGame == "map" ) then 
 		return 144, 96
 	elseif ( currentMiniGame == "house" ) then 
-		return 48, 304
+		return 80, 304
 	end
 end
 
@@ -125,8 +125,8 @@ function M.goBackPoint( currentMiniGame, previousMiniGameFile )
 	if ( currentMiniGame == previousMiniGameFile.currentMiniGame ) then
 		return previousMiniGameFile.character.steppingX, previousMiniGameFile.character.steppingY, previousMiniGameFile.character.flipped
 	elseif ( currentMiniGame == "map" ) then 
-		if ( previousMiniGameFile.currentMiniGame == "house" ) then 
-			if ( previousMiniGameFile.character.steppingX == houseExitX ) then 
+		if ( previousMiniGameFile.currentMiniGame == "house" ) then
+			if ( previousMiniGameFile.character.steppingX == houseExitX + 64 ) then 
 				return houseMapExitX, houseMapExitY, flipped
 			else 
 				return houseMapEntranceX, houseMapEntranceY, flipped

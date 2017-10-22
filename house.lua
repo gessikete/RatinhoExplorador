@@ -64,13 +64,13 @@ local function onCollision( event )
       transition.cancel()
       instructions:destroyInstructionsTable()
       gamePanel:stopAllListeners()
-      timer.performWithDelay( 400, sceneTransition.gotoMap )
+      timer.performWithDelay( 800, sceneTransition.gotoMap )
 
 	  elseif ( ( ( obj1.myName == "entrace" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "entrance" ) ) ) then 
       transition.cancel()
       instructions:destroyInstructionsTable()
       gamePanel:stopAllListeners()
-      timer.performWithDelay( 400, sceneTransition.gotoMap )
+      timer.performWithDelay( 800, sceneTransition.gotoMap )
 
     -- Colisão entre o personagem e os sensores dos tiles do caminho
     elseif ( ( obj1.myName == "character" ) and ( obj2.myName ~= "collision" ) ) then 
@@ -116,99 +116,6 @@ local function setPuzzle()
   end
 end
 
-local function getQuadrant( dx, dy )
-  if ( ( dx > 0) and ( dy > 0 ) ) then
-    return 2
-  elseif ( ( dx > 0 ) and ( dy < 0 ) ) then
-    return 1
-  elseif ( ( dx < 0 ) and ( dy > 0 ) ) then
-    return 3
-  elseif ( ( dx < 0 ) and ( dy < 0 ) ) then
-    return 4
-  end
-end
-
-local function l( event )
-  local circle = event.target
-  local phase = event.phase
-  local centerX, centerY = circle:localToContent( 0, 0 )
-
-  if ( "began" == phase ) then
-    display.currentStage:setFocus( circle )
-
-    local dx = event.x - centerX
-    local dy = event.y - centerY 
-    local radius = math.sqrt( math.pow( dx, 2 ) + math.pow( dy, 2 ) )
-    local ds, dt = ( circle.radius * dx ) / radius, ( circle.radius * dy ) / radius
-
-    adjustment = math.atan2( dt, ds ) * 180 / math.pi - circle.rotation
-
-    circle.quadrant = getQuadrant( ds, dt )
-  
-  elseif ( "moved" == phase ) then
-    if ( adjustment ) then 
-      local dx = event.x - centerX 
-      local dy = event.y - centerY
-      local radius = math.sqrt( math.pow( dx, 2 ) + math.pow( dy, 2 ) )
-      local ds, dt = ( circle.radius * dx ) / radius, ( circle.radius * dy ) / radius
-      local quadrant = getQuadrant( dx, dy )
-
-      if ( quadrant ~= circle.quadrant ) then
-        if ( ( circle.quadrant == 4 ) and ( quadrant == 1 ) ) then 
-          circle.steps = circle.steps + 0.5
-
-          p5 = display.newCircle( house, circle.x + ds, circle.y + dt, 5 )
-          p5:setFillColor( 0.1, 0.9, 1 )
-        elseif ( ( circle.quadrant == 1 ) and ( quadrant == 4 ) ) then 
-          if ( circle.steps > 0 ) then
-            circle.steps = circle.steps - 0.5
-
-            p5 = display.newCircle( house, circle.x + ds, circle.y + dt, 5 )
-            p5:setFillColor( 0.7, 0.3, 0.6 )
-          end
-        elseif ( quadrant > circle.quadrant ) then 
-          circle.steps = circle.steps + 0.5
-
-          p5 = display.newCircle( house, circle.x + ds, circle.y + dt, 5 )
-          p5:setFillColor( 0.1, 0.9, 1 )
-        elseif ( quadrant < circle.quadrant ) then 
-          if ( circle.steps > 0 ) then
-            circle.steps = circle.steps - 0.5
-
-            p5 = display.newCircle( house, circle.x + ds, circle.y + dt, 5 )
-            p5:setFillColor( 0.7, 0.3, 0.6 )
-          end
-        end 
-      end
-
-      circle.quadrant = quadrant
-
-      if ( circle.steps > 0 ) then
-        circle.rotation = ( math.atan2( dt, ds ) * 180 / math.pi ) - adjustment 
-      end
- 
-      t.text = math.floor(circle.steps)
-    end 
-  
-  elseif ( "ended" == phase or "cancelled" == phase ) then
-      display.currentStage:setFocus( nil )
-  end
-
-  return true 
-end
-
-local function c( )
-  bikeWheel  = house:findObject("bikeWheel")
-  bikeWheel.radius = bikeWheel.width/2
-  bikeWheel.quadrant = 1
-  bikeWheel.steps = 0
-
-  t = display.newText( house, bikeWheel.steps, display.contentCenterX, display.contentCenterY, system.nativeFontBold, 30 )
-  t:setFillColor( 0, 0, 0 )
-
-  bikeWheel:addEventListener( "touch", l )
-end
-
 -- -----------------------------------------------------------------------------------
 -- Cenas
 -- -----------------------------------------------------------------------------------
@@ -223,8 +130,6 @@ function scene:create( event )
   end
 
   setPuzzle()
-
-  c()
 
   sceneGroup:insert( house )
   sceneGroup:insert( gamePanel.tiled )
