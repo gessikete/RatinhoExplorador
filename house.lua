@@ -112,7 +112,7 @@ local function setPuzzle()
   for i = 1, bigPiecesLayer.numChildren do
     puzzle.bigPieces[ bigPiecesLayer[i].myName ] = bigPiecesLayer[i]
     puzzle.puzzleSensors[ puzzleSensorsLayer[i].puzzleNumber ] = puzzleSensorsLayer[i]
-    puzzle.littlePieces[ bigPiecesLayer[i].myName ] = littlePiecesLayer[i]
+    puzzle.littlePieces[ littlePiecesLayer[i].myName ] = littlePiecesLayer[i]
   end
 end
 
