@@ -12,7 +12,7 @@ function M.fitDefault( screen )
   	elseif (  display.actualContentWidth == 512 ) then
   		screen.x = screen.x - 16
   	end
-  	screen.y = screen.y - 32
+  	screen.y = screen.y - 48
 end
 
 function M.fitGamePanel( gamePanel, goBackButton )
@@ -20,7 +20,7 @@ function M.fitGamePanel( gamePanel, goBackButton )
 	  	gamePanel.x = gamePanel.x + ( display.actualContentWidth - gamePanel.designedWidth ) - 32
 	  	goBackButton.x = goBackButton.x - 64
   	end
-  		gamePanel.y = gamePanel.y - 5
+  		gamePanel.y = gamePanel.y + 20
 end
 
 function M.fitBackground( background )
@@ -47,8 +47,8 @@ function M.fitMenu( background, newGameButton, playButton, title )
 end
 
 function M.fitMap( map )
-	map.x = -28
-	map.y =  -40
+	--map.x = -28
+	--map.y =  map.y + 16
 end
 
 return M

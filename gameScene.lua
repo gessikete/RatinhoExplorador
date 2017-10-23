@@ -52,7 +52,7 @@ function M:set( miniGame, onCollision, sceneGroup )
 
 	if ( miniGame == "map" ) then 
 		fileName = "tiled/newmap.json"
-		fit = nil 
+		fit = fitScreen.fitMap
 	elseif ( miniGame == "house" ) then 
 		fileName = "tiled/house.json"
 		fit = fitScreen.fitDefault

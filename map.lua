@@ -58,10 +58,10 @@ local function setCamera()
   layer = camera:layer(1)
 
   local mapX, mapY = map:localToContent( 0, 0 )
-  layer:setCameraOffset( -98, -50 )
+  layer:setCameraOffset( -98, -35 )
 
   layer = camera:layer(2)
-  layer:setCameraOffset( -98, -50 )
+  layer:setCameraOffset( -98, -35 )
 
   camera:setBounds( 170, 300, 150, 312 )
   camera:setFocus(character)

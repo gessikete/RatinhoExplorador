@@ -123,6 +123,11 @@ end
 function scene:create( event )
 	local sceneGroup = self.view
 
+  print( display.actualContentHeight )
+  print( display.actualContentWidth )
+
+  persistence.setCurrentFileName( "ana" )
+
 	house, character, rope, ropeJoint, gamePanel, gameState, path, instructions, instructionsTable = gameScene:set( "house", onCollision )
 
   if ( character.flipped == true ) then

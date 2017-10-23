@@ -101,6 +101,7 @@ function M.new( executeInstructions )
 	  end  
 	end
 
+	-- Retorna quadrante do ponto onde o jogador está tocando
 	local function getQuadrant( dx, dy )
 	  	if ( ( dx > 0) and ( dy > 0 ) ) then
 	    	return 2
@@ -113,6 +114,7 @@ function M.new( executeInstructions )
 	  	end
 	end
 
+	-- Gira a roda da bicicleta
 	local function spinBikeWheel( event )
 		local circle = event.target
 		local phase = event.phase
@@ -176,66 +178,92 @@ function M.new( executeInstructions )
 		local phase = event.phase
 	 	local direction = event.target.myName
 	  	local directionButton = event.target
-	  	local box, boxX, boxY 
+	  	local box, boxCenterX, boxCenterY 
 	  	local selectedBox
 
+	  	-- Descobre qual é a caixa de instrução que mostrará a nova instrução e as suas posições
 	  	if ( instructions.shownBox < #instructions.boxes ) then
-	  		box, boxX, boxY = instructions.boxes[ instructions.shownBox + 1 ], instructions.boxes[ instructions.shownBox + 1 ]:localToContent( 0, 0 )
+	  		box, boxCenterX, boxCenterY = instructions.boxes[ instructions.shownBox + 1 ], instructions.boxes[ instructions.shownBox + 1 ]:localToContent( 0, 0 )
 	  		selectedBox = instructions.selectedBox[ instructions.shownBox + 1 ]
 	  	else
-	  		box, boxX, boxY = instructions.boxes[ #instructions.boxes ], instructions.boxes[ #instructions.boxes ]:localToContent( 0, 0 )
+	  		box, boxCenterX, boxCenterY = instructions.boxes[ #instructions.boxes ], instructions.boxes[ #instructions.boxes ]:localToContent( 0, 0 )
 	  		selectedBox = instructions.selectedBox[ #instructions.boxes ]
 	  	end
 
-	  	--print("shown:" .. instructions.shownBox .. ", #: " .. #instructions.boxes)
-
 	  	if ( "began" == phase ) then
 			display.currentStage:setFocus( directionButton )
-			directionButton:toFront( )
+			-- Seta selecionada é posicionada na frente de todos os outros objetos na tela
+			directionButton:toFront()
 
+			-- Cálculo do offset inicial
 			directionButton.touchOffsetX = event.x - directionButton.x
 			directionButton.touchOffsetY = event.y - directionButton.y
 
+			-- O loop começa com 1 passo e a rotação da roda de bicicleta volta para o início 
 			bikeWheel.steps = 1
 			bikeWheel.rotation = 0
 
+			-- Esconde as instruções anteriores e reseta a lista de instruções após uma execução
 			if ( instructionsTable.executing ~= 1 ) then 
 			   	hideInstructions()
 			   	instructionsTable:reset() 
 			end
 
-			if ( ( instructions.shownBox >= #instructions.boxes ) and ( instructions.texts[instructions.shownBox].text ~= " " ) ) then
+			-- Verifica se a última caixa de instrução está mostrando alguma instrução
+			-- e caso esteja, houve scroll
+			if ( ( instructions.shownBox >= #instructions.boxes ) and ( instructions.shownInstruction[instructions.shownBox] ~= instructionsTable.last  ) ) then
+				-- Caso tenha havido um scroll anteriormente, faz scroll para cima até a última
+				-- instrução feita ser mostrada na última caixa de instrução
+				while ( instructions.shownInstruction[instructions.shownBox] ~= instructionsTable.last ) do
+					scrollInstruction("up")
+				end 
+				moveInstruction( 0,  instructions.shownBox, 1, true )
+			elseif ( ( instructions.shownBox >= #instructions.boxes ) and ( instructions.texts[instructions.shownBox].text ~= " " ) ) then
+				-- Se a última instrução feita estiver na última caixa de instrução, faz um
+				-- scroll para cima para que a última caixa de instrução seja esvaziada
 				moveInstruction( 0,  instructions.shownBox, 1, true )
 			end
 	
 		elseif ( ( "moved" == phase ) and ( directionButton.touchOffsetX ) ) then
+			-- Move a seta
 			directionButton.x = event.x - directionButton.touchOffsetX
 			directionButton.y = event.y - directionButton.touchOffsetY
 
-			if ( ( event.x > boxX - box.width/2 ) and ( event.x < boxX + box.width/2 ) 
-			and ( event.y > boxY - box.height/2 ) and ( event.y < boxY + box.height/2 ) ) then
+			-- Mostra a "caixa selecionada", para reforçar que aquele é o local onde a seta deve ser
+			-- colocada
+			if ( ( event.x > boxCenterX - box.width/2 ) and ( event.x < boxCenterX + box.width/2 ) 
+			and ( event.y > boxCenterY - box.height/2 ) and ( event.y < boxCenterY + box.height/2 ) ) then
 				selectedBox.alpha = 1
 			else
 				selectedBox.alpha = 0
 			end
 
 		elseif ( ( "ended" == phase ) or ( "cancelled" == phase ) and ( directionButton.touchOffsetX ) ) then
-			if ( ( event.x > boxX - box.width/2 ) and ( event.x < boxX + box.width/2 ) 
-			and ( event.y > boxY - box.height/2 ) and ( event.y < boxY + box.height/2 ) ) then
+			-- Verifica se o local onde o movimento de "touch" terminou está dentro
+			-- da caixa de instrução atual
+			if ( ( event.x > boxCenterX - box.width/2 ) and ( event.x < boxCenterX + box.width/2 ) 
+			and ( event.y > boxCenterY - box.height/2 ) and ( event.y < boxCenterY + box.height/2 ) ) then
+				-- Caso esteja, a seta volta para sua posição original
 				directionButton.x = directionButton.originalX
 				directionButton.y = directionButton.originalY
 
 			  	-- Instrução começa com um passo para a direção escolhida
 			  	stepsCount = 1
+
+			  	-- Instrução é adicionada à lista de instruções e mostrada na sua caixa de instrução correspondente
 			  	instructionsTable:add( direction, stepsCount )
 			  	showInstruction( direction )
 
+			  	-- Listener da roda de bicicleta é adicionado
 			  	if ( instructionsTable.last == 1 ) then 
 			  		bikeWheel:addEventListener( "touch", spinBikeWheel )
 				end
 
+				-- A caixa selecionada é escondida
 			  	selectedBox.alpha = 0
 			else
+				-- Caso o movimento de toque acabe e a seta não seja colocada na caixa correta, ela 
+				-- volta para a posição original
 				transition.to( directionButton, { time = 400, x = directionButton.originalX, y = directionButton.originalY } )
 		  	end
 	    	display.currentStage:setFocus( nil )
@@ -462,7 +490,7 @@ function M.new( executeInstructions )
 		
 	    arrow[ boxNum ].alpha = 1
 	    instructions.shownArrow[boxNum] = arrow[boxNum]
-	    instructions.texts[boxNum] = display.newText( gamePanel:findLayer("instructions"), boxNum + 1 .. ".  " .. stepsCount, box.x - 10, box.y, system.nativeFont, 16)
+	    instructions.texts[boxNum] = display.newText( gamePanel:findLayer("instructions"), boxNum + 1 .. ".  " .. stepsCount, box.x - 10, box.y, system.nativeFontBold, 12)
 	    instructions.shownInstruction[boxNum] = instructionsTable.last 
 	  else 
 	    local boxNum = instructions.shownBox

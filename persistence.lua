@@ -116,9 +116,9 @@ end
 -- Informa onde o character irá se posicionar dependendo de onde ele entrou/saiu ou pausou
 -- o jogo anteriormente
 function M.goBackPoint( currentMiniGame, previousMiniGameFile )
-	local houseExitX, houseExitY = 304, 208
+	local houseExitX, houseExitY = 304+32, 208
 	local houseMapExitX, houseMapExitY = 144, 96 
-	local houseEntranceX, houseEntranceY = 48, 304  
+	local houseEntranceX, houseEntranceY = 80, 304  
 	local houseMapEntranceX, houseMapEntranceY = 80, 160
 	local flipped = false 
 
@@ -126,7 +126,7 @@ function M.goBackPoint( currentMiniGame, previousMiniGameFile )
 		return previousMiniGameFile.character.steppingX, previousMiniGameFile.character.steppingY, previousMiniGameFile.character.flipped
 	elseif ( currentMiniGame == "map" ) then 
 		if ( previousMiniGameFile.currentMiniGame == "house" ) then
-			if ( previousMiniGameFile.character.steppingX == houseExitX + 64 ) then 
+			if ( previousMiniGameFile.character.steppingX == houseExitX  ) then 
 				return houseMapExitX, houseMapExitY, flipped
 			else 
 				return houseMapEntranceX, houseMapEntranceY, flipped

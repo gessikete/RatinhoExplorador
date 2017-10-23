@@ -389,26 +389,6 @@
                 {
                  "gid":591,
                  "height":32,
-                 "id":55,
-                 "name":"",
-                 "properties":
-                    {
-                     "alpha":"0"
-                    },
-                 "propertytypes":
-                    {
-                     "alpha":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":32,
-                 "x":32,
-                 "y":320
-                }, 
-                {
-                 "gid":591,
-                 "height":32,
                  "id":58,
                  "name":"",
                  "properties":
@@ -544,26 +524,6 @@
                  "visible":true,
                  "width":32,
                  "x":320,
-                 "y":224
-                }, 
-                {
-                 "gid":593,
-                 "height":32,
-                 "id":117,
-                 "name":"",
-                 "properties":
-                    {
-                     "alpha":"0"
-                    },
-                 "propertytypes":
-                    {
-                     "alpha":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":32,
-                 "x":352,
                  "y":224
                 }, 
                 {
@@ -1051,30 +1011,6 @@
                 {
                  "gid":591,
                  "height":2,
-                 "id":84,
-                 "name":"",
-                 "properties":
-                    {
-                     "alpha":"0",
-                     "bodyType":"static",
-                     "isSensor":"true"
-                    },
-                 "propertytypes":
-                    {
-                     "alpha":"string",
-                     "bodyType":"string",
-                     "isSensor":"string"
-                    },
-                 "rotation":0,
-                 "type":"physics",
-                 "visible":true,
-                 "width":2,
-                 "x":47,
-                 "y":305
-                }, 
-                {
-                 "gid":591,
-                 "height":2,
                  "id":87,
                  "name":"",
                  "properties":
@@ -1167,30 +1103,6 @@
                  "width":2,
                  "x":175,
                  "y":273
-                }, 
-                {
-                 "gid":593,
-                 "height":2,
-                 "id":122,
-                 "name":"",
-                 "properties":
-                    {
-                     "alpha":"0",
-                     "bodyType":"static",
-                     "isSensor":"true"
-                    },
-                 "propertytypes":
-                    {
-                     "alpha":"string",
-                     "bodyType":"string",
-                     "isSensor":"string"
-                    },
-                 "rotation":0,
-                 "type":"physics",
-                 "visible":true,
-                 "width":2,
-                 "x":367,
-                 "y":209
                 }, 
                 {
                  "gid":593,
