@@ -74,6 +74,7 @@ local function build_transition(self, event, states, next_event)
       self.cancel = nil
 
       self.current = to
+      self.from = from
       self.event = event 
       self.nextEvent = next_event[event][from]
 

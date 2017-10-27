@@ -372,9 +372,7 @@ function M.new( executeInstructions )
 
 
 			  	M.hand.stopAnimation = true 
-			  	transition.cancel( M.hand )
-			  	transition.fadeOut( M.hand, { time = 400 } )
-    
+			  	
 			  	directionButtons.right:removeEventListener( "touch", createTutorialInstruction )
 			  	event.target.executeControlsTutorial()
 			else

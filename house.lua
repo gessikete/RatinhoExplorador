@@ -151,9 +151,12 @@ local function executeControlsTutorial( event, alternativeEvent )
       if ( alternativeEvent == "showHelpMessage" ) then
         controlsTutorialFSM.showHelpMessage()
         executeControlsTutorial()
+
       elseif ( alternativeEvent == "showMessage" ) then
         controlsTutorialFSM.showMessage()
+      
       end
+
     else
       if ( controlsTutorialFSM.nextEvent == "showAnimation" ) then 
         controlsTutorialFSM.showAnimation()
@@ -161,11 +164,22 @@ local function executeControlsTutorial( event, alternativeEvent )
 
       elseif ( controlsTutorialFSM.nextEvent == "showMessage" ) then 
         controlsTutorialFSM.showMessage()
+      
       elseif ( controlsTutorialFSM.nextEvent == "showMessageAndAnimation" ) then 
         controlsTutorialFSM.showMessageAndAnimation()
+        print( controlsTutorialFSM.from )
         local _, animationName = controlsTutorialFSM.current:match( "([^,]+)_([^,]+)" )
-
-        animation[animationName]()
+        local _, wait = controlsTutorialFSM.from:match( "([^,]+)_([^,]+)" )
+        
+        if ( wait ) then 
+          timer.performWithDelay( wait, animation[animationName] )
+        else
+          animation[animationName]()
+        end
+      
+      elseif ( controlsTutorialFSM.nextEvent == "transitionEvent" ) then 
+        controlsTutorialFSM.transitionEvent()
+        executeControlsTutorial()
       elseif ( controlsTutorialFSM.nextEvent == "showFeedback" ) then
       end
     end
@@ -254,7 +268,7 @@ end
 
 local function handAnimation( i, time, hand, x, y )
   if ( ( i == 0 ) or ( hand.stopAnimation == true ) ) then
-    transition.fadeOut( hand, { time = 400, onComplete = function() hand.x = hand.originalX hand.y = hand.originalY hand.stopAnimation = false end } )
+    transition.fadeOut( hand, { time = 400, onComplete = function() print("derp") hand.x = hand.originalX hand.y = hand.originalY hand.stopAnimation = false end } )
     return 
   else 
     hand.x = hand.originalX
@@ -311,13 +325,14 @@ local function controlsTutorial( )
     events = {
       {name = "showAnimation",  from = "start",  to = "momAnimation", nextEvent = "showMessage" },
       {name = "showMessage",  from = "momAnimation",  to = "msg1", nextEvent = "showMessageAndAnimation" },
-      {name = "showMessageAndAnimation",  from = "msg1",  to = "msg2_handAnimation1", nextEvent = "showMessage" },
+      {name = "showMessageAndAnimation",  from = "msg1",  to = "msg2_handAnimation1", nextEvent = "transitionEvent" },
       {name = "showHelpMessage",  from = "msg2_handAnimation1",  to = "help1", nextEvent = "showMessageAndAnimation" },
       {name = "showHelpMessage",  from = "help1_handAnimation1",  to = "help1", nextEvent = "showMessageAndAnimation" },
-      {name = "showMessageAndAnimation",  from = "help1",  to = "help1_handAnimation1", nextEvent = "showMessage" },
-      {name = "showMessage",  from = "msg2_handAnimation1",  to = "msg3" },
-      {name = "showMessage",  from = "help1_handAnimation1",  to = "msg3" },
-      {name = "showMessage",  from = "help1",  to = "msg3" },
+      {name = "showMessageAndAnimation",  from = "help1",  to = "help1_handAnimation1", nextEvent = "transitionEvent" },
+      {name = "transitionEvent",  from = "msg2_handAnimation1",  to = "transitionState_1500", nextEvent = "showMessageAndAnimation" },
+      {name = "transitionEvent",  from = "help1_handAnimation1",  to = "transitionState_1500", nextEvent = "showMessageAndAnimation" },
+      {name = "transitionEvent",  from = "help1",  to = "transitionState_1500", nextEvent = "showMessageAndAnimation" },
+      {name = "showMessageAndAnimation",  from = "transitionState_1500",  to = "msg3_handAnimation2" },
       --{name = "showAnimation", from = "msg2", to = "animation2", nextEvent = "showMessage" },
       --{name = "showMessage",  from = "animation2",  to = "end" },
     },
@@ -333,7 +348,7 @@ local function controlsTutorial( )
         showScrollView( house:findObject("message"), message[msg] )
 
         return animationName
-      end,
+      end
     }
   })
 
