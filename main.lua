@@ -17,7 +17,6 @@ math.randomseed( os.time() )
 
 
 -- go to the menu screen
---composer.gotoScene( "test" )
 composer.gotoScene( "house" )
 --composer.gotoScene( "menu" )
 --composer.gotoScene( "map" )

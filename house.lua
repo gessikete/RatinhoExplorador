@@ -254,15 +254,15 @@ local function momAnimation( )
   return time
 end
 
-local function handDirectionAnimation( i, time, hand, x, y )
+local function handDirectionAnimation( i, time, hand, initialX, initialY, x, y )
   if ( ( i == 0 ) or ( hand.stopAnimation == true ) ) then
-    transition.fadeOut( hand, { time = 400, onComplete = function() hand.x = hand.originalX hand.y = hand.originalY hand.stopAnimation = false end } )
+    transition.fadeOut( hand, { time = 400, onComplete = function() hand.x = initialX hand.y = initialY hand.stopAnimation = false end } )
     return 
   else 
-    hand.x = hand.originalX
-    hand.y = hand.originalY
+    hand.x = initialX
+    hand.y = initialY
     transition.to( hand, { time = time, x = x, y = y } )
-    local closure = function ( ) return handDirectionAnimation( i - 1, time, hand, x, y ) end
+    local closure = function ( ) return handDirectionAnimation( i - 1, time, hand, initialX, initialY, x, y ) end
     timer.performWithDelay(time + 400, closure)
   end
 end
@@ -276,7 +276,7 @@ local function handDirectionAnimation1( )
     hand.alpha = 1
     hand.stopAnimation = false 
 
-    handDirectionAnimation( 3, time, hand, hand.x, box.y - 5 )
+    handDirectionAnimation( 3, time, hand, hand.originalX, hand.originalY, hand.x, box.y - 5 )
     
   end
   gamePanel:addRightDirectionListener( executeControlsTutorial )
@@ -291,20 +291,45 @@ local function handDirectionAnimation2( )
     hand.alpha = 1
     hand.stopAnimation = false 
 
-    handDirectionAnimation( 3, time, hand, hand.x, box.y - 5 )
+    handDirectionAnimation( 3, time, hand, hand.originalX, hand.originalY, hand.x, box.y - 5 )
     
   end
   gamePanel:addRightDirectionListener( executeControlsTutorial )
 end
 
+local function handWalkAnimation( )
+  local hand = gamePanel.hand
+  local executeButton = gamePanel.executeButton
+  local time = 1500
+
+  if ( ( hand.x == hand.originalX ) and ( hand.y == hand.originalY ) ) then
+    hand.alpha = 1
+    hand.stopAnimation = false 
+    hand.x = executeButton.x 
+    hand.y = executeButton.y 
+
+    handDirectionAnimation( 3, time, hand, executeButton.contentBounds.xMin + 2, executeButton.y, executeButton.contentBounds.xMin + 10, executeButton.y - 5 )
+    
+  end
+  gamePanel:addExecuteButtonListener( executeControlsTutorial )
+end
+
+
+local function gamePanelAnimation( )
+  gamePanel:showDirectionButtons()
+end
 
 animation["momAnimation"] = momAnimation
 animation["handDirectionAnimation1"] = handDirectionAnimation1
 animation["handDirectionAnimation2"] = handDirectionAnimation2
-
+animation["handWalkAnimation"] = handWalkAnimation
+animation["gamePanelAnimation"] = gamePanelAnimation
+ 
 message["msg1"] = "Tenho um presente para você. Encontre todas as peças de quebra-cabeça que escondi pela casa para descobrir o que é."
 message["msg2"] = "Arraste a seta da direita para o retângulo laranja para andar um quadradinho"
 message["msg3"] = "Muito bem! Arraste mais uma seta para completar o caminho."
+message["msg4"] = "Agora aperte no botão \"andar\""
+message["msg5"] = "Parabéns! Agora tente pegar as outras peças com o que você aprendeu."
 message["help1"] = "Opa! Tome cuidado para arrastar a seta para o retângulo."
 message["help2"] = message["help1"]
 
@@ -321,16 +346,18 @@ local function controlsTutorial( )
       {name = "transitionEvent",  from = "msg2_handDirectionAnimation1",  to = "transitionState_1500_1", nextEvent = "showMessageAndAnimation" },
       {name = "transitionEvent",  from = "help1_handDirectionAnimation1",  to = "transitionState_1500_1", nextEvent = "showMessageAndAnimation" },
       {name = "transitionEvent",  from = "help1",  to = "transitionState_1500_1", nextEvent = "showMessageAndAnimation" },
+      
       {name = "showMessageAndAnimation",  from = "transitionState_1500_1",  to = "msg3_handDirectionAnimation2", nextEvent = "transitionEvent" },
-
       {name = "showHelpMessage",  from = "msg3_handDirectionAnimation2",  to = "help2", nextEvent = "showMessageAndAnimation" },
       {name = "showHelpMessage",  from = "help2_handDirectionAnimation2",  to = "help2", nextEvent = "showMessageAndAnimation" },
       {name = "showMessageAndAnimation",  from = "help2",  to = "help2_handDirectionAnimation2", nextEvent = "transitionEvent" },
-      {name = "transitionEvent",  from = "msg3_handDirectionAnimation2",  to = "transitionState_1500_2" },
-      {name = "transitionEvent",  from = "help2_handDirectionAnimation2",  to = "transitionState_1500_2" },
-      {name = "transitionEvent",  from = "help2",  to = "transitionState_1500_2" },
-      --{name = "showAnimation", from = "msg2", to = "animation2", nextEvent = "showMessage" },
-      --{name = "showMessage",  from = "animation2",  to = "end" },
+      {name = "transitionEvent",  from = "msg3_handDirectionAnimation2",  to = "transitionState_1500_2", nextEvent = "showMessageAndAnimation" },
+      {name = "transitionEvent",  from = "help2_handDirectionAnimation2",  to = "transitionState_1500_2", nextEvent = "showMessageAndAnimation" },
+      {name = "transitionEvent",  from = "help2",  to = "transitionState_1500_2", nextEvent = "showMessageAndAnimation" },
+      
+      {name = "showMessageAndAnimation",  from = "transitionState_1500_2",  to = "msg4_handWalkAnimation", nextEvent = "transitionEvent" },
+      {name = "transitionEvent",  from = "msg4_handWalkAnimation",  to = "transitionState_1500_3", nextEvent = "showMessageAndAnimation" },
+      {name = "showMessageAndAnimation",  from = "transitionState_1500_3",  to = "msg5_gamePanelAnimation" },
     },
     callbacks = {
       on_showMessage = function( self, event, from, to ) 

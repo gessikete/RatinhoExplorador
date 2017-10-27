@@ -80,7 +80,8 @@ function M.new( executeInstructions )
 
  	instructionsPanel = gamePanel:findObject("instructionsPanel")
 
-  	okButton = gamePanel:findObject("okButton")
+  	executeButton = gamePanel:findObject("executeButton")
+  	M.executeButton = executeButton
 
   	goBackButton = gamePanel:findObject("goBackButton")
 
@@ -93,6 +94,20 @@ function M.new( executeInstructions )
   	M.secondBox = instructions.boxes[1]
 
   	fitScreen.fitGamePanel( gamePanel, goBackButton )
+
+  	function M:showDirectionButtons( )
+  		transition.fadeIn( directionButtons.right, { time = 400 } )
+  		transition.fadeIn( directionButtons.left, { time = 400 } )
+  		transition.fadeIn( directionButtons.up, { time = 400 } )
+  		transition.fadeIn( directionButtons.down, { time = 400 } )
+
+  		local nonDraggableLayer = gamePanel:findLayer("non-draggable")
+  		for i = 1, nonDraggableLayer.numChildren do
+  			transition.fadeIn( nonDraggableLayer[i], { time = 400 } )
+  		end
+  	
+  	end
+
 
   	-- -----------------------------------------------------------------------------------
 	-- Listeners do game panel
@@ -430,8 +445,21 @@ function M.new( executeInstructions )
   		directionButtons.right:addEventListener( "touch", createTutorialInstruction )
   	end
 
+  	local function executeTutorialInstructions( )
+  		executeInstructions()
+  		M.hand.stopAnimation = true
+  		timer.performWithDelay( 500 * 2, executeButton.executeControlsTutorial ) 
+  		executeButton.executeControlsTutorial = nil
+  		executeButton:removeEventListener( "tap", executeTutorialInstructions ) 
+  	end
+
+  	function M:addExecuteButtonListener( executeControlsTutorial )
+  		executeButton.executeControlsTutorial = executeControlsTutorial
+  		executeButton:addEventListener( "tap", executeTutorialInstructions )
+  	end
+
   	function M:addButtonsListeners()
-  		okButton:addEventListener( "tap", executeInstructions )
+  		executeButton:addEventListener( "tap", executeInstructions )
     	goBackButton:addEventListener( "tap", sceneTransition.gotoMenu )
   	end
 
@@ -445,7 +473,7 @@ function M.new( executeInstructions )
 		directionButtons.down:removeEventListener( "touch", createInstruction )
 		directionButtons.up:removeEventListener( "touch", createInstruction )
 
-		okButton:removeEventListener( "tap", executeInstructions )
+		executeButton:removeEventListener( "tap", executeInstructions )
 
 		bikeWheel:removeEventListener( "touch", spinBikeWheel )
 
@@ -459,7 +487,7 @@ function M.new( executeInstructions )
 		directionButtons.down:removeEventListener( "touch", createInstruction )
 		directionButtons.up:removeEventListener( "touch", createInstruction )
 
-		okButton:removeEventListener( "tap", executeInstructions )
+		executeButton:removeEventListener( "tap", executeInstructions )
 
 		bikeWheel:removeEventListener( "touch", spinBikeWheel )
   	end
@@ -480,7 +508,7 @@ function M.new( executeInstructions )
 
 		bikeWheel:removeEventListener( "touch", spinBikeWheel )
 
-		okButton:removeEventListener( "tap", executeInstructions )
+		executeButton:removeEventListener( "tap", executeInstructions )
 		instructionsPanel:removeEventListener( "touch", scrollInstructionsPanel )
 
 		-- remove instruções
@@ -511,7 +539,7 @@ function M.new( executeInstructions )
 		end
 		instructionsTable = nil 
 
-		okButton = nil  
+		executeButton = nil  
 
 		bikeWheel = nil
 
