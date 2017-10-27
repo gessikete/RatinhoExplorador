@@ -31,7 +31,7 @@ function defaultFile()
 
 	default.house.isComplete = false
 	default.house.controlsTutorial = "incomplete"
-	default.house.collectedPieces = { } 
+	default.house.collectedPieces = { count = 0 } 
 	default.house.bikeTutorial = "incomplete"
 
 	return default
