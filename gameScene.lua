@@ -4,9 +4,9 @@ local physics = require "physics"
 
 local json = require "json"
 
-local persistence = require "persistence"
+local gamePanel
 
-local gamePanel = require "gamePanel"
+local persistence = require "persistence"
 
 local instructions = require "instructions"
 
@@ -42,6 +42,7 @@ local function setCharacter( tileMap, character )
 end
 
 function M:set( miniGame, onCollision, sceneGroup )
+  local miniGameData
 	local tileMap 
 	local fileName
 	local fitTiled 
@@ -75,13 +76,19 @@ function M:set( miniGame, onCollision, sceneGroup )
 
   	gameState.new( miniGame, character, onCollision )
 
-  	gameState:load()
+  	miniGameData = gameState:load()
     rope, ropeJoint = setCharacter( tileMap, character )
 
   	markedPath = path.new( tileMap )
   	path:setSensors()
 
   	instructionsTable = instructions.new( tilesSize, character, markedPath )
+
+    if ( miniGame == "house" ) then 
+      gamePanel = require "gamePanelTutorial" 
+    else
+      gamePanel = require "gamePanel"
+    end
 
   	gamePanel.tiled = gamePanel.new( instructions.executeInstructions )
   	instructions:setGamePanelListeners( gamePanel.stopExecutionListeners, gamePanel.restartExecutionListeners )
@@ -90,7 +97,7 @@ function M:set( miniGame, onCollision, sceneGroup )
   	--@TODO: TIRAR ISSO QUANDO ACABAREM OS TESTES COM A TELA
   	--local dragable = require "com.ponywolf.plugins.dragable"
   	--map = dragable.new(map)
-  	return tileMap, character, rope, ropeJoint, gamePanel, gameState, path, instructions, instructionsTable
+  	return tileMap, character, rope, ropeJoint, gamePanel, gameState, path, instructions, instructionsTable, miniGameData
 end
 
 return M

@@ -32,7 +32,7 @@ function M.new( executeInstructions )
   	local bikeWheel 
 
   	-- Carrega o arquivo tiled
-  	gamePanelData = json.decodeFile(system.pathForFile("tiled/gamePanel.json", system.ResourceDirectory))  -- load from json export
+  	gamePanelData = json.decodeFile(system.pathForFile("tiled/gamePanelTutorial.json", system.ResourceDirectory))  -- load from json export
   	gamePanel = tiled.new(gamePanelData, "tiled")
 
   	-- Cria referências para os quadros de instruções e suas setas
@@ -83,6 +83,13 @@ function M.new( executeInstructions )
   	okButton = gamePanel:findObject("okButton")
 
   	goBackButton = gamePanel:findObject("goBackButton")
+
+  	M.hand = gamePanel:findObject("hand")
+  	M.hand.originalX = M.hand.x 
+  	M.hand.originalY = M.hand.y
+
+  	M.firstBox = instructions.boxes[0]
+  	M.secondBox = instructions.boxes[1]
 
   	fitScreen.fitGamePanel( gamePanel, goBackButton )
 
@@ -303,6 +310,10 @@ function M.new( executeInstructions )
 	    directionButtons.left:addEventListener( "touch", createInstruction )
 	    directionButtons.down:addEventListener( "touch", createInstruction )
 	    directionButtons.up:addEventListener( "touch", createInstruction )
+  	end
+
+  	function M:addRightDirectionListener()
+  		directionButtons.right:addEventListener( "touch", createInstruction )
   	end
 
   	function M:addButtonsListeners()

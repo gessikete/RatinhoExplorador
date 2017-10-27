@@ -21,12 +21,18 @@ end
 
 -- Retorna um arquivo de jogo com os valores "default" de um jogo novo
 function defaultFile()
-	local default = { character = { steppingX, steppingY, flipped } }
-	
+	local character = { steppingX, steppingY, flipped } 
+	local house = { isComplete, controlsTutorial, collectedPieces, bikeTutorial }
+	local default = { character = character, house = house }
 
 	default.character.flipped = false
 	default.character.steppingX, default.character.steppingY = M.startingPoint( "house" )
 	default.currentMiniGame = "house" 
+
+	default.house.isComplete = false
+	default.house.controlsTutorial = "incomplete"
+	default.house.collectedPieces = { } 
+	default.house.bikeTutorial = "incomplete"
 
 	return default
 end

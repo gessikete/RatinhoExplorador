@@ -24,7 +24,7 @@ function M.new(  currentMiniGame, character, onCollision )
 	local loadingScreen = nil 
 
 	-- Salva o estado atual do jogo
-	function M:save()
+	function M:save( miniGameData )
 	  	local gameState = persistence.loadGameFile()
 
 	  	if ( gameState ) then
@@ -34,6 +34,15 @@ function M.new(  currentMiniGame, character, onCollision )
 	  		gameState.character.steppingY = character.steppingY
 	  		gameState.character.flipped = character.flipped 
 
+	  		if ( miniGameData ) then
+	  			if ( currentMiniGame == "house" ) then
+	  				gameState.house.controlsTutorial = miniGameData.controlsTutorial
+	  				gameState.house.collectedPieces = miniGameData.collectedPieces
+	  				gameState.house.bikeTutorial = miniGameData.bikeTutorial
+	  			end
+
+	  		end
+
 	  		persistence.saveGameFile( gameState )
 		end
 	end
@@ -41,6 +50,7 @@ function M.new(  currentMiniGame, character, onCollision )
 	-- Carrega um jogo salvo, posicionando o personagem no lugar correto
 	function M:load()
 		local loadingMiniGame = currentMiniGame
+		local miniGameData
 		gameFile = persistence.loadGameFile()
 
 		print( "CARREGANDO MINIGAME: " .. currentMiniGame )
@@ -71,6 +81,10 @@ function M.new(  currentMiniGame, character, onCollision )
 	  		character.steppingY = goBackPointY
 
 	  		gameFile.currentMiniGame = currentMiniGame
+
+	  		if ( currentMiniGame == "house" ) then
+	  			miniGameData = gameFile.house 
+	  		end
 	  	end  
 
 	  	 -- Retira imagem de carregamento (uma vez que a transição para o último ponto salvo se finalizou)
@@ -79,12 +93,11 @@ function M.new(  currentMiniGame, character, onCollision )
 	  	end
 
 	  	-- Salva o estado atual
-	  	M:save()
-	  	
-	  	-- Adiciona o listener das colisões, já que o personagem já está no ponto certo do mapa
-	  	--Runtime:addEventListener( "collision", onCollision )
+	  	M:save( miniGameData ) 	
 
 	  	print( "----------------------- FIM DO CARREGAMENTO -----------------------" )
+
+	  	return miniGameData
 	end
 end
 
