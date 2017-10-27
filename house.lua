@@ -27,6 +27,7 @@ local widget = require "widget"
 local fsm = require "com.fsm.src.fsm"
 
 physics.start()
+physics.setGravity( 0, 0 )
 
 -- -----------------------------------------------------------------------------------
 -- Declaração das variáveis
@@ -50,6 +51,16 @@ local puzzle = { bigPieces = { }, littlePieces = { }, puzzleSensors = { } }
 local miniGameData
 
 local activeState
+
+local controlsTutorialFSM
+
+local scrollView
+
+local animation = {}
+
+local message = {}
+
+local helpMessage = {}
 
 -- -----------------------------------------------------------------------------------
 -- Listeners
@@ -120,15 +131,11 @@ local function setPuzzle()
   for i = 1, bigPiecesLayer.numChildren do
     puzzle.bigPieces[ bigPiecesLayer[i].myName ] = bigPiecesLayer[i]
     puzzle.puzzleSensors[ puzzleSensorsLayer[i].puzzleNumber ] = puzzleSensorsLayer[i]
+    physics.addBody( puzzleSensorsLayer[i], { bodyType = "static", isSensor = true } )
+    littlePiecesLayer[i].alpha = 1
     puzzle.littlePieces[ littlePiecesLayer[i].myName ] = littlePiecesLayer[i]
   end
 end
-
-local controlsTutorialFSM
-local scrollView
-local animation = {}
-local message = {}
-local helpMessage = {}
 
 local function executeControlsTutorial( event, alternativeEvent )
     if ( scrollView ) then 
@@ -396,13 +403,13 @@ function scene:create( event )
     character.xScale = -1
   end
 
-  setPuzzle()
+  
 
   sceneGroup:insert( house )
   sceneGroup:insert( gamePanel.tiled )
 
   if ( miniGameData.controlsTutorial == "incomplete" ) then 
-    --gamePanel.tiled.alpha = 0
+    setPuzzle()
   end
 end
 
