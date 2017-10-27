@@ -157,7 +157,7 @@ local function executeControlsTutorial( event, alternativeEvent )
       elseif ( controlsTutorialFSM.nextEvent == "showMessageAndAnimation" ) then 
         controlsTutorialFSM.showMessageAndAnimation()
         local _, animationName = controlsTutorialFSM.current:match( "([^,]+)_([^,]+)" )
-        local from, wait = controlsTutorialFSM.from:match( "([^,]+)_([^,]+)" )
+        local from, wait, n = controlsTutorialFSM.from:match( "([^,]+)_([^,]+)_([^,]+)" )
         
         if ( ( from == "transitionState" ) and ( wait ) ) then 
           timer.performWithDelay( wait, animation[animationName] )
@@ -254,7 +254,7 @@ local function momAnimation( )
   return time
 end
 
-local function handAnimation( i, time, hand, x, y )
+local function handDirectionAnimation( i, time, hand, x, y )
   if ( ( i == 0 ) or ( hand.stopAnimation == true ) ) then
     transition.fadeOut( hand, { time = 400, onComplete = function() hand.x = hand.originalX hand.y = hand.originalY hand.stopAnimation = false end } )
     return 
@@ -262,12 +262,12 @@ local function handAnimation( i, time, hand, x, y )
     hand.x = hand.originalX
     hand.y = hand.originalY
     transition.to( hand, { time = time, x = x, y = y } )
-    local closure = function ( ) return handAnimation( i - 1, time, hand, x, y ) end
+    local closure = function ( ) return handDirectionAnimation( i - 1, time, hand, x, y ) end
     timer.performWithDelay(time + 400, closure)
   end
 end
 
-local function handAnimation1( )
+local function handDirectionAnimation1( )
   local hand = gamePanel.hand
   local box = gamePanel.firstBox
   local time = 1500
@@ -276,13 +276,13 @@ local function handAnimation1( )
     hand.alpha = 1
     hand.stopAnimation = false 
 
-    handAnimation( 3, time, hand, hand.x, box.y - 5 )
+    handDirectionAnimation( 3, time, hand, hand.x, box.y - 5 )
     
   end
   gamePanel:addRightDirectionListener( executeControlsTutorial )
 end
 
-local function handAnimation2( )
+local function handDirectionAnimation2( )
   local hand = gamePanel.hand
   local box = gamePanel.secondBox
   local time = 1500
@@ -291,7 +291,7 @@ local function handAnimation2( )
     hand.alpha = 1
     hand.stopAnimation = false 
 
-    handAnimation( 3, time, hand, hand.x, box.y - 5 )
+    handDirectionAnimation( 3, time, hand, hand.x, box.y - 5 )
     
   end
   gamePanel:addRightDirectionListener( executeControlsTutorial )
@@ -299,8 +299,8 @@ end
 
 
 animation["momAnimation"] = momAnimation
-animation["handAnimation1"] = handAnimation1
-animation["handAnimation2"] = handAnimation2
+animation["handDirectionAnimation1"] = handDirectionAnimation1
+animation["handDirectionAnimation2"] = handDirectionAnimation2
 
 message["msg1"] = "Tenho um presente para você. Encontre todas as peças de quebra-cabeça que escondi pela casa para descobrir o que é."
 message["msg2"] = "Arraste a seta da direita para o retângulo laranja para andar um quadradinho"
@@ -314,21 +314,21 @@ local function controlsTutorial( )
     events = {
       {name = "showAnimation",  from = "start",  to = "momAnimation", nextEvent = "showMessage" },
       {name = "showMessage",  from = "momAnimation",  to = "msg1", nextEvent = "showMessageAndAnimation" },
-      {name = "showMessageAndAnimation",  from = "msg1",  to = "msg2_handAnimation1", nextEvent = "transitionEvent" },
-      {name = "showHelpMessage",  from = "msg2_handAnimation1",  to = "help1", nextEvent = "showMessageAndAnimation" },
-      {name = "showHelpMessage",  from = "help1_handAnimation1",  to = "help1", nextEvent = "showMessageAndAnimation" },
-      {name = "showMessageAndAnimation",  from = "help1",  to = "help1_handAnimation1", nextEvent = "transitionEvent" },
-      {name = "transitionEvent",  from = "msg2_handAnimation1",  to = "transitionState_1500", nextEvent = "showMessageAndAnimation" },
-      {name = "transitionEvent",  from = "help1_handAnimation1",  to = "transitionState_1500", nextEvent = "showMessageAndAnimation" },
-      {name = "transitionEvent",  from = "help1",  to = "transitionState_1500", nextEvent = "showMessageAndAnimation" },
-      {name = "showMessageAndAnimation",  from = "transitionState_1500",  to = "msg3_handAnimation2", nextEvent = "transitionEvent" },
+      {name = "showMessageAndAnimation",  from = "msg1",  to = "msg2_handDirectionAnimation1", nextEvent = "transitionEvent" },
+      {name = "showHelpMessage",  from = "msg2_handDirectionAnimation1",  to = "help1", nextEvent = "showMessageAndAnimation" },
+      {name = "showHelpMessage",  from = "help1_handDirectionAnimation1",  to = "help1", nextEvent = "showMessageAndAnimation" },
+      {name = "showMessageAndAnimation",  from = "help1",  to = "help1_handDirectionAnimation1", nextEvent = "transitionEvent" },
+      {name = "transitionEvent",  from = "msg2_handDirectionAnimation1",  to = "transitionState_1500_1", nextEvent = "showMessageAndAnimation" },
+      {name = "transitionEvent",  from = "help1_handDirectionAnimation1",  to = "transitionState_1500_1", nextEvent = "showMessageAndAnimation" },
+      {name = "transitionEvent",  from = "help1",  to = "transitionState_1500_1", nextEvent = "showMessageAndAnimation" },
+      {name = "showMessageAndAnimation",  from = "transitionState_1500_1",  to = "msg3_handDirectionAnimation2", nextEvent = "transitionEvent" },
 
-      {name = "showHelpMessage",  from = "msg3_handAnimation2",  to = "help2", nextEvent = "showMessageAndAnimation" },
-      {name = "showHelpMessage",  from = "help2_handAnimation2",  to = "help2", nextEvent = "showMessageAndAnimation" },
-      {name = "showMessageAndAnimation",  from = "help2",  to = "help2_handAnimation2", nextEvent = "transitionEvent" },
-      {name = "transitionEvent",  from = "msg3_handAnimation2",  to = "transitionState_1500" },
-      {name = "transitionEvent",  from = "help2_handAnimation2",  to = "transitionState_1500" },
-      {name = "transitionEvent",  from = "help2",  to = "transitionState_1500" },
+      {name = "showHelpMessage",  from = "msg3_handDirectionAnimation2",  to = "help2", nextEvent = "showMessageAndAnimation" },
+      {name = "showHelpMessage",  from = "help2_handDirectionAnimation2",  to = "help2", nextEvent = "showMessageAndAnimation" },
+      {name = "showMessageAndAnimation",  from = "help2",  to = "help2_handDirectionAnimation2", nextEvent = "transitionEvent" },
+      {name = "transitionEvent",  from = "msg3_handDirectionAnimation2",  to = "transitionState_1500_2" },
+      {name = "transitionEvent",  from = "help2_handDirectionAnimation2",  to = "transitionState_1500_2" },
+      {name = "transitionEvent",  from = "help2",  to = "transitionState_1500_2" },
       --{name = "showAnimation", from = "msg2", to = "animation2", nextEvent = "showMessage" },
       --{name = "showMessage",  from = "animation2",  to = "end" },
     },
