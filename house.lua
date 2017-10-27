@@ -138,27 +138,36 @@ blue:setFillColor( 0, 0, 1 )
 local controlsTutorialFSM
 local scrollView
 local animation = {}
-local message = { }
+local message = {}
+local helpMessage = {}
 
-
-local function executeControlsTutorial()
+local function executeControlsTutorial( event, alternativeEvent )
     if ( scrollView ) then 
       scrollView:removeSelf()
       scrollView = nil
     end
 
-    if ( controlsTutorialFSM.nextEvent == "showAnimation" ) then 
-      controlsTutorialFSM.showAnimation()
-      timer.performWithDelay( animation[controlsTutorialFSM.current](), executeControlsTutorial )
+    if ( alternativeEvent ) then
+      if ( alternativeEvent == "showHelpMessage" ) then
+        controlsTutorialFSM.showHelpMessage()
+        executeControlsTutorial()
+      elseif ( alternativeEvent == "showMessage" ) then
+        controlsTutorialFSM.showMessage()
+      end
+    else
+      if ( controlsTutorialFSM.nextEvent == "showAnimation" ) then 
+        controlsTutorialFSM.showAnimation()
+        timer.performWithDelay( animation[controlsTutorialFSM.current](), executeControlsTutorial )
 
-    elseif ( controlsTutorialFSM.nextEvent == "showMessage" ) then 
-      controlsTutorialFSM.showMessage()
-    elseif ( controlsTutorialFSM.nextEvent == "showMessageAndAnimation" ) then 
-      controlsTutorialFSM.showMessageAndAnimation()
-      local _, animationName = controlsTutorialFSM.current:match( "([^,]+)_([^,]+)" )
+      elseif ( controlsTutorialFSM.nextEvent == "showMessage" ) then 
+        controlsTutorialFSM.showMessage()
+      elseif ( controlsTutorialFSM.nextEvent == "showMessageAndAnimation" ) then 
+        controlsTutorialFSM.showMessageAndAnimation()
+        local _, animationName = controlsTutorialFSM.current:match( "([^,]+)_([^,]+)" )
 
-      animation[animationName]()
-    elseif ( controlsTutorialFSM.nextEvent == "showFeedback" ) then
+        animation[animationName]()
+      elseif ( controlsTutorialFSM.nextEvent == "showFeedback" ) then
+      end
     end
 end
 
@@ -244,8 +253,8 @@ local function momAnimation( )
 end
 
 local function handAnimation( i, time, hand, x, y )
-  if ( i == 0 ) then
-    transition.fadeOut( hand, { time = 400, onComplete = function() hand.x = hand.originalX hand.y = hand.originalY end } )
+  if ( ( i == 0 ) or ( hand.stopAnimation == true ) ) then
+    transition.fadeOut( hand, { time = 400, onComplete = function() hand.x = hand.originalX hand.y = hand.originalY hand.stopAnimation = false end } )
     return 
   else 
     hand.x = hand.originalX
@@ -261,20 +270,40 @@ local function handAnimation1( )
   local box = gamePanel.firstBox
   local time = 1500
 
-  hand.alpha = 1
+  if ( ( hand.x == hand.originalX ) and ( hand.y == hand.originalY ) ) then
+    hand.alpha = 1
+    hand.stopAnimation = false 
 
-  handAnimation( 3, time, hand, hand.x, box.y )
-  gamePanel:addRightDirectionListener()
+    handAnimation( 3, time, hand, hand.x, box.y - 5 )
+    
+  end
+  gamePanel:addRightDirectionListener( executeControlsTutorial )
+end
+
+local function handAnimation2( )
+  local hand = gamePanel.hand
+  local box = gamePanel.secondBox
+  local time = 1500
+
+  if ( ( hand.x == hand.originalX ) and ( hand.y == hand.originalY ) ) then
+    hand.alpha = 1
+    hand.stopAnimation = false 
+
+    handAnimation( 3, time, hand, hand.x, box.y - 5 )
+    
+  end
+  gamePanel:addRightDirectionListener( executeControlsTutorial )
 end
 
 
 animation["momAnimation"] = momAnimation
 animation["handAnimation1"] = handAnimation1
-
+animation["handAnimation2"] = handAnimation2
 
 message["msg1"] = "Tenho um presente para você. Encontre todas as peças de quebra-cabeça que escondi pela casa para descobrir o que é."
 message["msg2"] = "Arraste a seta da direita para o retângulo laranja para andar um quadradinho"
-
+message["msg3"] = "Muito bem! Arraste mais uma seta para completar o caminho."
+message["help1"] = "Opa! Tome cuidado para arrastar a seta para o retângulo."
 
 local function controlsTutorial( )
   controlsTutorialFSM = fsm.create({
@@ -282,12 +311,21 @@ local function controlsTutorial( )
     events = {
       {name = "showAnimation",  from = "start",  to = "momAnimation", nextEvent = "showMessage" },
       {name = "showMessage",  from = "momAnimation",  to = "msg1", nextEvent = "showMessageAndAnimation" },
-      {name = "showMessageAndAnimation",  from = "msg1",  to = "msg2_handAnimation1" },
+      {name = "showMessageAndAnimation",  from = "msg1",  to = "msg2_handAnimation1", nextEvent = "showMessage" },
+      {name = "showHelpMessage",  from = "msg2_handAnimation1",  to = "help1", nextEvent = "showMessageAndAnimation" },
+      {name = "showHelpMessage",  from = "help1_handAnimation1",  to = "help1", nextEvent = "showMessageAndAnimation" },
+      {name = "showMessageAndAnimation",  from = "help1",  to = "help1_handAnimation1", nextEvent = "showMessage" },
+      {name = "showMessage",  from = "msg2_handAnimation1",  to = "msg3" },
+      {name = "showMessage",  from = "help1_handAnimation1",  to = "msg3" },
+      {name = "showMessage",  from = "help1",  to = "msg3" },
       --{name = "showAnimation", from = "msg2", to = "animation2", nextEvent = "showMessage" },
       --{name = "showMessage",  from = "animation2",  to = "end" },
     },
     callbacks = {
       on_showMessage = function( self, event, from, to ) 
+          showScrollView( house:findObject("message"), message[self.current] )
+      end,
+      on_showHelpMessage = function( self, event, from, to ) 
           showScrollView( house:findObject("message"), message[self.current] )
       end,
       on_showMessageAndAnimation = function( self, event, from, to )

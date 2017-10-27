@@ -87,6 +87,7 @@ function M.new( executeInstructions )
   	M.hand = gamePanel:findObject("hand")
   	M.hand.originalX = M.hand.x 
   	M.hand.originalY = M.hand.y
+  	M.hand.stopAnimation = false
 
   	M.firstBox = instructions.boxes[0]
   	M.secondBox = instructions.boxes[1]
@@ -279,6 +280,120 @@ function M.new( executeInstructions )
 	  	return true 
 	end
 
+	-- É o listener para quando o jogador aperta uma seta
+	-- Também adiciona a instrução na fila
+	local function createTutorialInstruction( event )
+		local phase = event.phase
+	 	local direction = event.target.myName
+	  	local directionButton = event.target
+	  	local box
+	  	local selectedBox
+
+	  	-- Descobre qual é a caixa de instrução que mostrará a nova instrução e as suas posições
+	  	if ( instructions.shownBox < #instructions.boxes ) then
+	  		box = instructions.boxes[ instructions.shownBox + 1 ], instructions.boxes[ instructions.shownBox + 1 ]:localToContent( 0, 0 )
+	  		selectedBox = instructions.selectedBox[ instructions.shownBox + 1 ]
+	  	else
+	  		box = instructions.boxes[ #instructions.boxes ], instructions.boxes[ #instructions.boxes ]:localToContent( 0, 0 )
+	  		selectedBox = instructions.selectedBox[ #instructions.boxes ]
+	  	end
+
+	  	if ( "began" == phase ) then
+			display.currentStage:setFocus( directionButton )
+			-- Seta selecionada é posicionada na frente de todos os outros objetos na tela
+			directionButton:toFront()
+
+			-- Cálculo do offset inicial
+			directionButton.touchOffsetX = event.x - directionButton.x
+			directionButton.touchOffsetY = event.y - directionButton.y
+
+			-- O loop começa com 1 passo e a rotação da roda de bicicleta volta para o início 
+			bikeWheel.steps = 1
+			bikeWheel.rotation = 0
+
+			-- Esconde as instruções anteriores e reseta a lista de instruções após uma execução
+			if ( instructionsTable.executing ~= 1 ) then 
+			   	hideInstructions()
+			   	instructionsTable:reset() 
+			end
+
+			-- Verifica se a última caixa de instrução está mostrando alguma instrução
+			-- e caso esteja, houve scroll
+			if ( ( instructions.shownBox >= #instructions.boxes ) and ( instructions.shownInstruction[instructions.shownBox] ~= instructionsTable.last  ) ) then
+				-- Caso tenha havido um scroll anteriormente, faz scroll para cima até a última
+				-- instrução feita ser mostrada na última caixa de instrução
+				while ( instructions.shownInstruction[instructions.shownBox] ~= instructionsTable.last ) do
+					scrollInstruction("up")
+				end 
+				moveInstruction( 0,  instructions.shownBox, 1, true )
+			elseif ( ( instructions.shownBox >= #instructions.boxes ) and ( instructions.texts[instructions.shownBox].text ~= " " ) ) then
+				-- Se a última instrução feita estiver na última caixa de instrução, faz um
+				-- scroll para cima para que a última caixa de instrução seja esvaziada
+				moveInstruction( 0,  instructions.shownBox, 1, true )
+			end
+	
+		elseif ( ( "moved" == phase ) and ( directionButton.touchOffsetX ) ) then
+			-- Move a seta
+			directionButton.x = event.x - directionButton.touchOffsetX
+			directionButton.y = event.y - directionButton.touchOffsetY
+
+			-- Mostra a "caixa selecionada", para reforçar que aquele é o local onde a seta deve ser
+			-- colocada
+			if ( ( event.x > box.contentBounds.xMin ) and ( event.x < box.contentBounds.xMax ) 
+			and ( event.y > box.contentBounds.yMin ) and ( event.y < box.contentBounds.yMax ) ) then
+				selectedBox.alpha = 1
+			else
+				selectedBox.alpha = 0
+			end
+
+		elseif ( ( "ended" == phase ) or ( "cancelled" == phase ) and ( directionButton.touchOffsetX ) ) then
+			-- Verifica se o local onde o movimento de "touch" terminou está dentro
+			-- da caixa de instrução atual
+			if ( ( event.x > box.contentBounds.xMin ) and ( event.x < box.contentBounds.xMax ) 
+			and ( event.y > box.contentBounds.yMin ) and ( event.y < box.contentBounds.yMax ) ) then
+				-- Caso esteja, a seta volta para sua posição original
+				directionButton.x = directionButton.originalX
+				directionButton.y = directionButton.originalY
+
+			  	-- Instrução começa com um passo para a direção escolhida
+			  	local stepsCount = 1
+
+			  	-- Instrução é adicionada à lista de instruções e mostrada na sua caixa de instrução correspondente
+			  	instructionsTable:add( direction, stepsCount )
+			  	showInstruction( direction, stepsCount )
+
+			  	-- Listener da roda de bicicleta é adicionado
+			  	if ( instructionsTable.last == 1 ) then 
+			  		bikeWheel:addEventListener( "touch", spinBikeWheel )
+				end
+
+				-- A caixa selecionada é escondida
+			  	selectedBox.alpha = 0
+
+
+			  	M.hand.stopAnimation = true 
+			  	transition.cancel( M.hand )
+			  	transition.fadeOut( M.hand, { time = 400 } )
+    
+			  	directionButtons.right:removeEventListener( "touch", createTutorialInstruction )
+			  	event.target.executeControlsTutorial()
+			else
+				-- Caso o movimento de toque acabe e a seta não seja colocada na caixa correta, ela 
+				-- volta para a posição original
+				transition.to( directionButton, { time = 400, x = directionButton.originalX, y = directionButton.originalY } )
+		  		
+		  		
+		  		M.hand.stopAnimation = true 
+		  		directionButtons.right:removeEventListener( "touch", createTutorialInstruction )
+			  	
+		  		event.target.executeControlsTutorial( _, "showHelpMessage" )
+		  	end
+	    	display.currentStage:setFocus( nil )
+		end
+
+	  	return true 
+	end
+
 	-- Faz o scroll das instruções
 	local function scrollInstructionsPanel( event )
 	  local phase = event.phase
@@ -312,8 +427,9 @@ function M.new( executeInstructions )
 	    directionButtons.up:addEventListener( "touch", createInstruction )
   	end
 
-  	function M:addRightDirectionListener()
-  		directionButtons.right:addEventListener( "touch", createInstruction )
+  	function M:addRightDirectionListener( executeControlsTutorial )
+  		directionButtons.right.executeControlsTutorial = executeControlsTutorial
+  		directionButtons.right:addEventListener( "touch", createTutorialInstruction )
   	end
 
   	function M:addButtonsListeners()

@@ -57,7 +57,7 @@ local function build_transition(self, event, states, next_event)
       "previous transition still pending")
 
     assert(self.can(event),
-      "invalid transition from state '" .. from .. "' with event '" .. event .. "'")
+      "invalid transition from state [" .. from .. "] to [" .. to .. "] with event" .. "[" .. event .. "]")
 
     local before = before_event(self, event, from, to, args)
     if before == false then
