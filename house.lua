@@ -124,17 +124,6 @@ local function setPuzzle()
   end
 end
 
-
-local green = display.newCircle( display.contentCenterX + 60, display.contentCenterY, 10 )
-green:setFillColor( 0, 1, 0 )
-
-local red = display.newCircle( display.contentCenterX + 30, display.contentCenterY, 10 )
-red:setFillColor( 1, 0, 0 )
-
-local blue = display.newCircle( display.contentCenterX, display.contentCenterY, 10 )
-blue:setFillColor( 0, 0, 1 )
-
-
 local controlsTutorialFSM
 local scrollView
 local animation = {}
@@ -167,11 +156,10 @@ local function executeControlsTutorial( event, alternativeEvent )
       
       elseif ( controlsTutorialFSM.nextEvent == "showMessageAndAnimation" ) then 
         controlsTutorialFSM.showMessageAndAnimation()
-        print( controlsTutorialFSM.from )
         local _, animationName = controlsTutorialFSM.current:match( "([^,]+)_([^,]+)" )
-        local _, wait = controlsTutorialFSM.from:match( "([^,]+)_([^,]+)" )
+        local from, wait = controlsTutorialFSM.from:match( "([^,]+)_([^,]+)" )
         
-        if ( wait ) then 
+        if ( ( from == "transitionState" ) and ( wait ) ) then 
           timer.performWithDelay( wait, animation[animationName] )
         else
           animation[animationName]()
@@ -268,7 +256,7 @@ end
 
 local function handAnimation( i, time, hand, x, y )
   if ( ( i == 0 ) or ( hand.stopAnimation == true ) ) then
-    transition.fadeOut( hand, { time = 400, onComplete = function() print("derp") hand.x = hand.originalX hand.y = hand.originalY hand.stopAnimation = false end } )
+    transition.fadeOut( hand, { time = 400, onComplete = function() hand.x = hand.originalX hand.y = hand.originalY hand.stopAnimation = false end } )
     return 
   else 
     hand.x = hand.originalX
@@ -318,6 +306,7 @@ message["msg1"] = "Tenho um presente para você. Encontre todas as peças de que
 message["msg2"] = "Arraste a seta da direita para o retângulo laranja para andar um quadradinho"
 message["msg3"] = "Muito bem! Arraste mais uma seta para completar o caminho."
 message["help1"] = "Opa! Tome cuidado para arrastar a seta para o retângulo."
+message["help2"] = message["help1"]
 
 local function controlsTutorial( )
   controlsTutorialFSM = fsm.create({
@@ -332,7 +321,14 @@ local function controlsTutorial( )
       {name = "transitionEvent",  from = "msg2_handAnimation1",  to = "transitionState_1500", nextEvent = "showMessageAndAnimation" },
       {name = "transitionEvent",  from = "help1_handAnimation1",  to = "transitionState_1500", nextEvent = "showMessageAndAnimation" },
       {name = "transitionEvent",  from = "help1",  to = "transitionState_1500", nextEvent = "showMessageAndAnimation" },
-      {name = "showMessageAndAnimation",  from = "transitionState_1500",  to = "msg3_handAnimation2" },
+      {name = "showMessageAndAnimation",  from = "transitionState_1500",  to = "msg3_handAnimation2", nextEvent = "transitionEvent" },
+
+      {name = "showHelpMessage",  from = "msg3_handAnimation2",  to = "help2", nextEvent = "showMessageAndAnimation" },
+      {name = "showHelpMessage",  from = "help2_handAnimation2",  to = "help2", nextEvent = "showMessageAndAnimation" },
+      {name = "showMessageAndAnimation",  from = "help2",  to = "help2_handAnimation2", nextEvent = "transitionEvent" },
+      {name = "transitionEvent",  from = "msg3_handAnimation2",  to = "transitionState_1500" },
+      {name = "transitionEvent",  from = "help2_handAnimation2",  to = "transitionState_1500" },
+      {name = "transitionEvent",  from = "help2",  to = "transitionState_1500" },
       --{name = "showAnimation", from = "msg2", to = "animation2", nextEvent = "showMessage" },
       --{name = "showMessage",  from = "animation2",  to = "end" },
     },
@@ -364,9 +360,6 @@ end
 -- create()
 function scene:create( event )
 	local sceneGroup = self.view
-
-  print( display.actualContentHeight )
-  print( display.actualContentWidth )
 
   persistence.setCurrentFileName( "ana" )
 
