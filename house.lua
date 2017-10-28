@@ -22,8 +22,6 @@ local path = require "path"
 
 local gameScene = require "gameScene"
 
-local widget = require "widget"
-
 local fsm = require "com.fsm.src.fsm"
 
 physics.start()
@@ -50,11 +48,11 @@ local puzzle = { bigPieces = { }, littlePieces = { count }, puzzleSensors = { } 
 
 local miniGameData
 
-local collectedPieces
+local collectedPieces = { count = 0 }
 
 local controlsTutorialFSM
 
-local scrollView
+local messageBubble
 
 local animation = {}
 
@@ -74,27 +72,33 @@ local function destroyScene()
 
   house:removeSelf()
   house = nil 
+
+  if ( ( messageBubble ) and ( messageBubble.text ) ) then
+    messageBubble.text:removeSelf()
+    messageBubble.text = nil 
+  end
 end
 
 local function setPuzzle()
   local bigPiecesLayer = house:findLayer("big puzzle") 
   local littlePiecesLayer = house:findLayer("little puzzle") 
   local puzzleSensorsLayer = house:findLayer("puzzle sensors")
-
+  
   for i = 1, bigPiecesLayer.numChildren do
     puzzle.bigPieces[ bigPiecesLayer[i].myName ] = bigPiecesLayer[i]
     puzzle.puzzleSensors[ puzzleSensorsLayer[i].puzzleNumber ] = puzzleSensorsLayer[i]
-    physics.addBody( puzzleSensorsLayer[i], { bodyType = "static", isSensor = true } )
+    physics.addBody( puzzleSensorsLayer[i], { bodyType = "static", isSensor = true } )  
     littlePiecesLayer[i].alpha = 1
     puzzle.littlePieces[ littlePiecesLayer[i].myName ] = littlePiecesLayer[i]
   end
+  
   puzzle.littlePieces.count = bigPiecesLayer.numChildren
 end
 
 local function executeControlsTutorial( event, alternativeEvent )
-    if ( scrollView ) then 
-      scrollView:removeSelf()
-      scrollView = nil
+    if ( ( messageBubble ) and ( messageBubble.text ) ) then
+      messageBubble.text:removeSelf()
+      messageBubble.text = nil
     end
 
     if ( alternativeEvent ) then
@@ -134,93 +138,99 @@ local function executeControlsTutorial( event, alternativeEvent )
       elseif ( controlsTutorialFSM.nextEvent == "transitionEvent" ) then 
         controlsTutorialFSM.transitionEvent()
         executeControlsTutorial()
+
+      elseif ( controlsTutorialFSM.nextEvent == "saveEvent" ) then
+        controlsTutorialFSM.saveEvent()
+        miniGameData.controlsTutorial = "complete"
+        --gameState:save( miniGameData )
+        executeControlsTutorial()
+
       elseif ( controlsTutorialFSM.nextEvent == "showFeedback" ) then
+        controlsTutorialFSM.showFeedback()
+        executeControlsTutorial()
+
+      elseif ( controlsTutorialFSM.nextEvent == "nextTutorial" ) then
+        controlsTutorialFSM.nextTutorial()
       end
     end
 end
 
+local function showSubText( event )
+  messageBubble = event.target
 
-local function scrollSpeechBubble( event )
-  local phase = event.phase 
+  if ( messageBubble.message[messageBubble.shownText] ) then 
+    messageBubble.text:removeSelf()
 
+    local remainingPieces = puzzle.littlePieces.count - collectedPieces.count
 
-
-  if ( phase == "began" ) then
-    event.target.touchOffset = event.y
-
-  elseif ( phase == "moved" ) then 
-    if ( ( event.y - event.target.touchOffset >= 15 ) and ( event.target.text.y ~= event.target.text.initialY ) ) then
-      event.target.text.y = event.target.text.y + 15
-      event.target.touchOffset = event.y
-    end
-  elseif ( phase == "ended" ) then
-    if ( ( event.target.text.height - (event.target.text.initialY - event.target.text.y) ) < ( event.target.height + 15 ) ) then
-      -- Vai para o próximo estado
-      if ( controlsTutorialFSM.event == "showMessage" ) then
-        transition.fadeOut( event.target.messageBubble, { time = 400, onComplete = executeControlsTutorial } )
+    if ( ( controlsTutorialFSM.current == "msg6" ) and ( messageBubble.message[messageBubble.shownText] == "Mas ainda falta" ) ) then 
+      if ( remainingPieces > 1 ) then
+        messageBubble.options.text = messageBubble.message[messageBubble.shownText] .. "m " .. remainingPieces .. " peças."
       else
-        transition.fadeOut( event.target, { time = 400 } )
-        transition.fadeOut( event.target.messageBubble, { time = 400 } )
+        messageBubble.options.text = messageBubble.message[messageBubble.shownText] .. " " .. remainingPieces .. " peça."
       end
-    elseif( event.y - event.target.touchOffset == 0 ) then 
-      event.target.text.y = event.target.text.y - 15
-
+    else
+      messageBubble.options.text = messageBubble.message[messageBubble.shownText]
     end
-    --[[if ( controlsTutorialFSM.event == "showMessage" ) then 
-      event.target.messageBubble.alpha = 0
-      executeControlsTutorial()
-    end]]
 
+    local newText = display.newText( messageBubble.options ) 
+    newText.x = newText.x + newText.width/2
+    newText.y = newText.y + newText.height/2
+
+    messageBubble.text = newText
+    messageBubble.shownText = messageBubble.shownText + 1
+
+  else
+    if ( controlsTutorialFSM.event == "showMessage" ) then
+      transition.fadeOut( messageBubble.text, { time = 400 } )
+      transition.fadeOut( messageBubble, { time = 400, onComplete = executeControlsTutorial } )
+      messageBubble.text:removeSelf()
+      messageBubble.text = nil
+      messageBubble:removeEventListener( "tap", showSubText )
+    else
+      transition.fadeOut( messageBubble.text, { time = 400 } )
+      transition.fadeOut( messageBubble, { time = 400 } )
+      messageBubble.text:removeSelf()
+      messageBubble.text = nil
+      messageBubble:removeEventListener( "tap", showSubText )
+    end
   end
-
-  return true 
 end
 
-local function showScrollView( messageBubble, text )
+local function showText( bubble, message )
+  messageBubble = bubble 
   local options = {
-    text = text,
-    x = 0, 
-    y = 0,
-    fontSize = 13,
-    width = messageBubble.width - 27,
-    height = 0,
-    align = "left" 
+      text = " ",
+      x = messageBubble.contentBounds.xMin + 15, 
+      y = messageBubble.contentBounds.yMin + 10,
+      fontSize = 13,
+      width = messageBubble.width - 27,
+      height = 0,
+      align = "left" 
   }
-
-  if ( messageBubble.alpha == 0 ) then
-    transition.fadeIn( messageBubble, { time = 400 } )
-  end 
+  options.text = message[1]
 
   local newText = display.newText( options ) 
-
   newText.x = newText.x + newText.width/2
   newText.y = newText.y + newText.height/2
 
-  scrollView = widget.newScrollView( 
-    {
-      top = messageBubble.contentBounds.yMin + 10, 
-      left = messageBubble.contentBounds.xMin + 15,
-      width = messageBubble.width - 27,
-      height = messageBubble.height/2 + 2,
-      horizontalScrollDisabled = true,
-      verticalScrollDisabled = true,
-      hideBackground = true,
-      listener = scrollSpeechBubble
-    }
-  )
+  if ( messageBubble.alpha == 0 ) then
+    transition.fadeIn( messageBubble, { time = 400 } )
+    messageBubble:addEventListener( "tap", showSubText )
+  end 
 
-  scrollView:insert( newText )
-  scrollView.scrollPosition = 0
-  newText.initialY = newText.y 
-  scrollView.text =  newText
-  scrollView.messageBubble = messageBubble
-end 
+  messageBubble.message = message 
+  messageBubble.text = newText
+  messageBubble.shownText = 1
+  messageBubble.options = options
+
+end
 
 local function momAnimation( )
   local time = 20
   transition.to( house:findObject("mom"), { time = time, x = character.x, y = character.y - tilesSize } )
 
-  return time
+  return time + 2
 end
 
 local function handDirectionAnimation( i, time, hand, initialX, initialY, x, y )
@@ -285,7 +295,7 @@ end
 
 
 local function gamePanelAnimation( )
-  gamePanel:showDirectionButtons()
+  gamePanel:showDirectionButtons( true )
 end
 
 animation["momAnimation"] = momAnimation
@@ -294,14 +304,33 @@ animation["handDirectionAnimation2"] = handDirectionAnimation2
 animation["handWalkAnimation"] = handWalkAnimation
 animation["gamePanelAnimation"] = gamePanelAnimation
  
-message["msg1"] = "Tenho um presente para você. Encontre todas as peças de quebra-cabeça que escondi pela casa para descobrir o que é."
-message["msg2"] = "Arraste a seta da direita para o retângulo laranja para andar um quadradinho"
-message["msg3"] = "Muito bem! Arraste mais uma seta para completar o caminho."
-message["msg4"] = "Agora aperte no botão \"andar\""
-message["msg5"] = "Parabéns! Agora tente pegar as outras peças com o que você aprendeu."
-message["msg6"] = "Muito bem! Você está perto de descobrir qual é o presente. Mas ainda falta"
-message["msg7"] = "Parabéns! Você ganhou uma bicicleta."
-message["help1"] = "Opa! Tome cuidado para arrastar a seta para o retângulo."
+
+message["msg1"] = { "Tenho um presente para você.",
+                  "Encontre todas as peças de",
+                  "quebra-cabeça que escondi",
+                  "pela casa para descobrir",
+                  "o que é." }
+
+message["msg2"] = { "Arraste a seta da direita para", 
+                    "o retângulo laranja para andar",
+                    "um quadradinho" }
+
+message["msg3"] = { "Muito bem! Arraste mais uma",
+                    "seta para completar o caminho." }
+
+message["msg4"] = { "Agora aper-te no botão \"andar\"." }
+message["msg5"] = { "Parabéns! Agora tente pegar as",
+                    "outras peças usando", 
+                    "também outras setas." }
+message["msg6"] = { "Muito bem! Você está perto de",
+                    "descobrir qual é o presente.",
+                    "Mas ainda falta" }
+message["msg7"] = { "Parabéns! Você ga-nhou uma",
+                    "bicicleta." }
+
+message["help1"] = { "Opa! Tome cuidado para", 
+                     "arrastar a seta para o retângulo." }
+
 message["help2"] = message["help1"]
 
 local function controlsTutorial( )
@@ -331,43 +360,46 @@ local function controlsTutorial( )
       {name = "showMessageAndAnimation",  from = "transitionState_1500_3",  to = "msg5_gamePanelAnimation", nextEvent = "showTempMessage" },
 
       {name = "showTempMessage",  from = "msg5_gamePanelAnimation",  to = "msg6", nextEvent = "showTempMessage" },
+
       {name = "showTempMessage",  from = "msg6",  to = "msg6", nextEvent = "showTempMessage" },
-      {name = "transitionEvent",  from = "msg6",  to = "transitionState4", nextEvent = "showMessage" },
-      {name = "showMessage",  from = "transitionState4",  to = "msg7" },
+      {name = "transitionEvent",  from = "msg6",  to = "transitionState4", nextEvent = "saveEvent" },
+      {name = "saveEvent",  from = "transitionState4",  to = "save", nextEvent = "showMessage" },
+      {name = "showMessage",  from = "save",  to = "msg7", nextEvent = "showFeedback" },
+      {name = "showFeedback",  from = "msg7",  to = "feedback", nextEvent = "nextTutorial" },
+      {name = "nextTutorial",  from = "feedback",  to = "tutorial" },
     },
     callbacks = {
       on_showMessage = function( self, event, from, to ) 
-        showScrollView( house:findObject("message"), message[self.current] )
+        showText( house:findObject("message"), message[self.current] )
       end,
       on_showTempMessage = function( self, event, from, to ) 
           if ( self.current ~= "msg6" ) then 
-            showScrollView( house:findObject("message"), message[self.current] )
+            showText( house:findObject("message"), message[self.current] )
           else
             local remainingPieces = puzzle.littlePieces.count - (collectedPieces.count + 1)
 
-            if ( remainingPieces > 1 ) then
-              showScrollView( house:findObject("message"), message["msg6"] .. "m " .. remainingPieces .. " peças." )
-            else
-              showScrollView( house:findObject("message"), message["msg6"] .. " " .. remainingPieces .. " peça." )
-            end
+            showText( house:findObject("message"), message[self.current] )
           end
       end,
       on_showHelpMessage = function( self, event, from, to ) 
-          showScrollView( house:findObject("message"), message[self.current] )
+          showText( house:findObject("message"), message[self.current] )
       end,
       on_showMessageAndAnimation = function( self, event, from, to )
         local msg, animationName = controlsTutorialFSM.current:match( "([^,]+)_([^,]+)" ) 
-        showScrollView( house:findObject("message"), message[msg] )
+        showText( house:findObject("message"), message[msg] )
 
         return animationName
+      end,
+      on_nextTutorial = function( self, event, from, to ) 
+         
       end
     }
   })
 
+  
   controlsTutorialFSM.showAnimation()
-
-
   timer.performWithDelay( animation[controlsTutorialFSM.current](), executeControlsTutorial )
+  
 
 end
 
@@ -395,6 +427,8 @@ local function onCollision( event )
           executeControlsTutorial( _, "transitionEvent" )
         end
         collectedPieces.count = collectedPieces.count + 1
+
+        print( "collectedPieces: " .. collectedPieces.count .. "; remain: " .. remainingPieces )
       end 
     elseif ( ( obj1.myName == "character" ) and ( obj2.myName == "puzzle" ) ) then 
       if ( collectedPieces[obj2.puzzleNumber] == nil ) then
@@ -414,17 +448,19 @@ local function onCollision( event )
 
     -- Volta para o mapa quando o personagem chega na saída/entrada da casa
     elseif ( ( ( obj1.myName == "exit" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "exit" ) ) ) then 
-      transition.cancel()
-      instructions:destroyInstructionsTable()
-      gamePanel:stopAllListeners()
-      timer.performWithDelay( 800, sceneTransition.gotoMap )
-
+      if ( miniGameData.isComplete == true ) then
+        transition.cancel()
+        instructions:destroyInstructionsTable()
+        gamePanel:stopAllListeners()
+        timer.performWithDelay( 800, sceneTransition.gotoMap )
+      end
     elseif ( ( ( obj1.myName == "entrace" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "entrance" ) ) ) then 
-      transition.cancel()
-      instructions:destroyInstructionsTable()
-      gamePanel:stopAllListeners()
-      timer.performWithDelay( 800, sceneTransition.gotoMap )
-
+      if ( miniGameData.isComplete == true ) then
+        transition.cancel()
+        instructions:destroyInstructionsTable()
+        gamePanel:stopAllListeners()
+        timer.performWithDelay( 800, sceneTransition.gotoMap )
+      end
     -- Colisão entre o personagem e os sensores dos tiles do caminho
     elseif ( ( obj1.myName == "character" ) and ( obj2.myName ~= "collision" ) ) then 
       character.steppingX = obj2.x 
@@ -450,6 +486,9 @@ end
 function scene:create( event )
 	local sceneGroup = self.view
 
+  print( display.actualContentWidth )
+  print( display.actualContentHeight )
+
   persistence.setCurrentFileName( "ana" )
 
 	house, character, rope, ropeJoint, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "house", onCollision )
@@ -465,7 +504,6 @@ function scene:create( event )
 
   if ( miniGameData.controlsTutorial == "incomplete" ) then 
     setPuzzle()
-    collectedPieces = miniGameData.collectedPieces
   end
 end
 
@@ -476,17 +514,21 @@ function scene:show( event )
 	local phase = event.phase
 
 	if ( phase == "will" ) then
-    if ( miniGameData.isComplete == true ) then
+    if ( miniGameData.controlsTutorial == "complete" ) then
 		  gamePanel:addDirectionListeners()
     end
 
 	elseif ( phase == "did" ) then
-    if ( miniGameData.isComplete == true ) then
+    if ( miniGameData.controlsTutorial == "complete" ) then
+      gamePanel:showDirectionButtons( false )
 		  gamePanel:addButtonsListeners()
       gamePanel:addInstructionPanelListeners()
 
     else
-      controlsTutorial()
+      if ( miniGameData.controlsTutorial == "incomplete" ) then
+        controlsTutorial()
+      end
+      gamePanel:addGoBackButtonListener()
     end
 	end
 end

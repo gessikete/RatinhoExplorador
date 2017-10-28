@@ -37,7 +37,6 @@ function M.new(  currentMiniGame, character, onCollision )
 	  		if ( miniGameData ) then
 	  			if ( currentMiniGame == "house" ) then
 	  				gameState.house.controlsTutorial = miniGameData.controlsTutorial
-	  				gameState.house.collectedPieces = miniGameData.collectedPieces
 	  				gameState.house.bikeTutorial = miniGameData.bikeTutorial
 	  			end
 
@@ -56,31 +55,33 @@ function M.new(  currentMiniGame, character, onCollision )
 		print( "CARREGANDO MINIGAME: " .. currentMiniGame )
 
 	  	if ( gameFile ~= nil ) then 
-	  		local startingPointX, startingPointY = persistence.startingPoint( loadingMiniGame )
-	  		local goBackPointX, goBackPointY, flipped = persistence.goBackPoint( loadingMiniGame, gameFile )
-	  		-- Apresenta uma imagem de carregamento enquanto o personagem é posicionado
-		    --[[if ( gameFile.currentMiniGame == loadingMiniGame ) then 
-		      local defaultLoadingData = json.decodeFile(system.pathForFile("tiled/loading.json", system.ResourceDirectory))  -- load from json export
-		      loadingScreen = tiled.new(defaultLoadingData, "tiled")
-		      fitScreen.fitBackground( loadingScreen )
-		    elseif ( gameFile.currentMiniGame == "house" ) then 
-		      	local loadingHouseData = json.decodeFile(system.pathForFile("tiled/loadingHouse.json", system.ResourceDirectory))
-		      	loadingScreen = tiled.new(loadingHouseData, "tiled")
-		      	fitScreen.fitDefault( loadingScreen )
-		    elseif ( gameFile.currentMiniGame == "map" ) then
-		      	local loadingMapData = json.decodeFile(system.pathForFile("tiled/loadingMap.json", system.ResourceDirectory))
-	    		loadingScreen = tiled.new(loadingMapData, "tiled")
-	    		fitScreen.fitMap( loadingScreen )
-		    end]]
+	  		if ( ( currentMiniGame ~= "house" ) or ( gameFile.house.controlsTutorial == "complete" ) ) then 
+		  		local startingPointX, startingPointY = persistence.startingPoint( loadingMiniGame )
+		  		local goBackPointX, goBackPointY, flipped = persistence.goBackPoint( loadingMiniGame, gameFile )
+		  		-- Apresenta uma imagem de carregamento enquanto o personagem é posicionado
+			    --[[if ( gameFile.currentMiniGame == loadingMiniGame ) then 
+			      local defaultLoadingData = json.decodeFile(system.pathForFile("tiled/loading.json", system.ResourceDirectory))  -- load from json export
+			      loadingScreen = tiled.new(defaultLoadingData, "tiled")
+			      fitScreen.fitBackground( loadingScreen )
+			    elseif ( gameFile.currentMiniGame == "house" ) then 
+			      	local loadingHouseData = json.decodeFile(system.pathForFile("tiled/loadingHouse.json", system.ResourceDirectory))
+			      	loadingScreen = tiled.new(loadingHouseData, "tiled")
+			      	fitScreen.fitDefault( loadingScreen )
+			    elseif ( gameFile.currentMiniGame == "map" ) then
+			      	local loadingMapData = json.decodeFile(system.pathForFile("tiled/loadingMap.json", system.ResourceDirectory))
+		    		loadingScreen = tiled.new(loadingMapData, "tiled")
+		    		fitScreen.fitMap( loadingScreen )
+			    end]]
 
-		    print( "PREPARANDO PERSONAGEM" )
-			character.x = character.x + ( goBackPointX - startingPointX )
-			character.y = character.y + (goBackPointY - startingPointY )
-			character.flipped = flipped
-	  		character.steppingX = goBackPointX
-	  		character.steppingY = goBackPointY
+			    print( "PREPARANDO PERSONAGEM" )
+				character.x = character.x + ( goBackPointX - startingPointX )
+				character.y = character.y + (goBackPointY - startingPointY )
+				character.flipped = flipped
+		  		character.steppingX = goBackPointX
+		  		character.steppingY = goBackPointY
 
-	  		gameFile.currentMiniGame = currentMiniGame
+		  		gameFile.currentMiniGame = currentMiniGame
+		  	end
 
 	  		if ( currentMiniGame == "house" ) then
 	  			miniGameData = gameFile.house 

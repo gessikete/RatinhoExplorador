@@ -95,17 +95,27 @@ function M.new( executeInstructions )
 
   	fitScreen.fitGamePanel( gamePanel, goBackButton )
 
-  	function M:showDirectionButtons( )
-  		transition.fadeIn( directionButtons.right, { time = 400 } )
-  		transition.fadeIn( directionButtons.left, { time = 400 } )
-  		transition.fadeIn( directionButtons.up, { time = 400 } )
-  		transition.fadeIn( directionButtons.down, { time = 400 } )
+  	function M:showDirectionButtons( fadeIn )
+  		if ( fadeIn == true ) then 
+	  		transition.fadeIn( directionButtons.right, { time = 400 } )
+	  		transition.fadeIn( directionButtons.left, { time = 400 } )
+	  		transition.fadeIn( directionButtons.up, { time = 400 } )
+	  		transition.fadeIn( directionButtons.down, { time = 400 } )
 
-  		local nonDraggableLayer = gamePanel:findLayer("non-draggable")
-  		for i = 1, nonDraggableLayer.numChildren do
-  			transition.fadeIn( nonDraggableLayer[i], { time = 400 } )
+	  		local nonDraggableLayer = gamePanel:findLayer("non-draggable")
+	  		for i = 1, nonDraggableLayer.numChildren do
+	  			transition.fadeIn( nonDraggableLayer[i], { time = 400 } )
+	  		end
+  		else 
+  			directionButtons.left.alpha = 1
+  			directionButtons.up.alpha = 1
+  			directionButtons.down.alpha = 1
+
+  			local nonDraggableLayer = gamePanel:findLayer("non-draggable")
+	  		for i = 1, nonDraggableLayer.numChildren do
+	  			nonDraggableLayer[i].alpha = 1
+	  		end
   		end
-  	
   	end
 
 
@@ -433,6 +443,10 @@ function M.new( executeInstructions )
   		goBackButton = nil
 	end
 
+	function M:addGoBackButtonListener( )
+		goBackButton:addEventListener( "tap", sceneTransition.gotoMenu )
+	end
+
   	function M:addDirectionListeners()
   		directionButtons.right:addEventListener( "touch", createInstruction )
 	    directionButtons.left:addEventListener( "touch", createInstruction )
@@ -448,7 +462,7 @@ function M.new( executeInstructions )
   	local function executeTutorialInstructions( )
   		executeInstructions()
   		M.hand.stopAnimation = true
-  		timer.performWithDelay( 500 * 2, executeButton.executeControlsTutorial ) 
+  		executeButton.executeControlsTutorial() 
   		executeButton.executeControlsTutorial = nil
   		executeButton:removeEventListener( "tap", executeTutorialInstructions ) 
   	end

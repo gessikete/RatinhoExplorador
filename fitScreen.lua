@@ -16,11 +16,13 @@ function M.fitDefault( screen )
 end
 
 function M.fitGamePanel( gamePanel, goBackButton )
-	if ( display.actualContentWidth > 420 ) then
-	  	gamePanel.x = gamePanel.x + ( display.actualContentWidth - gamePanel.designedWidth ) + 60
-	  	goBackButton.x = goBackButton.x - 70
+  if ( display.actualContentWidth >= 480 ) then
+    goBackButton.x = goBackButton.x
+    gamePanel.x = gamePanel.x + ( display.actualContentWidth - gamePanel.designedWidth ) + 30
+	elseif ( display.actualContentWidth > 420 ) then
+	  gamePanel.x = gamePanel.x + ( display.actualContentWidth - gamePanel.designedWidth ) + 60
   end
-  	gamePanel.y = gamePanel.y
+  	gamePanel.y = gamePanel.y + 20
 end
 
 function M.fitBackground( background )
