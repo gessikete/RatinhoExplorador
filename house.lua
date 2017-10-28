@@ -58,9 +58,6 @@ local animation = {}
 
 local message = {}
 
-local helpMessage = {}
-
-
 -- -----------------------------------------------------------------------------------
 -- Remoções para limpar a tela
 -- -----------------------------------------------------------------------------------
@@ -77,6 +74,8 @@ local function destroyScene()
     messageBubble.text:removeSelf()
     messageBubble.text = nil 
   end
+
+  controlsTutorialFSM = nil 
 end
 
 local function setPuzzle()
@@ -96,17 +95,14 @@ local function setPuzzle()
 end
 
 local function executeControlsTutorial( event, alternativeEvent )
+  if ( controlsTutorialFSM ) then 
     if ( ( messageBubble ) and ( messageBubble.text ) ) then
       messageBubble.text:removeSelf()
       messageBubble.text = nil
     end
 
     if ( alternativeEvent ) then
-      if ( alternativeEvent == "showHelpMessage" ) then
-        controlsTutorialFSM.showHelpMessage()
-        executeControlsTutorial()
-
-      elseif ( alternativeEvent == "showMessage" ) then
+      if ( alternativeEvent == "showMessage" ) then
         controlsTutorialFSM.showMessage()
       elseif ( alternativeEvent == "transitionEvent" ) then
         controlsTutorialFSM.transitionEvent()
@@ -153,6 +149,7 @@ local function executeControlsTutorial( event, alternativeEvent )
         controlsTutorialFSM.nextTutorial()
       end
     end
+  end
 end
 
 local function showSubText( event )
@@ -227,21 +224,20 @@ local function showText( bubble, message )
 end
 
 local function momAnimation( )
-  local time = 20
+  local time = 5000
   transition.to( house:findObject("mom"), { time = time, x = character.x, y = character.y - tilesSize } )
 
-  return time + 2
+  return time + 500
 end
 
-local function handDirectionAnimation( i, time, hand, initialX, initialY, x, y )
-  if ( ( i == 0 ) or ( hand.stopAnimation == true ) ) then
-    transition.fadeOut( hand, { time = 400, onComplete = function() hand.x = initialX hand.y = initialY hand.stopAnimation = false end } )
-    return 
+local function handDirectionAnimation( time, hand, initialX, initialY, x, y, state )
+  if ( state ~= controlsTutorialFSM.current ) then
+    return
   else 
     hand.x = initialX
     hand.y = initialY
     transition.to( hand, { time = time, x = x, y = y } )
-    local closure = function ( ) return handDirectionAnimation( i - 1, time, hand, initialX, initialY, x, y ) end
+    local closure = function ( ) return handDirectionAnimation( time, hand, initialX, initialY, x, y, state ) end
     timer.performWithDelay(time + 400, closure)
   end
 end
@@ -251,13 +247,13 @@ local function handDirectionAnimation1( )
   local box = gamePanel.firstBox
   local time = 1500
 
-  if ( ( hand.x == hand.originalX ) and ( hand.y == hand.originalY ) ) then
-    hand.alpha = 1
-    hand.stopAnimation = false 
+  hand.x = hand.originalX 
+  hand.y = hand.originalY
+  hand.alpha = 1
+   
 
-    handDirectionAnimation( 3, time, hand, hand.originalX, hand.originalY, hand.x, box.y - 5 )
-    
-  end
+  handDirectionAnimation( time, hand, hand.originalX, hand.originalY, hand.x, box.y - 5, controlsTutorialFSM.current )
+  
   gamePanel:addRightDirectionListener( executeControlsTutorial )
 end
 
@@ -266,13 +262,13 @@ local function handDirectionAnimation2( )
   local box = gamePanel.secondBox
   local time = 1500
 
-  if ( ( hand.x == hand.originalX ) and ( hand.y == hand.originalY ) ) then
-    hand.alpha = 1
-    hand.stopAnimation = false 
+  hand.x = hand.originalX 
+  hand.y = hand.originalY
+  hand.alpha = 1
+   
 
-    handDirectionAnimation( 3, time, hand, hand.originalX, hand.originalY, hand.x, box.y - 5 )
-    
-  end
+  handDirectionAnimation( time, hand, hand.originalX, hand.originalY, hand.x, box.y - 5, controlsTutorialFSM.current )
+  
   gamePanel:addRightDirectionListener( executeControlsTutorial )
 end
 
@@ -284,10 +280,9 @@ local function handWalkAnimation( )
   hand.x = executeButton.x 
   hand.y = executeButton.y
   hand.alpha = 1
-  hand.stopAnimation = false 
-     
+   
 
-  handDirectionAnimation( 3, time, hand, executeButton.contentBounds.xMin + 2, executeButton.y, executeButton.contentBounds.xMin + 10, executeButton.y - 5 )
+  handDirectionAnimation( time, hand, executeButton.contentBounds.xMin + 2, executeButton.y, executeButton.contentBounds.xMin + 10, executeButton.y - 5, controlsTutorialFSM.current )
     
 
   gamePanel:addExecuteButtonListener( executeControlsTutorial )
@@ -328,11 +323,6 @@ message["msg6"] = { "Muito bem! Você está perto de",
 message["msg7"] = { "Parabéns! Você ga-nhou uma",
                     "bicicleta." }
 
-message["help1"] = { "Opa! Tome cuidado para", 
-                     "arrastar a seta para o retângulo." }
-
-message["help2"] = message["help1"]
-
 local function controlsTutorial( )
   controlsTutorialFSM = fsm.create({
     initial = "start",
@@ -340,24 +330,14 @@ local function controlsTutorial( )
       {name = "showAnimation",  from = "start",  to = "momAnimation", nextEvent = "showMessage" },
       {name = "showMessage",  from = "momAnimation",  to = "msg1", nextEvent = "showMessageAndAnimation" },
       {name = "showMessageAndAnimation",  from = "msg1",  to = "msg2_handDirectionAnimation1", nextEvent = "transitionEvent" },
-      {name = "showHelpMessage",  from = "msg2_handDirectionAnimation1",  to = "help1", nextEvent = "showMessageAndAnimation" },
-      {name = "showHelpMessage",  from = "help1_handDirectionAnimation1",  to = "help1", nextEvent = "showMessageAndAnimation" },
-      {name = "showMessageAndAnimation",  from = "help1",  to = "help1_handDirectionAnimation1", nextEvent = "transitionEvent" },
-      {name = "transitionEvent",  from = "msg2_handDirectionAnimation1",  to = "transitionState_1500_1", nextEvent = "showMessageAndAnimation" },
-      {name = "transitionEvent",  from = "help1_handDirectionAnimation1",  to = "transitionState_1500_1", nextEvent = "showMessageAndAnimation" },
-      {name = "transitionEvent",  from = "help1",  to = "transitionState_1500_1", nextEvent = "showMessageAndAnimation" },
+      {name = "transitionEvent",  from = "msg2_handDirectionAnimation1",  to = "transitionState_100_1", nextEvent = "showMessageAndAnimation" },
       
-      {name = "showMessageAndAnimation",  from = "transitionState_1500_1",  to = "msg3_handDirectionAnimation2", nextEvent = "transitionEvent" },
-      {name = "showHelpMessage",  from = "msg3_handDirectionAnimation2",  to = "help2", nextEvent = "showMessageAndAnimation" },
-      {name = "showHelpMessage",  from = "help2_handDirectionAnimation2",  to = "help2", nextEvent = "showMessageAndAnimation" },
-      {name = "showMessageAndAnimation",  from = "help2",  to = "help2_handDirectionAnimation2", nextEvent = "transitionEvent" },
-      {name = "transitionEvent",  from = "msg3_handDirectionAnimation2",  to = "transitionState_1500_2", nextEvent = "showMessageAndAnimation" },
-      {name = "transitionEvent",  from = "help2_handDirectionAnimation2",  to = "transitionState_1500_2", nextEvent = "showMessageAndAnimation" },
-      {name = "transitionEvent",  from = "help2",  to = "transitionState_1500_2", nextEvent = "showMessageAndAnimation" },
+      {name = "showMessageAndAnimation",  from = "transitionState_100_1",  to = "msg3_handDirectionAnimation2", nextEvent = "transitionEvent" },
+      {name = "transitionEvent",  from = "msg3_handDirectionAnimation2",  to = "transitionState_100_2", nextEvent = "showMessageAndAnimation" },
       
-      {name = "showMessageAndAnimation",  from = "transitionState_1500_2",  to = "msg4_handWalkAnimation", nextEvent = "transitionEvent" },
-      {name = "transitionEvent",  from = "msg4_handWalkAnimation",  to = "transitionState_1500_3", nextEvent = "showMessageAndAnimation" },
-      {name = "showMessageAndAnimation",  from = "transitionState_1500_3",  to = "msg5_gamePanelAnimation", nextEvent = "showTempMessage" },
+      {name = "showMessageAndAnimation",  from = "transitionState_100_2",  to = "msg4_handWalkAnimation", nextEvent = "transitionEvent" },
+      {name = "transitionEvent",  from = "msg4_handWalkAnimation",  to = "transitionState_100_3", nextEvent = "showMessageAndAnimation" },
+      {name = "showMessageAndAnimation",  from = "transitionState_100_3",  to = "msg5_gamePanelAnimation", nextEvent = "showTempMessage" },
 
       {name = "showTempMessage",  from = "msg5_gamePanelAnimation",  to = "msg6", nextEvent = "showTempMessage" },
 
@@ -380,9 +360,6 @@ local function controlsTutorial( )
 
             showText( house:findObject("message"), message[self.current] )
           end
-      end,
-      on_showHelpMessage = function( self, event, from, to ) 
-          showText( house:findObject("message"), message[self.current] )
       end,
       on_showMessageAndAnimation = function( self, event, from, to )
         local msg, animationName = controlsTutorialFSM.current:match( "([^,]+)_([^,]+)" ) 
@@ -486,10 +463,10 @@ end
 function scene:create( event )
 	local sceneGroup = self.view
 
-  print( display.actualContentWidth )
-  print( display.actualContentHeight )
+  --print( display.actualContentWidth )
+  --print( display.actualContentHeight )
 
-  persistence.setCurrentFileName( "ana" )
+  --persistence.setCurrentFileName( "ana" )
 
 	house, character, rope, ropeJoint, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "house", onCollision )
 
@@ -528,7 +505,7 @@ function scene:show( event )
       if ( miniGameData.controlsTutorial == "incomplete" ) then
         controlsTutorial()
       end
-      gamePanel:addGoBackButtonListener()
+      --gamePanel:addGoBackButtonListener()
     end
 	end
 end

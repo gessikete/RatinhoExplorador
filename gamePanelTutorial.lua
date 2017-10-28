@@ -88,7 +88,6 @@ function M.new( executeInstructions )
   	M.hand = gamePanel:findObject("hand")
   	M.hand.originalX = M.hand.x 
   	M.hand.originalY = M.hand.y
-  	M.hand.stopAnimation = false
 
   	M.firstBox = instructions.boxes[0]
   	M.secondBox = instructions.boxes[1]
@@ -395,21 +394,19 @@ function M.new( executeInstructions )
 				-- A caixa selecionada é escondida
 			  	selectedBox.alpha = 0
 
-
-			  	M.hand.stopAnimation = true 
-			  	
 			  	directionButtons.right:removeEventListener( "touch", createTutorialInstruction )
-			  	event.target.executeControlsTutorial()
+			  	
+
+			  	transition.fadeOut( M.hand, { time = 450, onComplete = 
+      				function() 
+        				event.target.executeControlsTutorial()
+        			end } )
+
+			  	
 			else
 				-- Caso o movimento de toque acabe e a seta não seja colocada na caixa correta, ela 
 				-- volta para a posição original
 				transition.to( directionButton, { time = 400, x = directionButton.originalX, y = directionButton.originalY } )
-		  		
-		  		
-		  		M.hand.stopAnimation = true 
-		  		directionButtons.right:removeEventListener( "touch", createTutorialInstruction )
-			  	
-		  		event.target.executeControlsTutorial( _, "showHelpMessage" )
 		  	end
 	    	display.currentStage:setFocus( nil )
 		end
@@ -461,9 +458,12 @@ function M.new( executeInstructions )
 
   	local function executeTutorialInstructions( )
   		executeInstructions()
-  		M.hand.stopAnimation = true
-  		executeButton.executeControlsTutorial() 
-  		executeButton.executeControlsTutorial = nil
+  		transition.fadeOut( M.hand, { time = 450, onComplete = 
+      				function() 
+        				executeButton.executeControlsTutorial()
+  						executeButton.executeControlsTutorial = nil
+        			end } )
+
   		executeButton:removeEventListener( "tap", executeTutorialInstructions ) 
   	end
 

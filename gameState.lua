@@ -52,6 +52,7 @@ function M.new(  currentMiniGame, character, onCollision )
 		local miniGameData
 		gameFile = persistence.loadGameFile()
 
+		print( "CARREGANDO ARQUIVO: " .. persistence.getCurrentFileName() )
 		print( "CARREGANDO MINIGAME: " .. currentMiniGame )
 
 	  	if ( gameFile ~= nil ) then 
