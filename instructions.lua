@@ -82,7 +82,7 @@ function M.new( tilesSize, character, markedPath )
   end
 
   -- Desmarca caminho feito anteriormente
-  local function unmarkPath ( markedPath )
+ function M:unmarkPath ( markedPath )
     if ( markedPath ~= nil ) then 
       for i = #markedPath, 1, -1 do
         markedPath[i].alpha = 0
@@ -121,7 +121,7 @@ function M.new( tilesSize, character, markedPath )
     else print( "Listener nulo (instructions.lua)" )
     end
     -- Desmarca caminho anterior
-    unmarkPath( markedPath )
+    M:unmarkPath( markedPath )
 
     -- Executa as instruções uma a uma
     executeSingleInstruction()

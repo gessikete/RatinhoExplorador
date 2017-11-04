@@ -864,36 +864,6 @@
         }, 
         {
          "draworder":"topdown",
-         "name":"hand",
-         "objects":[
-                {
-                 "gid":25,
-                 "height":45,
-                 "id":118,
-                 "name":"hand",
-                 "properties":
-                    {
-                     "alpha":"0"
-                    },
-                 "propertytypes":
-                    {
-                     "alpha":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":50,
-                 "x":394,
-                 "y":62
-                }],
-         "opacity":1,
-         "type":"objectgroup",
-         "visible":true,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "draworder":"topdown",
          "name":"directions",
          "objects":[
                 {
@@ -981,6 +951,36 @@
                  "width":25,
                  "x":444,
                  "y":58
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"hand",
+         "objects":[
+                {
+                 "gid":25,
+                 "height":45,
+                 "id":118,
+                 "name":"hand",
+                 "properties":
+                    {
+                     "alpha":"0"
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":50,
+                 "x":407,
+                 "y":63
                 }],
          "opacity":1,
          "type":"objectgroup",

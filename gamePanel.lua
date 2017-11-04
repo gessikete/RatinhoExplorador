@@ -134,35 +134,38 @@ function M.new( executeInstructions )
 		  
 		elseif ( "moved" == phase ) then
 		    if ( adjustment ) then 
+
 		      	local dx = event.x - centerX 
 		      	local dy = event.y - centerY
 		      	local radius = math.sqrt( math.pow( dx, 2 ) + math.pow( dy, 2 ) )
 		      	local ds, dt = ( circle.radius * dx ) / radius, ( circle.radius * dy ) / radius
 		      	local quadrant = getQuadrant( dx, dy )
 
-		      	if ( quadrant ~= circle.quadrant ) then
-		      	  	if ( ( circle.quadrant == 4 ) and ( quadrant == 1 ) ) then 
-		      	    	circle.steps = circle.steps + 0.5
-		      		elseif ( ( circle.quadrant == 1 ) and ( quadrant == 4 ) ) then 
-		      	    	if ( circle.steps > 0 ) then
-		      	      		circle.steps = circle.steps - 0.5
-		      	    	end
-		      	  	elseif ( quadrant > circle.quadrant ) then 
-		      	    	circle.steps = circle.steps + 0.5
-		      	  	elseif ( quadrant < circle.quadrant ) then 
-		      	    	if ( circle.steps > 0 ) then
-		      	      		circle.steps = circle.steps - 0.5
-		      	    	end
-		      	  	end 
-		      	end
+		      	if ( ( quadrant ) and ( circle.quadrant ) ) then 
+			      	if ( quadrant ~= circle.quadrant ) then
+			      	  	if ( ( circle.quadrant == 4 ) and ( quadrant == 1 ) ) then 
+			      	    	circle.steps = circle.steps + 0.5
+			      		elseif ( ( circle.quadrant == 1 ) and ( quadrant == 4 ) ) then 
+			      	    	if ( circle.steps > 0 ) then
+			      	      		circle.steps = circle.steps - 0.5
+			      	    	end
+			      	  	elseif ( quadrant > circle.quadrant ) then 
+			      	    	circle.steps = circle.steps + 0.5
+			      	  	elseif ( quadrant < circle.quadrant ) then 
+			      	    	if ( circle.steps > 0 ) then
+			      	      		circle.steps = circle.steps - 0.5
+			      	    	end
+			      	  	end 
+			      	end
 
-		      	circle.quadrant = quadrant
+			      	circle.quadrant = quadrant
 
-		      	if ( circle.steps > 0 ) then
-		      	  circle.rotation = ( math.atan2( dt, ds ) * 180 / math.pi ) - adjustment 
+			      	if ( circle.steps > 0 ) then
+			      	  circle.rotation = ( math.atan2( dt, ds ) * 180 / math.pi ) - adjustment 
+			      	end
+			 
+			      	updateSteps( circle )
 		      	end
-		 
-		      	updateSteps( circle )
 		    end 
 		  
 		elseif ( "ended" == phase or "cancelled" == phase ) then

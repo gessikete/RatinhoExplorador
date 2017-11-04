@@ -60,6 +60,7 @@ function M.new( executeInstructions )
   	bikeWheel.radius = bikeWheel.width/2
   	bikeWheel.quadrant = 1
   	bikeWheel.steps = 1
+  	M.bikeWheel = bikeWheel
 
   	-- Setas que definem a direção
   	directionButtons.right = gamePanel:findObject("directionRight") 
@@ -117,6 +118,13 @@ function M.new( executeInstructions )
   		end
   	end
 
+  	function M:showBikewheel ( fadeIn )
+  		if ( fadeIn == true ) then
+  			transition.fadeIn( bikeWheel, { time = 400 } )
+  		else
+  			bikeWheel.alpha = 1
+  		end
+  	end
 
   	-- -----------------------------------------------------------------------------------
 	-- Listeners do game panel
@@ -166,39 +174,58 @@ function M.new( executeInstructions )
 		  
 		elseif ( "moved" == phase ) then
 		    if ( adjustment ) then 
-		      	local dx = event.x - centerX 
-		      	local dy = event.y - centerY
-		      	local radius = math.sqrt( math.pow( dx, 2 ) + math.pow( dy, 2 ) )
-		      	local ds, dt = ( circle.radius * dx ) / radius, ( circle.radius * dy ) / radius
-		      	local quadrant = getQuadrant( dx, dy )
+		    	--print( bikeWheel.maxSteps )
+		    	if ( ( bikeWheel.maxSteps ) and ( bikeWheel.steps == bikeWheel.maxSteps ) ) then
+						local executeTutorial = event.target.executeTutorial
+						transition.cancel( M.hand ) 
+						transition.fadeOut( M.hand, { time = 450, onComplete = 
+      						function() 
+        						executeTutorial()
+        					end } )
+					
+				elseif ( ( not bikeWheel.maxSteps ) or ( ( bikeWheel.maxSteps ) and ( bikeWheel.steps < bikeWheel.maxSteps ) ) ) then  
+			      	local dx = event.x - centerX 
+			      	local dy = event.y - centerY
+			      	local radius = math.sqrt( math.pow( dx, 2 ) + math.pow( dy, 2 ) )
+			      	local ds, dt = ( circle.radius * dx ) / radius, ( circle.radius * dy ) / radius
+			      	local quadrant = getQuadrant( dx, dy )
 
-		      	if ( quadrant ~= circle.quadrant ) then
-		      	  	if ( ( circle.quadrant == 4 ) and ( quadrant == 1 ) ) then 
-		      	    	circle.steps = circle.steps + 0.5
-		      		elseif ( ( circle.quadrant == 1 ) and ( quadrant == 4 ) ) then 
-		      	    	if ( circle.steps > 0 ) then
-		      	      		circle.steps = circle.steps - 0.5
-		      	    	end
-		      	  	elseif ( quadrant > circle.quadrant ) then 
-		      	    	circle.steps = circle.steps + 0.5
-		      	  	elseif ( quadrant < circle.quadrant ) then 
-		      	    	if ( circle.steps > 0 ) then
-		      	      		circle.steps = circle.steps - 0.5
-		      	    	end
-		      	  	end 
+			      	if ( ( quadrant ) and ( circle.quadrant ) ) then 
+				      	if ( quadrant ~= circle.quadrant ) then
+				      	  	if ( ( circle.quadrant == 4 ) and ( quadrant == 1 ) ) then 
+				      	    	circle.steps = circle.steps + 0.5
+				      		elseif ( ( circle.quadrant == 1 ) and ( quadrant == 4 ) ) then 
+				      	    	if ( circle.steps > 0 ) then
+				      	      		circle.steps = circle.steps - 0.5
+				      	    	end
+				      	  	elseif ( quadrant > circle.quadrant ) then 
+				      	    	circle.steps = circle.steps + 0.5
+				      	  	elseif ( quadrant < circle.quadrant ) then 
+				      	    	if ( circle.steps > 0 ) then
+				      	      		circle.steps = circle.steps - 0.5
+				      	    	end
+				      	  	end 
+				      	end
+
+				      	circle.quadrant = quadrant
+
+				      	if ( circle.steps > 0 ) then
+				      	  circle.rotation = ( math.atan2( dt, ds ) * 180 / math.pi ) - adjustment 
+				      	end
+				 
+				      	updateSteps( circle )
+				      	
+			      	end
 		      	end
-
-		      	circle.quadrant = quadrant
-
-		      	if ( circle.steps > 0 ) then
-		      	  circle.rotation = ( math.atan2( dt, ds ) * 180 / math.pi ) - adjustment 
-		      	end
-		 
-		      	updateSteps( circle )
 		    end 
 		  
 		elseif ( "ended" == phase or "cancelled" == phase ) then
 			display.currentStage:setFocus( nil )
+			if ( bikeWheel.executeTutorial ) then 
+				bikeWheel:removeEventListener( "touch", spinBikeWheel )
+				bikeWheel.executeTutorial = nil 
+				bikeWheel.maxSteps = nil
+			end
 		end
 
 		return true 
@@ -237,7 +264,7 @@ function M.new( executeInstructions )
 
 			-- Esconde as instruções anteriores e reseta a lista de instruções após uma execução
 			if ( instructionsTable.executing ~= 1 ) then 
-			   	hideInstructions()
+			   	M:hideInstructions()
 			   	instructionsTable:reset() 
 			end
 
@@ -306,7 +333,7 @@ function M.new( executeInstructions )
 
 	-- É o listener para quando o jogador aperta uma seta
 	-- Também adiciona a instrução na fila
-	local function createTutorialInstruction( event )
+	local function createControlsTutorialInstruction( event )
 		local phase = event.phase
 	 	local direction = event.target.myName
 	  	local directionButton = event.target
@@ -337,7 +364,7 @@ function M.new( executeInstructions )
 
 			-- Esconde as instruções anteriores e reseta a lista de instruções após uma execução
 			if ( instructionsTable.executing ~= 1 ) then 
-			   	hideInstructions()
+			   	M:hideInstructions()
 			   	instructionsTable:reset() 
 			end
 
@@ -387,19 +414,19 @@ function M.new( executeInstructions )
 			  	showInstruction( direction, stepsCount )
 
 			  	-- Listener da roda de bicicleta é adicionado
-			  	if ( instructionsTable.last == 1 ) then 
+			  	--[[if ( instructionsTable.last == 1 ) then 
 			  		bikeWheel:addEventListener( "touch", spinBikeWheel )
-				end
+				end]]
 
 				-- A caixa selecionada é escondida
 			  	selectedBox.alpha = 0
 
-			  	directionButtons.right:removeEventListener( "touch", createTutorialInstruction )
-			  	
+			  	directionButtons.right:removeEventListener( "touch", createControlsTutorialInstruction )
+			  	directionButtons.up:removeEventListener( "touch", createControlsTutorialInstruction )
 
 			  	transition.fadeOut( M.hand, { time = 450, onComplete = 
       				function() 
-        				event.target.executeControlsTutorial()
+        				event.target.executeTutorial()
         			end } )
 
 			  	
@@ -451,24 +478,35 @@ function M.new( executeInstructions )
 	    directionButtons.up:addEventListener( "touch", createInstruction )
   	end
 
-  	function M:addRightDirectionListener( executeControlsTutorial )
-  		directionButtons.right.executeControlsTutorial = executeControlsTutorial
-  		directionButtons.right:addEventListener( "touch", createTutorialInstruction )
+  	function M:addRightDirectionListener( executeTutorial )
+  		directionButtons.right.executeTutorial = executeTutorial
+  		directionButtons.right:addEventListener( "touch", createControlsTutorialInstruction )
+  	end
+
+  	function M:addUpDirectionListener( executeTutorial )
+  		directionButtons.up.executeTutorial = executeTutorial
+  		directionButtons.up:addEventListener( "touch", createControlsTutorialInstruction )
+  	end
+
+  	function M:addBikeTutorialListener( maxSteps, executeTutorial )
+  		bikeWheel:addEventListener( "touch", spinBikeWheel )
+  		bikeWheel.maxSteps = maxSteps
+  		bikeWheel.executeTutorial = executeTutorial
   	end
 
   	local function executeTutorialInstructions( )
   		executeInstructions()
   		transition.fadeOut( M.hand, { time = 450, onComplete = 
       				function() 
-        				executeButton.executeControlsTutorial()
-  						executeButton.executeControlsTutorial = nil
+        				executeButton.executeTutorial()
+  						executeButton.executeTutorial = nil
         			end } )
 
   		executeButton:removeEventListener( "tap", executeTutorialInstructions ) 
   	end
 
-  	function M:addExecuteButtonListener( executeControlsTutorial )
-  		executeButton.executeControlsTutorial = executeControlsTutorial
+  	function M:addExecuteButtonListener( executeTutorial )
+  		executeButton.executeTutorial = executeTutorial
   		executeButton:addEventListener( "tap", executeTutorialInstructions )
   	end
 
@@ -509,7 +547,6 @@ function M.new( executeInstructions )
   	function M.restartExecutionListeners()
   		M:addDirectionListeners()
   		M:addButtonsListeners()
-
   	end
 
   	function M:destroy() 
@@ -623,7 +660,7 @@ function M.new( executeInstructions )
 	end
 
 	-- Esconde as instruções após a execução
-	function hideInstructions()
+	function M:hideInstructions()
 	  local boxNum = instructions.shownBox
 
 	  	if ( instructions.shownBox ~= -1 ) then
@@ -633,13 +670,14 @@ function M.new( executeInstructions )
 		      instructions.boxes[i].alpha = 0
 		      instructions.shownBox = -1
 		    end
-	  	end 
+	  	 
 
-	  	for i = boxNum, #instructions.boxes do
-	  		instructions.boxes[i].alpha = 0
-	  	end 
+		  	for i = boxNum, #instructions.boxes do
+		  		instructions.boxes[i].alpha = 0
+		  	end 
 
-	  	instructions.boxes[0].alpha = 1
+		  	instructions.boxes[0].alpha = 1
+	  	end
 	end
 
 	-- Mostra as instruções à medida que são feitas
