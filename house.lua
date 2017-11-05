@@ -112,13 +112,13 @@ local function executeTutorial( event, alternativeEvent )
         tutorialFSM.showMessage()
       elseif ( alternativeEvent == "transitionEvent" ) then
         tutorialFSM.transitionEvent()
-        executeTutorial()
+        --executeTutorial()
       end
 
     else
       if ( tutorialFSM.nextEvent == "showAnimation" ) then 
         tutorialFSM.showAnimation()
-        timer.performWithDelay( animation[tutorialFSM.current](), executeTutorial )
+        --timer.performWithDelay( animation[tutorialFSM.current](), executeTutorial )
 
       elseif ( tutorialFSM.nextEvent == "showMessage" ) then 
         tutorialFSM.showMessage()
@@ -128,31 +128,32 @@ local function executeTutorial( event, alternativeEvent )
       
       elseif ( tutorialFSM.nextEvent == "showMessageAndAnimation" ) then 
         tutorialFSM.showMessageAndAnimation()
-        local _, animationName = tutorialFSM.current:match( "([^,]+)_([^,]+)" )
+
+        --[[local _, animationName = tutorialFSM.current:match( "([^,]+)_([^,]+)" )
         local from, wait, n = tutorialFSM.from:match( "([^,]+)_([^,]+)_([^,]+)" )
         
         if ( ( from == "transitionState" ) and ( wait ) ) then 
           timer.performWithDelay( wait, animation[animationName] )
         else
           animation[animationName]()
-        end
+        end]]
       
       elseif ( tutorialFSM.nextEvent == "transitionEvent" ) then 
         tutorialFSM.transitionEvent()
-        executeTutorial()
+        --executeTutorial()
 
-      elseif ( tutorialFSM.nextEvent == "saveEvent" ) then
-        tutorialFSM.saveEvent()
-        miniGameData.controlsTutorial = "complete"
-        --gameState:save( miniGameData )
-        executeTutorial()
-
+      elseif ( tutorialFSM.nextEvent == "saveGame" ) then
+        tutorialFSM.saveGame()
+        --executeTutorial()
       elseif ( tutorialFSM.nextEvent == "showFeedback" ) then
         tutorialFSM.showFeedback()
-        executeTutorial()
+        --executeTutorial()
 
       elseif ( tutorialFSM.nextEvent == "nextTutorial" ) then
         tutorialFSM.nextTutorial()
+
+      elseif ( tutorialFSM.nextEvent == "endTutorial" ) then
+        tutorialFSM.endTutorial()
       end
     end
   end
@@ -216,50 +217,68 @@ local function showSubText( event )
   end
 end
 
-local function showText( bubble, message )
-  messageBubble = bubble 
+local function showText( bubble, message ) 
   local options = {
       text = " ",
-      x = messageBubble.contentBounds.xMin + 15, 
-      y = messageBubble.contentBounds.yMin + 10,
+      x = bubble.contentBounds.xMin + 15, 
+      y = bubble.contentBounds.yMin + 10,
       fontSize = 12.5,
-      width = messageBubble.width - 27,
+      width = bubble.width - 27,
       height = 0,
       align = "left" 
   }
   options.text = message[1]
 
-  if ( ( not messageBubble.listener ) or ( ( messageBubble.listener ) and ( messageBubble.listener == false ) ) ) then
-    transition.fadeIn( messageBubble, { time = 400 } )
-    messageBubble.listener = true
-    messageBubble:addEventListener( "tap", showSubText )
+  if ( bubble.alpha == 0 ) then
+    transition.fadeIn( bubble, { time = 400 } )
+  end
+
+  if ( ( not bubble.listener ) or ( ( bubble.listener ) and ( bubble.listener == false ) ) ) then
+    bubble.listener = true
+    bubble:addEventListener( "tap", showSubText )
   end 
 
   local newText = display.newText( options ) 
   newText.x = newText.x + newText.width/2
   newText.y = newText.y + newText.height/2
 
-  messageBubble.message = message 
-  messageBubble.text = newText
-  messageBubble.shownText = 1
-  messageBubble.options = options
+  bubble.message = message 
+  bubble.text = newText
+  bubble.shownText = 1
+  bubble.options = options
 
   local time 
-  if ( not messageBubble.blinkingDart ) then 
+  if ( not bubble.blinkingDart ) then 
     if ( tutorialFSM.event == "showObligatoryMessage" ) then 
       time = 500
-      messageBubble.blinkingDart = house:findObject( "obligatoryBlinkingDart" ) 
+      bubble.blinkingDart = house:findObject( "obligatoryBlinkingDart" ) 
     else
       time = 2000
-      messageBubble.blinkingDart = house:findObject( "regularBlinkingDart" ) 
+      if ( bubble == house:findObject( "momBubble" ) ) then 
+        bubble.blinkingDart = house:findObject( "momBlinkingDart" ) 
+      else
+        bubble.blinkingDart = house:findObject( "momBlinkingDart" ) 
+      end
     end
-    messageBubble.blinkingDart.x = messageBubble.x + 33
-    messageBubble.blinkingDart.y = messageBubble.y + 12
+    bubble.blinkingDart.x = bubble.x + 33
+    bubble.blinkingDart.y = bubble.y + 12
 
-    messageBubble.blinkingDart.alpha = 1
-    transition.blink( messageBubble.blinkingDart, { time = time } )
+    bubble.blinkingDart.alpha = 1
+    transition.blink( bubble.blinkingDart, { time = time } )
   end
 
+  if ( ( messageBubble ) and ( messageBubble ~= bubble ) ) then
+    messageBubble.listener = false 
+    messageBubble:removeEventListener( "tap", showSubText )
+
+    messageBubble = bubble
+  elseif ( not messageBubble ) then 
+    messageBubble = bubble
+  end
+
+  --[[if ( ( tutorialFSM ) and ( tutorialFSM.event == "showObligatoryMessage" ) ) then
+    gamePanel.stopExecutionListeners()
+  end]]
 end
 
 local function momAnimation( )
@@ -327,7 +346,7 @@ local function handDirectionAnimation3( )
   gamePanel:addUpDirectionListener( executeTutorial )
 end
 
-local function handWalkAnimation( )
+local function handExecuteAnimation( )
   local hand = gamePanel.hand
   local executeButton = gamePanel.executeButton
   local time = 1500
@@ -419,15 +438,94 @@ local function handExitAnimation()
   gamePanel.restartExecutionListeners()
 end
 
+local function goBackAnimation()
+  local steps = 3
+  local time = steps * 400
+  --gamePanel.stopExecutionListeners()
+  path:hidePath()
+  character.xScale = -1
+  transition.to( character, { time = time, x = character.x - tilesSize * steps } )
+
+  return time
+end
+
+local function showBrotherChallengeAnimation()
+  local brother = house:findObject( "brother" )
+  local steps = 4.5
+  local time = 400 * steps
+  local hidingWallLayer = house:findLayer( "hidingWall" ) 
+
+  path:hidePath()
+  for i = 1, hidingWallLayer.numChildren do
+    hidingWallLayer[i].alpha = 1
+  end 
+  brother.alpha = 1
+
+  local function flipCharacter()
+    character.xScale = 1
+  end
+  --timer.performWithDelay( 400, flipCharacter )
+  transition.to( brother, { time = time, x = brother.x - tilesSize * steps, onComplete =  timer.performWithDelay( 2400, flipCharacter ) } )
+
+  return time
+end
+
+local function brotherJumpingAnimation()
+  local brother = house:findObject( "brother" )
+
+  local time = 1500
+
+  transition.to( brother, { rotation = 7, time = time, y = brother.y - 5, transition = easing.inBounce,
+  onComplete =  
+    function()
+      transition.to( brother, { rotation = 0, time = time, y = brother.y + 5, transition = easing.outBounce } )
+    end
+   } )
+
+  return 0
+end
+
+local function brotherLeavingAnimation()
+  local brother = house:findObject( "brother" )
+  local steps = 4.5
+  local time = 400 * steps
+  local hidingWallLayer = house:findLayer( "hidingWall" ) 
+
+  brother.xScale = 1
+  transition.to( brother, { time = time, x = brother.x + tilesSize * steps, onComplete = 
+    function()
+      for i = 1, hidingWallLayer.numChildren do
+        hidingWallLayer[i].alpha = 0
+      end 
+    end
+   } )
+
+  return time
+end
+
+local function leaveAnimation()
+  local steps = 3
+  local time = steps * 400
+  character.xScale = 1
+  transition.to( character, { time = time, x = character.x + tilesSize * steps } )
+
+  return time
+end
+
 animation["momAnimation"] = momAnimation
 animation["handDirectionAnimation1"] = handDirectionAnimation1
 animation["handDirectionAnimation2"] = handDirectionAnimation2
 animation["handDirectionAnimation3"] = handDirectionAnimation3
-animation["handWalkAnimation"] = handWalkAnimation
+animation["handExecuteAnimation"] = handExecuteAnimation
 animation["gamePanelAnimation"] = gamePanelAnimation
 animation["handBikeAnimation1"] = handBikeAnimation1
 animation["handBikeAnimation2"] = handBikeAnimation2 
 animation["handExitAnimation"] = handExitAnimation 
+animation["goBackAnimation"] = goBackAnimation
+animation["showBrotherChallengeAnimation"] = showBrotherChallengeAnimation
+animation["brotherJumpingAnimation"] = brotherJumpingAnimation
+animation["brotherLeavingAnimation"] = brotherLeavingAnimation
+animation["leaveAnimation"] = leaveAnimation
 
 message["msg1"] = { "Tenho um presente para você.",
                   "Encontre todas as peças de",
@@ -484,12 +582,27 @@ message["msg14"] = { "Agora por que você não vai lá",
 message["msg15"] = { "Para sair de casa, chegue ao", 
                      "quadradinho vermelho." }
 
-message["msg16"] = { "Ah, quase me esqueci!",
-                     "Se você voltar logo para", 
+message["msg16"] = { "Ah, quase me esqueci!" }
+
+message["msg17"] = { "Se você voltar logo para", 
                      "casa, vou te dar outro presente.",
                      "Mas só volte depois de ajudar",
-                     "Todo mundo da cidade que precisar",
-                     "de ajuda." }
+                     "todo mundo da cidade que precisar",
+                     "da sua ajuda." }
+
+message["msg18"] = { "Humpf! Eu ouvi presente?",
+                     "Acho que eu deveria ganhá-lo!",
+                     "Ei, por que não fazemos uma aposta?",
+                     "Se eu chegar antes de você em",
+                     "casa, eu fico com o seu presente." }
+
+message["msg19"] = { "Hahaha! Te vejo mais tarde",
+                      "com o meu presente!" }
+
+message["msg20"] = { "Esse seu irmão não tem jeito!",
+                     "É melhor você correr para",
+                     "alcançá-lo.",
+                     "Até mais tarde." }
 
 local function bikeTutorial()
   local start = house:findObject( "start" )
@@ -522,81 +635,297 @@ local function bikeTutorial()
       {name = "transitionEvent",  from = "momBubble_msg10_handBikeAnimation1",  to = "transitionState_100_1", nextEvent = "showMessageAndAnimation" },
       {name = "showMessageAndAnimation",  from = "transitionState_100_1",  to = "momBubble_msg11_handDirectionAnimation3", nextEvent = "showMessageAndAnimation" },
       {name = "showMessageAndAnimation",  from = "momBubble_msg11_handDirectionAnimation3",  to = "momBubble_msg12_handBikeAnimation2", nextEvent = "showMessageAndAnimation" },
-      {name = "showMessageAndAnimation",  from = "momBubble_msg12_handBikeAnimation2",  to = "momBubble_msg13_handWalkAnimation", nextEvent = "showObligatoryMessage" },
-      {name = "showObligatoryMessage",  from = "momBubble_msg13_handWalkAnimation",  to = "momBubble_msg14", nextEvent = "showMessageAndAnimation" },
-      {name = "showMessageAndAnimation",  from = "momBubble_msg14",  to = "momBubble_msg15_handExitAnimation" },-- nextEvent = "showObligatoryMessage" },
+      {name = "showMessageAndAnimation",  from = "momBubble_msg12_handBikeAnimation2",  to = "momBubble_msg13_handExecuteAnimation", nextEvent = "transitionEvent" },
       
-      {name = "showMessage",  from = "start",  to = "momBubble_msg10", nextEvent = "showMessageAndAnimation" },
+      {name = "transitionEvent",  from = "momBubble_msg13_handExecuteAnimation",  to = "transitionState_1800_2", nextEvent = "showObligatoryMessage" },
+      {name = "showObligatoryMessage",  from = "transitionState_1800_2",  to = "momBubble_msg14", nextEvent = "showMessageAndAnimation" },
+      
+
+      {name = "showMessageAndAnimation",  from = "momBubble_msg14",  to = "momBubble_msg15_handExitAnimation", nextEvent = "showObligatoryMessage" },
+      
       {name = "showMessageAndAnimation",  from = "momBubble_msg10",  to = "momBubble_msg15_handExitAnimation", nextEvent = "showObligatoryMessage" },
-      {name = "showObligatoryMessage",  from = "momBubble_msg15_handExitAnimation",  to = "momBubble_msg16"},-- nextEvent = "showMessageAndAnimation" },
-      
+      {name = "showObligatoryMessage",  from = "momBubble_msg15_handExitAnimation",  to = "momBubble_msg16", nextEvent = "showAnimation" },
+      {name = "showAnimation",  from = "momBubble_msg16",  to = "goBackAnimation", nextEvent = "showObligatoryMessage" },
+      {name = "showObligatoryMessage",  from = "goBackAnimation",  to = "momBubble_msg17", nextEvent = "showAnimation" },
+      {name = "showAnimation",  from = "momBubble_msg17",  to = "momBubble_msg15_showBrotherChallengeAnimation", nextEvent = "showObligatoryMessage" }, 
+    
+      {name = "showAnimation",  from = "momBubble_msg17",  to = "showBrotherChallengeAnimation", nextEvent = "showObligatoryMessage" }, 
+      {name = "showObligatoryMessage",  from = "showBrotherChallengeAnimation",  to = "brotherBubble_msg18", nextEvent = "showAnimation" },
+      {name = "showAnimation",  from = "brotherBubble_msg18",  to = "brotherJumpingAnimation", nextEvent = "showObligatoryMessage" },
+      {name = "showObligatoryMessage",  from = "brotherJumpingAnimation",  to = "brotherBubble_msg19", nextEvent = "showAnimation" },
+      {name = "showAnimation",  from = "brotherBubble_msg19",  to = "brotherLeavingAnimation", nextEvent = "showObligatoryMessage" },
+      {name = "showObligatoryMessage",  from = "brotherLeavingAnimation",  to = "momBubble_msg20", nextEvent = "showAnimation" },
+      {name = "showAnimation",  from = "momBubble_msg20",  to = "leaveAnimation", nextEvent = "saveGame" },
+      {name = "saveGame",  from = "leaveAnimation",  to = "save", nextEvent = "endTutorial" },
+      {name = "endTutorial",  from = "save",  to = "end" },
     },
     callbacks = {
-      on_showMessage = function( self, event, from, to ) 
-        local messageBubble, msg = tutorialFSM.current:match( "([^,]+)_([^,]+)" ) 
-        showText( house:findObject( messageBubble ), message[msg] )
-      end,
-      on_showObligatoryMessage = function( self, event, from, to ) 
-        local messageBubble, msg = tutorialFSM.current:match( "([^,]+)_([^,]+)" ) 
-        showText( house:findObject( messageBubble ), message[msg] )
-      end,
-      on_showMessageAndAnimation = function( self, event, from, to )
-        local messageBubble, msg, animationName = tutorialFSM.current:match( "([^,]+)_([^,]+)_([^,]+)" ) 
-        
-        showText( house:findObject( messageBubble ), message[msg] )
+      on_showAnimation = 
+        function( self, event, from, to ) 
+          local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+          local function closure() 
+            gamePanel.stopExecutionListeners()
+            timer.performWithDelay( animation[self.current](), executeTutorial ) 
+          end
 
-        return animationName
-      end
+          if ( ( from == "transitionState" ) and ( wait ) ) then 
+            timer.performWithDelay( wait, closure )
+          else
+            closure()
+          end
+        end,
+
+      on_showMessage = 
+        function( self, event, from, to ) 
+          local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
+          local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+          local function closure() 
+            gamePanel.stopExecutionListeners()
+            showText( house:findObject( messageBubble ), message[ msg ] ) 
+          end
+
+          if ( ( from == "transitionState" ) and ( wait ) ) then 
+            timer.performWithDelay( wait, closure )
+          else
+            closure()
+          end
+
+        end,
+
+      on_showObligatoryMessage = 
+        function( self, event, from, to ) 
+          local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
+          local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+          local function closure() 
+            showText( house:findObject( messageBubble ), message[ msg ] ) 
+            gamePanel.stopExecutionListeners()
+          end
+
+          if ( ( from == "transitionState" ) and ( wait ) ) then 
+            timer.performWithDelay( wait, closure )
+          else
+            closure()
+          end
+        end,
+
+      on_showMessageAndAnimation = 
+        function( self, event, from, to )
+          local messageBubble, msg, animationName = self.current:match( "([^,]+)_([^,]+)_([^,]+)" ) 
+          local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+
+          showText( house:findObject( messageBubble ), message[ msg ] )
+
+          --local _, animationName = tutorialFSM.current:match( "([^,]+)_([^,]+)" )
+
+          gamePanel.stopExecutionListeners()
+          if ( ( from == "transitionState" ) and ( wait ) ) then 
+            timer.performWithDelay( wait, animation[animationName] )
+          else
+            animation[animationName]()
+          end
+
+          --return animationName
+        end,
+
+      on_transitionEvent = 
+        function( self, event, from, to ) 
+          local _, _, animationName = self.from:match( "([^,]+)_([^,]+)_([^,]+)" ) 
+          
+          gamePanel.stopExecutionListeners()
+          if ( ( animationName ) and ( animationName == "handExecuteAnimation" ) ) then
+            transition.fadeOut( messageBubble, { time = 400 } )
+          end
+
+          if ( ( messageBubble ) and ( messageBubble.text ) ) then
+            transition.fadeOut( messageBubble.text, { time = 400 } )
+            transition.fadeOut( messageBubble, { time = 400 } )
+            messageBubble.text:removeSelf()
+            messageBubble.text = nil
+            transition.cancel( messageBubble.blinkingDart )
+            messageBubble.blinkingDart.alpha = 0
+            messageBubble.blinkingDart = nil
+          end
+          executeTutorial()
+        end,
+
+      on_showFeedback = 
+        function( self, event, from, to ) 
+            local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+
+            gamePanel.stopExecutionListeners()
+            if ( ( from == "transitionState" ) and ( wait ) ) then 
+              timer.performWithDelay( wait, executeTutorial )
+            else
+              executeTutorial()
+            end
+          end,
+
+      on_nextTutorial = 
+        function( self, event, from, to ) 
+           bikeTutorial()
+        end,
+
+      on_saveGame = 
+        function( self, event, from, to ) 
+          miniGameData.bikeTutorial = "complete"
+          miniGameData.isComplete = true 
+          --gameState:save( miniGameData )
+          executeTutorial()
+        end,
+
+      on_endTutorial = 
+        function( self, event, from, to ) 
+          transition.cancel()
+          instructions:destroyInstructionsTable()
+          gamePanel:stopAllListeners()
+          timer.performWithDelay( 800, sceneTransition.gotoMap )
+        end,
     }
   })
 
-  --tutorialFSM.showObligatoryMessage()
-  tutorialFSM.showMessage() ----tirar
-  executeTutorial()         ----tirar
+  tutorialFSM.showObligatoryMessage()
+  --tutorialFSM.showMessage() ----tirar
+  --executeTutorial()         ----tirar
 
 end
 
 local function controlsTutorial( )
-  tutorialFSM = fsm.create({
+  tutorialFSM = fsm.create( {
     initial = "start",
     events = {
       {name = "showAnimation",  from = "start",  to = "momAnimation", nextEvent = "showObligatoryMessage" },
-      {name = "showObligatoryMessage",  from = "momAnimation",  to = "msg1", nextEvent = "showMessageAndAnimation" },
-      {name = "showMessageAndAnimation",  from = "msg1",  to = "msg2_handDirectionAnimation1", nextEvent = "transitionEvent" },
-      {name = "transitionEvent",  from = "msg2_handDirectionAnimation1",  to = "transitionState_100_1", nextEvent = "showMessageAndAnimation" },
+      {name = "showObligatoryMessage",  from = "momAnimation",  to = "momBubble_msg1", nextEvent = "showMessageAndAnimation" },
+      {name = "showMessageAndAnimation",  from = "momBubble_msg1",  to = "momBubble_msg2_handDirectionAnimation1", nextEvent = "transitionEvent" },
+      {name = "transitionEvent",  from = "momBubble_msg2_handDirectionAnimation1",  to = "transitionState_100_1", nextEvent = "showMessageAndAnimation" },
       
-      {name = "showMessageAndAnimation",  from = "transitionState_100_1",  to = "msg3_handDirectionAnimation2", nextEvent = "transitionEvent" },
-      {name = "transitionEvent",  from = "msg3_handDirectionAnimation2",  to = "transitionState_100_2", nextEvent = "showMessageAndAnimation" },
+      {name = "showMessageAndAnimation",  from = "transitionState_100_1",  to = "momBubble_msg3_handDirectionAnimation2", nextEvent = "transitionEvent" },
+      {name = "transitionEvent",  from = "momBubble_msg3_handDirectionAnimation2",  to = "transitionState_100_2", nextEvent = "showMessageAndAnimation" },
       
-      {name = "showMessageAndAnimation",  from = "transitionState_100_2",  to = "msg4_handWalkAnimation", nextEvent = "transitionEvent" },
-      {name = "transitionEvent",  from = "msg4_handWalkAnimation",  to = "transitionState_100_3", nextEvent = "showMessageAndAnimation" },
-      {name = "showMessageAndAnimation",  from = "transitionState_100_3",  to = "msg5_gamePanelAnimation", nextEvent = "showMessage" },
+      {name = "showMessageAndAnimation",  from = "transitionState_100_2",  to = "momBubble_msg4_handExecuteAnimation", nextEvent = "transitionEvent" },
+      {name = "transitionEvent",  from = "momBubble_msg4_handExecuteAnimation",  to = "transitionState_100_3", nextEvent = "showMessageAndAnimation" },
+      {name = "showMessageAndAnimation",  from = "transitionState_100_3",  to = "momBubble_msg5_gamePanelAnimation", nextEvent = "showMessage" },
 
-      {name = "showMessage",  from = "msg5_gamePanelAnimation",  to = "msg6", nextEvent = "showMessage" },
+      {name = "showMessage",  from = "momBubble_msg5_gamePanelAnimation",  to = "momBubble_msg6", nextEvent = "showMessage" },
 
-      {name = "showMessage",  from = "msg6",  to = "msg6", nextEvent = "showMessage" },
-      {name = "transitionEvent",  from = "msg6",  to = "transitionState4", nextEvent = "saveEvent" },
-      {name = "saveEvent",  from = "transitionState4",  to = "save", nextEvent = "showObligatoryMessage" },
-      {name = "showObligatoryMessage",  from = "save",  to = "msg7", nextEvent = "showFeedback" },
-      {name = "showFeedback",  from = "msg7",  to = "feedback", nextEvent = "nextTutorial" },
+      {name = "showMessage",  from = "momBubble_msg6",  to = "momBubble_msg6", nextEvent = "showMessage" },
+      {name = "transitionEvent",  from = "momBubble_msg6",  to = "transitionState4", nextEvent = "saveGame" },
+      {name = "saveGame",  from = "transitionState4",  to = "save", nextEvent = "showObligatoryMessage" },
+      {name = "showObligatoryMessage",  from = "save",  to = "momBubble_msg7", nextEvent = "showFeedback" },
+      {name = "showFeedback",  from = "momBubble_msg7",  to = "feedback", nextEvent = "nextTutorial" },
       {name = "nextTutorial",  from = "feedback",  to = "tutorial" },
     },
     callbacks = {
-      on_showMessage = function( self, event, from, to ) 
-        showText( house:findObject("message"), message[self.current] )
-      end,
-      on_showObligatoryMessage = function( self, event, from, to ) 
-        showText( house:findObject("message"), message[self.current] )
-      end,
-      on_showMessageAndAnimation = function( self, event, from, to )
-        local msg, animationName = tutorialFSM.current:match( "([^,]+)_([^,]+)" ) 
-        showText( house:findObject("message"), message[msg] )
+      n_showAnimation = 
+        function( self, event, from, to ) 
+          local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+          local function closure() 
+            gamePanel.stopExecutionListeners()
+            timer.performWithDelay( animation[self.current](), executeTutorial ) 
+          end
 
-        return animationName
-      end,
-      on_nextTutorial = function( self, event, from, to ) 
-         bikeTutorial()
-      end
+          if ( ( from == "transitionState" ) and ( wait ) ) then 
+            timer.performWithDelay( wait, closure )
+          else
+            closure()
+          end
+        end,
+
+      on_showMessage = 
+        function( self, event, from, to ) 
+          local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
+          local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+          local function closure() 
+            gamePanel.stopExecutionListeners()
+            showText( house:findObject( messageBubble ), message[ msg ] ) 
+          end
+
+          if ( ( from == "transitionState" ) and ( wait ) ) then 
+            timer.performWithDelay( wait, closure )
+          else
+            closure()
+          end
+
+        end,
+
+      on_showObligatoryMessage = 
+        function( self, event, from, to ) 
+          local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
+          local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+          local function closure() 
+            showText( house:findObject( messageBubble ), message[ msg ] ) 
+            gamePanel.stopExecutionListeners()
+          end
+
+          if ( ( from == "transitionState" ) and ( wait ) ) then 
+            timer.performWithDelay( wait, closure )
+          else
+            closure()
+          end
+        end,
+
+      on_showMessageAndAnimation = 
+        function( self, event, from, to )
+          local messageBubble, msg, animationName = self.current:match( "([^,]+)_([^,]+)_([^,]+)" ) 
+          local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+
+          showText( house:findObject( messageBubble ), message[ msg ] )
+
+          --local _, animationName = tutorialFSM.current:match( "([^,]+)_([^,]+)" )
+
+          gamePanel.stopExecutionListeners()
+          if ( ( from == "transitionState" ) and ( wait ) ) then 
+            timer.performWithDelay( wait, animation[animationName] )
+          else
+            animation[animationName]()
+          end
+
+          --return animationName
+        end,
+
+      on_transitionEvent = 
+        function( self, event, from, to ) 
+          local _, _, animationName = self.from:match( "([^,]+)_([^,]+)_([^,]+)" ) 
+          
+          gamePanel.stopExecutionListeners()
+          if ( ( animationName ) and ( animationName == "handExecuteAnimation" ) ) then
+            transition.fadeOut( messageBubble, { time = 400 } )
+          end
+
+          if ( ( messageBubble ) and ( messageBubble.text ) ) then
+            transition.fadeOut( messageBubble.text, { time = 400 } )
+            transition.fadeOut( messageBubble, { time = 400 } )
+            messageBubble.text:removeSelf()
+            messageBubble.text = nil
+            transition.cancel( messageBubble.blinkingDart )
+            messageBubble.blinkingDart.alpha = 0
+            messageBubble.blinkingDart = nil
+          end
+          executeTutorial()
+        end,
+
+      on_showFeedback = 
+        function( self, event, from, to ) 
+            local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+
+            gamePanel.stopExecutionListeners()
+            if ( ( from == "transitionState" ) and ( wait ) ) then 
+              timer.performWithDelay( wait, executeTutorial )
+            else
+              executeTutorial()
+            end
+          end,
+
+      on_nextTutorial = 
+        function( self, event, from, to ) 
+           bikeTutorial()
+        end,
+
+      on_saveGame = 
+        function( self, event, from, to ) 
+          miniGameData.controlsTutorial = "complete"
+          --gameState:save( miniGameData )
+          executeTutorial()
+        end,
     }
   })
 
@@ -713,6 +1042,7 @@ function scene:create( event )
   end
 
   miniGameData.controlsTutorial = "complete"
+  miniGameData.bikeTutorial = "incomplete"
 
   sceneGroup:insert( house )
   sceneGroup:insert( gamePanel.tiled )

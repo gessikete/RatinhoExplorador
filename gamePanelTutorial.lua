@@ -177,6 +177,7 @@ function M.new( executeInstructions )
 		    	--print( bikeWheel.maxSteps )
 		    	if ( ( bikeWheel.maxSteps ) and ( bikeWheel.steps == bikeWheel.maxSteps ) ) then
 						local executeTutorial = event.target.executeTutorial
+
 						transition.cancel( M.hand ) 
 						transition.fadeOut( M.hand, { time = 450, onComplete = 
       						function() 
@@ -221,7 +222,7 @@ function M.new( executeInstructions )
 		  
 		elseif ( "ended" == phase or "cancelled" == phase ) then
 			display.currentStage:setFocus( nil )
-			if ( bikeWheel.executeTutorial ) then 
+			if ( ( bikeWheel.executeTutorial ) and ( bikeWheel.steps == bikeWheel.maxSteps ) ) then 
 				bikeWheel:removeEventListener( "touch", spinBikeWheel )
 				bikeWheel.executeTutorial = nil 
 				bikeWheel.maxSteps = nil
@@ -501,8 +502,8 @@ function M.new( executeInstructions )
         				executeButton.executeTutorial()
   						executeButton.executeTutorial = nil
         			end } )
-
-  		executeButton:removeEventListener( "tap", executeTutorialInstructions ) 
+ 
+  		M.stopExecutionListeners()
   	end
 
   	function M:addExecuteButtonListener( executeTutorial )
@@ -526,6 +527,7 @@ function M.new( executeInstructions )
 		directionButtons.up:removeEventListener( "touch", createInstruction )
 
 		executeButton:removeEventListener( "tap", executeInstructions )
+		executeButton:removeEventListener( "tap", executeTutorialInstructions )
 
 		bikeWheel:removeEventListener( "touch", spinBikeWheel )
 
