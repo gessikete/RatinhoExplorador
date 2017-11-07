@@ -52,20 +52,8 @@
                  "height":70,
                  "id":612,
                  "name":"",
-                 "properties":
-                    {
-                     "bodyType":"static",
-                     "isSensor":"true",
-                     "myName":"house"
-                    },
-                 "propertytypes":
-                    {
-                     "bodyType":"string",
-                     "isSensor":"string",
-                     "myName":"string"
-                    },
                  "rotation":0,
-                 "type":"physics",
+                 "type":"",
                  "visible":true,
                  "width":88,
                  "x":32,

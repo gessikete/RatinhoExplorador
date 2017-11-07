@@ -36,6 +36,7 @@ function M.new(  currentMiniGame, character, onCollision )
 
 	  		if ( miniGameData ) then
 	  			if ( currentMiniGame == "house" ) then
+	  				gameState.house.isComplete = miniGameData.isComplete
 	  				gameState.house.controlsTutorial = miniGameData.controlsTutorial
 	  				gameState.house.bikeTutorial = miniGameData.bikeTutorial
 	  			end

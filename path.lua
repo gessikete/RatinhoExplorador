@@ -62,7 +62,7 @@ function M.new( map )
 
 	function M:hidePath()
 		for k, v in pairs( path ) do
-			path[k].alpha = 0
+			transition.fadeOut( path[k], { time = 400 } )
 		end
 	end
 

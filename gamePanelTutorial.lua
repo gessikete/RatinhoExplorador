@@ -414,11 +414,6 @@ function M.new( executeInstructions )
 			  	instructionsTable:add( direction, stepsCount )
 			  	showInstruction( direction, stepsCount )
 
-			  	-- Listener da roda de bicicleta é adicionado
-			  	--[[if ( instructionsTable.last == 1 ) then 
-			  		bikeWheel:addEventListener( "touch", spinBikeWheel )
-				end]]
-
 				-- A caixa selecionada é escondida
 			  	selectedBox.alpha = 0
 
@@ -436,6 +431,7 @@ function M.new( executeInstructions )
 				-- volta para a posição original
 				transition.to( directionButton, { time = 400, x = directionButton.originalX, y = directionButton.originalY } )
 		  	end
+
 	    	display.currentStage:setFocus( nil )
 		end
 

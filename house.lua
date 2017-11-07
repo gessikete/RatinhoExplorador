@@ -60,25 +60,6 @@ local animation = {}
 
 local message = {}
 
--- -----------------------------------------------------------------------------------
--- Remoções para limpar a tela
--- -----------------------------------------------------------------------------------
-local function destroyScene()
-  Runtime:removeEventListener( "collision", onCollision )
-  gamePanel:destroy()
-
-  instructions:destroyInstructionsTable()
-
-  house:removeSelf()
-  house = nil 
-
-  if ( ( messageBubble ) and ( messageBubble.text ) ) then
-    messageBubble.text:removeSelf()
-    messageBubble.text = nil 
-  end
-
-  tutorialFSM = nil 
-end
 
 local function setPuzzle()
   local bigPiecesLayer = house:findLayer("big puzzle") 
@@ -166,7 +147,7 @@ local function showSubText( event )
   if ( messageBubble.message[messageBubble.shownText] ) then 
     messageBubble.text:removeSelf()
 
-    if ( ( tutorialFSM.current == "msg6" ) and ( messageBubble.message[messageBubble.shownText] == "Mas ainda falta" ) ) then 
+    if ( ( tutorialFSM.current == "momBubble_msg6" ) and ( messageBubble.message[messageBubble.shownText] == "Mas ainda falta" ) ) then 
       local remainingPieces = puzzle.littlePieces.count - collectedPieces.count
 
       if ( remainingPieces > 1 ) then
@@ -282,10 +263,10 @@ local function showText( bubble, message )
 end
 
 local function momAnimation( )
-  local time = 5 --5000
+  local time = 5000
   transition.to( house:findObject("mom"), { time = time, x = character.x, y = character.y - tilesSize } )
 
-  return time --+ 500
+  return time + 500
 end
 
 local function handDirectionAnimation( time, wait, hand, initialX, initialY, x, y, state )
@@ -441,7 +422,7 @@ end
 local function goBackAnimation()
   local steps = 3
   local time = steps * 400
-  --gamePanel.stopExecutionListeners()
+
   path:hidePath()
   character.xScale = -1
   transition.to( character, { time = time, x = character.x - tilesSize * steps } )
@@ -464,7 +445,7 @@ local function showBrotherChallengeAnimation()
   local function flipCharacter()
     character.xScale = 1
   end
-  --timer.performWithDelay( 400, flipCharacter )
+
   transition.to( brother, { time = time, x = brother.x - tilesSize * steps, onComplete =  timer.performWithDelay( 2400, flipCharacter ) } )
 
   return time
@@ -503,13 +484,119 @@ local function brotherLeavingAnimation()
   return time
 end
 
-local function leaveAnimation()
+local function characterLeaveAnimation()
   local steps = 3
   local time = steps * 400
   character.xScale = 1
   transition.to( character, { time = time, x = character.x + tilesSize * steps } )
 
   return time
+end
+
+local function bikeAnimation()
+  local time = 1000
+  local bike = house:findObject( "bike" )
+  local completePuzzle = house:findObject( "completePuzzle" )
+  local xPos, yPos = persistence.startingPoint( "house" ) 
+  local mom = house:findObject( "mom" )
+
+  transition.fadeIn( completePuzzle, { time = time, 
+    onComplete =  
+      function()
+        for k, v in pairs( puzzle.bigPieces ) do
+          puzzle.bigPieces[k].alpha = 0
+        end
+        bike.alpha = 1
+        transition.fadeOut( completePuzzle, { time = time, 
+          onComplete =  
+            function()
+              characterLayer = house:findLayer("character")
+              characterLayer:insert( bike )
+              transition.scaleTo( bike, { time = time * 3, xScale = .5, yScale = .5, x = xPos, y = yPos,
+                onComplete = 
+                  function()
+                    bikeLayer = house:findLayer("bike")
+                    bikeLayer:insert( bike )
+                  end
+               } )
+            end
+          } )
+      end
+
+    } )
+
+  return time * 7
+end
+
+local function gotoInitialPosition()
+  local stepsX, stepsY 
+  local time = 400
+  local bike = house:findObject( "bike" )
+
+  path:hidePath()
+  local function flip()
+    character.xScale = 1
+  end
+
+  local function delayedflip()
+    timer.performWithDelay( 200, flip )
+  end
+
+  local function hideBike()
+    transition.fadeOut( bike, { time = time } )
+  end
+
+
+  if ( collectedPieces.last == "2" ) then
+    stepsX = 2
+    stepsY = 3
+
+    transition.to( character, { time = stepsY * time, y = character.y + stepsY * tilesSize,
+      onComplete = 
+        function()
+          character.xScale = -1 
+          transition.to( character, { time = stepsX * time, x = character.x - stepsX * tilesSize, 
+            onComplete = 
+              function()
+                hideBike()
+                delayedflip()
+              end
+            } )
+        end
+      } )
+  elseif ( collectedPieces.last == "3" ) then 
+    stepsX = 4
+    stepsY = 3
+    stepsX2 = 2
+
+    character.xScale = -1
+    transition.to( character, { time = stepsX * time, x = character.x - stepsX * tilesSize,
+      onComplete = 
+        function()
+          transition.to( character, { time = stepsY * time, y = character.y + stepsY * tilesSize,
+          onComplete = 
+            function()
+              transition.to( character, { time = stepsX2 * time, x = character.x - stepsX2 * tilesSize, 
+                onComplete = 
+                  function()
+                    hideBike()
+                    delayedflip()
+                  end 
+                } )
+            end
+           } )
+        end
+      } )
+    stepsX = stepsX + stepsX2
+  elseif ( collectedPieces.last == "4" ) then 
+    stepsX = 4
+    stepsY = 0
+    character.xScale = -1
+    transition.to( character, { time = stepsX * time, x = character.x - stepsX * tilesSize, onComplete = hideBike } )
+  end
+
+
+  return time * stepsX + time*stepsY
 end
 
 animation["momAnimation"] = momAnimation
@@ -525,7 +612,9 @@ animation["goBackAnimation"] = goBackAnimation
 animation["showBrotherChallengeAnimation"] = showBrotherChallengeAnimation
 animation["brotherJumpingAnimation"] = brotherJumpingAnimation
 animation["brotherLeavingAnimation"] = brotherLeavingAnimation
-animation["leaveAnimation"] = leaveAnimation
+animation["characterLeaveAnimation"] = characterLeaveAnimation
+animation["bikeAnimation"] = bikeAnimation
+animation["gotoInitialPosition"] = gotoInitialPosition
 
 message["msg1"] = { "Tenho um presente para você.",
                   "Encontre todas as peças de",
@@ -538,7 +627,7 @@ message["msg2"] = { "Arraste a seta da direita para",
                     "um quadradinho" }
 
 message["msg3"] = { "Muito bem! Arraste mais uma",
-                    "seta para completar o caminho." }
+                    "seta para pegar a peça ao lado." }
 
 message["msg4"] = { "Agora aper-te no botão \"andar\"." }
 
@@ -609,14 +698,10 @@ local function bikeTutorial()
 
   if ( not mom ) then 
     mom = house:findObject( "mom" )
-    mom.x = character.x
-    mom.y = character.y - tilesSize
   else 
-    physics.removeBody( character )
-    character.x = mom.x 
-    character.y = mom.y + tilesSize
+    transition.to( character, { time = 0, x = 80, y = 296} )
+    mom.x, mom.y = character.x, character.y - tilesSize
 
-    physics.addBody( character )
     path:hidePath()
 
     gamePanel:showBikewheel ( true )
@@ -655,8 +740,8 @@ local function bikeTutorial()
       {name = "showObligatoryMessage",  from = "brotherJumpingAnimation",  to = "brotherBubble_msg19", nextEvent = "showAnimation" },
       {name = "showAnimation",  from = "brotherBubble_msg19",  to = "brotherLeavingAnimation", nextEvent = "showObligatoryMessage" },
       {name = "showObligatoryMessage",  from = "brotherLeavingAnimation",  to = "momBubble_msg20", nextEvent = "showAnimation" },
-      {name = "showAnimation",  from = "momBubble_msg20",  to = "leaveAnimation", nextEvent = "saveGame" },
-      {name = "saveGame",  from = "leaveAnimation",  to = "save", nextEvent = "endTutorial" },
+      {name = "showAnimation",  from = "momBubble_msg20",  to = "characterLeaveAnimation", nextEvent = "saveGame" },
+      {name = "saveGame",  from = "characterLeaveAnimation",  to = "save", nextEvent = "endTutorial" },
       {name = "endTutorial",  from = "save",  to = "end" },
     },
     callbacks = {
@@ -760,11 +845,6 @@ local function bikeTutorial()
             end
           end,
 
-      on_nextTutorial = 
-        function( self, event, from, to ) 
-           bikeTutorial()
-        end,
-
       on_saveGame = 
         function( self, event, from, to ) 
           miniGameData.bikeTutorial = "complete"
@@ -784,6 +864,7 @@ local function bikeTutorial()
   })
 
   tutorialFSM.showObligatoryMessage()
+  --tutorialFSM.showAnimation()
   --tutorialFSM.showMessage() ----tirar
   --executeTutorial()         ----tirar
 
@@ -793,29 +874,33 @@ local function controlsTutorial( )
   tutorialFSM = fsm.create( {
     initial = "start",
     events = {
-      {name = "showAnimation",  from = "start",  to = "momAnimation", nextEvent = "showObligatoryMessage" },
-      {name = "showObligatoryMessage",  from = "momAnimation",  to = "momBubble_msg1", nextEvent = "showMessageAndAnimation" },
-      {name = "showMessageAndAnimation",  from = "momBubble_msg1",  to = "momBubble_msg2_handDirectionAnimation1", nextEvent = "transitionEvent" },
-      {name = "transitionEvent",  from = "momBubble_msg2_handDirectionAnimation1",  to = "transitionState_100_1", nextEvent = "showMessageAndAnimation" },
+      --{ name = "showAnimation", from = "start", to = "bikeAnimation", nextEvent = "showAnimation" },
+      --{ name = "showAnimation", from = "bikeAnimation", to = "gotoInitialPosition" },
+      { name = "showAnimation",  from = "start",  to = "momAnimation", nextEvent = "showObligatoryMessage" },
+      { name = "showObligatoryMessage",  from = "momAnimation",  to = "momBubble_msg1", nextEvent = "showMessageAndAnimation" },
+      { name = "showMessageAndAnimation",  from = "momBubble_msg1",  to = "momBubble_msg2_handDirectionAnimation1", nextEvent = "transitionEvent" },
+      { name = "transitionEvent",  from = "momBubble_msg2_handDirectionAnimation1",  to = "transitionState_100_1", nextEvent = "showMessageAndAnimation" },
       
-      {name = "showMessageAndAnimation",  from = "transitionState_100_1",  to = "momBubble_msg3_handDirectionAnimation2", nextEvent = "transitionEvent" },
-      {name = "transitionEvent",  from = "momBubble_msg3_handDirectionAnimation2",  to = "transitionState_100_2", nextEvent = "showMessageAndAnimation" },
+      { name = "showMessageAndAnimation",  from = "transitionState_100_1",  to = "momBubble_msg3_handDirectionAnimation2", nextEvent = "transitionEvent" },
+      { name = "transitionEvent",  from = "momBubble_msg3_handDirectionAnimation2",  to = "transitionState_100_2", nextEvent = "showMessageAndAnimation" },
       
-      {name = "showMessageAndAnimation",  from = "transitionState_100_2",  to = "momBubble_msg4_handExecuteAnimation", nextEvent = "transitionEvent" },
-      {name = "transitionEvent",  from = "momBubble_msg4_handExecuteAnimation",  to = "transitionState_100_3", nextEvent = "showMessageAndAnimation" },
-      {name = "showMessageAndAnimation",  from = "transitionState_100_3",  to = "momBubble_msg5_gamePanelAnimation", nextEvent = "showMessage" },
+      { name = "showMessageAndAnimation",  from = "transitionState_100_2",  to = "momBubble_msg4_handExecuteAnimation", nextEvent = "transitionEvent" },
+      { name = "transitionEvent",  from = "momBubble_msg4_handExecuteAnimation",  to = "transitionState_100_3", nextEvent = "showMessageAndAnimation" },
+      { name = "showMessageAndAnimation",  from = "transitionState_100_3",  to = "momBubble_msg5_gamePanelAnimation", nextEvent = "showMessage" },
 
-      {name = "showMessage",  from = "momBubble_msg5_gamePanelAnimation",  to = "momBubble_msg6", nextEvent = "showMessage" },
+      { name = "showMessage",  from = "momBubble_msg5_gamePanelAnimation",  to = "momBubble_msg6", nextEvent = "showMessage" },
 
-      {name = "showMessage",  from = "momBubble_msg6",  to = "momBubble_msg6", nextEvent = "showMessage" },
-      {name = "transitionEvent",  from = "momBubble_msg6",  to = "transitionState4", nextEvent = "saveGame" },
-      {name = "saveGame",  from = "transitionState4",  to = "save", nextEvent = "showObligatoryMessage" },
-      {name = "showObligatoryMessage",  from = "save",  to = "momBubble_msg7", nextEvent = "showFeedback" },
-      {name = "showFeedback",  from = "momBubble_msg7",  to = "feedback", nextEvent = "nextTutorial" },
-      {name = "nextTutorial",  from = "feedback",  to = "tutorial" },
+      { name = "showMessage",  from = "momBubble_msg6",  to = "momBubble_msg6", nextEvent = "showMessage" },
+      { name = "transitionEvent",  from = "momBubble_msg6",  to = "transitionState4", nextEvent = "saveGame" },
+      { name = "saveGame",  from = "transitionState4",  to = "save", nextEvent = "showObligatoryMessage" },
+      { name = "showObligatoryMessage",  from = "save",  to = "momBubble_msg7", nextEvent = "showAnimation" },
+      { name = "showAnimation", from = "momBubble_msg7", to = "bikeAnimation", nextEvent = "showAnimation" },
+      { name = "showAnimation", from = "bikeAnimation", to = "gotoInitialPosition", nextEvent = "showFeedback"  },
+      { name = "showFeedback",  from = "gotoInitialPosition",  to = "feedback", nextEvent = "nextTutorial" },
+      { name = "nextTutorial",  from = "feedback",  to = "tutorial" },
     },
     callbacks = {
-      n_showAnimation = 
+      on_showAnimation = 
         function( self, event, from, to ) 
           local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
           local function closure() 
@@ -870,16 +955,12 @@ local function controlsTutorial( )
 
           showText( house:findObject( messageBubble ), message[ msg ] )
 
-          --local _, animationName = tutorialFSM.current:match( "([^,]+)_([^,]+)" )
-
           gamePanel.stopExecutionListeners()
           if ( ( from == "transitionState" ) and ( wait ) ) then 
             timer.performWithDelay( wait, animation[animationName] )
           else
             animation[animationName]()
           end
-
-          --return animationName
         end,
 
       on_transitionEvent = 
@@ -887,9 +968,9 @@ local function controlsTutorial( )
           local _, _, animationName = self.from:match( "([^,]+)_([^,]+)_([^,]+)" ) 
           
           gamePanel.stopExecutionListeners()
-          if ( ( animationName ) and ( animationName == "handExecuteAnimation" ) ) then
+          --[[if ( ( animationName ) and ( animationName == "handExecuteAnimation" ) ) then
             transition.fadeOut( messageBubble, { time = 400 } )
-          end
+          end]]
 
           if ( ( messageBubble ) and ( messageBubble.text ) ) then
             transition.fadeOut( messageBubble.text, { time = 400 } )
@@ -917,7 +998,7 @@ local function controlsTutorial( )
 
       on_nextTutorial = 
         function( self, event, from, to ) 
-           bikeTutorial()
+          bikeTutorial()
         end,
 
       on_saveGame = 
@@ -934,7 +1015,7 @@ local function controlsTutorial( )
   mom.originalY = mom.y
   
   tutorialFSM.showAnimation()
-  timer.performWithDelay( animation[tutorialFSM.current](), executeTutorial )
+  --timer.performWithDelay( animation[tutorialFSM.current](), executeTutorial )
   
 
 end
@@ -950,13 +1031,15 @@ local function onCollision( event )
   local obj2 = event.object2
 
   if ( event.phase == "began" ) then
-    if ( ( obj1.myName == "puzzle" ) and ( obj2.myName == "character" ) ) then
+    if ( ( ( obj1.myName == "character" ) and ( obj2.myName == "rope" ) ) or ( ( obj2.myName == "character" ) and ( obj1.myName == "rope" ) ) ) then 
+    elseif ( ( obj1.myName == "puzzle" ) and ( obj2.myName == "character" ) ) then
       if ( collectedPieces[obj1.puzzleNumber] == nil ) then 
         puzzle.bigPieces[obj1.puzzleNumber].alpha = 1
         puzzle.littlePieces[ obj1.puzzleNumber ].alpha = 0
         collectedPieces[ obj1.puzzleNumber ] = puzzle.littlePieces[ obj1.puzzleNumber ]
         local remainingPieces = puzzle.littlePieces.count - (collectedPieces.count + 1)
 
+        collectedPieces.last = obj1.puzzleNumber
         if ( ( collectedPieces.count ~= 0 ) and ( remainingPieces > 0 ) ) then
           executeTutorial()
         elseif ( remainingPieces <= 0 ) then 
@@ -964,7 +1047,6 @@ local function onCollision( event )
         end
         collectedPieces.count = collectedPieces.count + 1
 
-        print( "collectedPieces: " .. collectedPieces.count .. "; remain: " .. remainingPieces )
       end 
     elseif ( ( obj1.myName == "character" ) and ( obj2.myName == "puzzle" ) ) then 
       if ( collectedPieces[obj2.puzzleNumber] == nil ) then
@@ -973,7 +1055,7 @@ local function onCollision( event )
         collectedPieces[ obj2.puzzleNumber ] = puzzle.littlePieces[ obj2.puzzleNumber ]
         local remainingPieces = puzzle.littlePieces.count - (collectedPieces.count + 1)
 
-
+        collectedPieces.last = obj2.puzzleNumber
         if ( ( collectedPieces.count ~= 0 ) and ( remainingPieces > 0 ) ) then
           executeTutorial()
         elseif ( remainingPieces <= 0 ) then 
@@ -1016,12 +1098,33 @@ local function onCollision( event )
       character.steppingY = obj1.y 
       path:showTile( obj1.myName )
 
+
     -- Colisão com os demais objetos e o personagem (rope nesse caso)
     elseif ( ( ( obj1.myName == "collision" ) and ( obj2.myName == "rope" ) ) or ( ( obj1.myName == "rope" ) and ( obj2.myName == "collision" ) ) ) then 
       transition.cancel()
     end
   end 
   return true 
+end
+
+-- -----------------------------------------------------------------------------------
+-- Remoções para limpar a tela
+-- -----------------------------------------------------------------------------------
+local function destroyScene()
+  Runtime:removeEventListener( "collision", onCollision )
+  gamePanel:destroy()
+
+  instructions:destroyInstructionsTable()
+
+  house:removeSelf()
+  house = nil 
+
+  if ( ( messageBubble ) and ( messageBubble.text ) ) then
+    messageBubble.text:removeSelf()
+    messageBubble.text = nil 
+  end
+
+  tutorialFSM = nil 
 end
 -- -----------------------------------------------------------------------------------
 -- Cenas
@@ -1041,8 +1144,8 @@ function scene:create( event )
     character.xScale = -1
   end
 
-  miniGameData.controlsTutorial = "complete"
-  miniGameData.bikeTutorial = "incomplete"
+  --miniGameData.controlsTutorial = "incomplete"
+  --miniGameData.bikeTutorial = "incomplete"
 
   sceneGroup:insert( house )
   sceneGroup:insert( gamePanel.tiled )
@@ -1050,6 +1153,7 @@ function scene:create( event )
   if ( miniGameData.controlsTutorial == "incomplete" ) then 
     setPuzzle()
   end
+
 end
 
 -- show()
@@ -1065,7 +1169,6 @@ function scene:show( event )
 
 	elseif ( phase == "did" ) then
     if ( miniGameData.controlsTutorial == "complete" ) then
-      gamePanel:showDirectionButtons( false )
 		  gamePanel:addButtonsListeners()
       gamePanel:addInstructionPanelListeners()
 
