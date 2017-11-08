@@ -60,6 +60,7 @@ function M.new( executeInstructions )
   	bikeWheel.radius = bikeWheel.width/2
   	bikeWheel.quadrant = 1
   	bikeWheel.steps = 1
+  	bikeWheel.maxCount = math.huge
   	M.bikeWheel = bikeWheel
 
   	-- Setas que definem a direção
@@ -81,8 +82,15 @@ function M.new( executeInstructions )
 
  	instructionsPanel = gamePanel:findObject("instructionsPanel")
 
+ 	-----==
   	executeButton = gamePanel:findObject("executeButton")
+  	executeButton.executionsCount = 0
+  	executeButton.instructionsCount = {}
+  	executeButton.bikeCount = {}
   	M.executeButton = executeButton
+
+  	bikeLimit = gamePanel:findObject( "bikeLimit" )
+  	-----==
 
   	goBackButton = gamePanel:findObject("goBackButton")
 
@@ -154,6 +162,22 @@ function M.new( executeInstructions )
 	  	end
 	end
 
+	function M:updateBikeMaxCount( count )
+		bikeWheel.maxCount = count
+
+		if ( bikeLimit.text ) then 
+			bikeLimit.text.text = count 
+		else
+			bikeLimit.text = display.newText( gamePanel:findLayer( "bikeLimit" ), " ", bikeLimit.x, bikeLimit.y, system.nativeFontBold, 12 )
+			bikeLimit.text.alpha = 0
+			bikeLimit.text.text = count
+		end
+
+		transition.fadeIn( bikeLimit.text, { time = 400 } ) 
+		transition.fadeIn( bikeLimit, { time = 400 } ) 
+
+	end
+
 	-- Gira a roda da bicicleta
 	local function spinBikeWheel( event )
 		local circle = event.target
@@ -174,48 +198,49 @@ function M.new( executeInstructions )
 		  
 		elseif ( "moved" == phase ) then
 		    if ( adjustment ) then 
-		    	--print( bikeWheel.maxSteps )
-		    	if ( ( bikeWheel.maxSteps ) and ( bikeWheel.steps == bikeWheel.maxSteps ) ) then
-						local executeTutorial = event.target.executeTutorial
+		    	if ( bikeWheel.maxCount > 0 ) then 
+			    	if ( ( bikeWheel.maxSteps ) and ( bikeWheel.steps == bikeWheel.maxSteps ) ) then
+							local executeTutorial = event.target.executeTutorial
 
-						transition.cancel( M.hand ) 
-						transition.fadeOut( M.hand, { time = 450, onComplete = 
-      						function() 
-        						executeTutorial()
-        					end } )
-					
-				elseif ( ( not bikeWheel.maxSteps ) or ( ( bikeWheel.maxSteps ) and ( bikeWheel.steps < bikeWheel.maxSteps ) ) ) then  
-			      	local dx = event.x - centerX 
-			      	local dy = event.y - centerY
-			      	local radius = math.sqrt( math.pow( dx, 2 ) + math.pow( dy, 2 ) )
-			      	local ds, dt = ( circle.radius * dx ) / radius, ( circle.radius * dy ) / radius
-			      	local quadrant = getQuadrant( dx, dy )
+							transition.cancel( M.hand ) 
+							transition.fadeOut( M.hand, { time = 450, onComplete = 
+	      						function() 
+	        						executeTutorial()
+	        					end } )
+						
+					elseif ( ( not bikeWheel.maxSteps ) or ( ( bikeWheel.maxSteps ) and ( bikeWheel.steps < bikeWheel.maxSteps ) ) ) then  
+				      	local dx = event.x - centerX 
+				      	local dy = event.y - centerY
+				      	local radius = math.sqrt( math.pow( dx, 2 ) + math.pow( dy, 2 ) )
+				      	local ds, dt = ( circle.radius * dx ) / radius, ( circle.radius * dy ) / radius
+				      	local quadrant = getQuadrant( dx, dy )
 
-			      	if ( ( quadrant ) and ( circle.quadrant ) ) then 
-				      	if ( quadrant ~= circle.quadrant ) then
-				      	  	if ( ( circle.quadrant == 4 ) and ( quadrant == 1 ) ) then 
-				      	    	circle.steps = circle.steps + 0.5
-				      		elseif ( ( circle.quadrant == 1 ) and ( quadrant == 4 ) ) then 
-				      	    	if ( circle.steps > 0 ) then
-				      	      		circle.steps = circle.steps - 0.5
-				      	    	end
-				      	  	elseif ( quadrant > circle.quadrant ) then 
-				      	    	circle.steps = circle.steps + 0.5
-				      	  	elseif ( quadrant < circle.quadrant ) then 
-				      	    	if ( circle.steps > 0 ) then
-				      	      		circle.steps = circle.steps - 0.5
-				      	    	end
-				      	  	end 
+				      	if ( ( quadrant ) and ( circle.quadrant ) ) then 
+					      	if ( quadrant ~= circle.quadrant ) then
+					      	  	if ( ( circle.quadrant == 4 ) and ( quadrant == 1 ) ) then 
+					      	    	circle.steps = circle.steps + 0.5
+					      		elseif ( ( circle.quadrant == 1 ) and ( quadrant == 4 ) ) then 
+					      	    	if ( circle.steps > 0 ) then
+					      	      		circle.steps = circle.steps - 0.5
+					      	    	end
+					      	  	elseif ( quadrant > circle.quadrant ) then 
+					      	    	circle.steps = circle.steps + 0.5
+					      	  	elseif ( quadrant < circle.quadrant ) then 
+					      	    	if ( circle.steps > 0 ) then
+					      	      		circle.steps = circle.steps - 0.5
+					      	    	end
+					      	  	end 
+					      	end
+
+					      	circle.quadrant = quadrant
+
+					      	if ( circle.steps > 0 ) then
+					      	  circle.rotation = ( math.atan2( dt, ds ) * 180 / math.pi ) - adjustment 
+					      	end
+					 
+					      	updateSteps( circle )
+					      	
 				      	end
-
-				      	circle.quadrant = quadrant
-
-				      	if ( circle.steps > 0 ) then
-				      	  circle.rotation = ( math.atan2( dt, ds ) * 180 / math.pi ) - adjustment 
-				      	end
-				 
-				      	updateSteps( circle )
-				      	
 			      	end
 		      	end
 		    end 
@@ -321,6 +346,12 @@ function M.new( executeInstructions )
 
 				-- A caixa selecionada é escondida
 			  	selectedBox.alpha = 0
+
+			  	---------====
+			  	if ( ( bikeWheel.maxCount ~= math.huge ) and ( instructionsTable.last ~= 1 ) and ( instructionsTable.steps[ instructionsTable.last - 1 ]  > 1 ) )  then
+			  		M:updateBikeMaxCount( bikeWheel.maxCount - 1 )
+			  	end
+			  	---------====
 			else
 				-- Caso o movimento de toque acabe e a seta não seja colocada na caixa correta, ela 
 				-- volta para a posição original
@@ -420,6 +451,13 @@ function M.new( executeInstructions )
 			  	directionButtons.right:removeEventListener( "touch", createControlsTutorialInstruction )
 			  	directionButtons.up:removeEventListener( "touch", createControlsTutorialInstruction )
 
+
+			  	---------====
+			  	if ( ( bikeWheel.maxCount ~= math.huge ) and ( instructionsTable.last ~= 1 ) and ( instructionsTable.steps[ instructionsTable.last - 1 ]  > 1 ) )  then
+			  		M:updateBikeMaxCount( bikeWheel.maxCount - 1 )
+			  	end
+			  	---------====
+
 			  	transition.fadeOut( M.hand, { time = 450, onComplete = 
       				function() 
         				event.target.executeTutorial()
@@ -491,15 +529,49 @@ function M.new( executeInstructions )
   		bikeWheel.executeTutorial = executeTutorial
   	end
 
+  	-----==
+  	function M.executeInstructions()
+  		local bikeCount = 0
+
+  		executeButton.executionsCount = executeButton.executionsCount + 1
+  		table.insert( executeButton.instructionsCount, instructionsTable.last )
+  		
+  		
+  		for i = 1, #instructionsTable.steps do 
+  			if ( instructionsTable.steps[i] ) > 1 then bikeCount = bikeCount + 1 end 
+  		end
+
+  		table.insert( executeButton.bikeCount, bikeCount )
+
+  		print( "-----" )
+  		for i = 1, #executeButton.instructionsCount do
+  			print( "EXEC #" .. i .. ": " .. executeButton.instructionsCount[i] .. "; Bike #" .. i .. ": " .. executeButton.bikeCount[i] )
+  		end
+  		print( "-----" )
+
+  		if ( instructionsTable.steps[ instructionsTable.last ]  > 1 ) then 
+  			M:updateBikeMaxCount( bikeWheel.maxCount - 1 )
+  		end
+
+  		executeInstructions()
+  	end
+
+  	-----==
+
   	local function executeTutorialInstructions( )
   		executeInstructions()
+
   		transition.fadeOut( M.hand, { time = 450, onComplete = 
       				function() 
         				executeButton.executeTutorial()
   						executeButton.executeTutorial = nil
         			end } )
  
-  		M.stopExecutionListeners()
+ 		M.stopExecutionListeners()
+
+ 		if ( instructionsTable.steps[ instructionsTable.last ]  > 1 ) then 
+  			M:updateBikeMaxCount( bikeWheel.maxCount - 1 )
+  		end	
   	end
 
   	function M:addExecuteButtonListener( executeTutorial )
@@ -508,7 +580,7 @@ function M.new( executeInstructions )
   	end
 
   	function M:addButtonsListeners()
-  		executeButton:addEventListener( "tap", executeInstructions )
+  		executeButton:addEventListener( "tap", M.executeInstructions )
     	goBackButton:addEventListener( "tap", sceneTransition.gotoMenu )
   	end
 
@@ -522,7 +594,7 @@ function M.new( executeInstructions )
 		directionButtons.down:removeEventListener( "touch", createInstruction )
 		directionButtons.up:removeEventListener( "touch", createInstruction )
 
-		executeButton:removeEventListener( "tap", executeInstructions )
+		executeButton:removeEventListener( "tap", M.executeInstructions )
 		executeButton:removeEventListener( "tap", executeTutorialInstructions )
 
 		bikeWheel:removeEventListener( "touch", spinBikeWheel )
@@ -537,7 +609,7 @@ function M.new( executeInstructions )
 		directionButtons.down:removeEventListener( "touch", createInstruction )
 		directionButtons.up:removeEventListener( "touch", createInstruction )
 
-		executeButton:removeEventListener( "tap", executeInstructions )
+		executeButton:removeEventListener( "tap", M.executeInstructions )
 
 		bikeWheel:removeEventListener( "touch", spinBikeWheel )
   	end
@@ -557,7 +629,7 @@ function M.new( executeInstructions )
 
 		bikeWheel:removeEventListener( "touch", spinBikeWheel )
 
-		executeButton:removeEventListener( "tap", executeInstructions )
+		executeButton:removeEventListener( "tap", M.executeInstructions )
 		instructionsPanel:removeEventListener( "touch", scrollInstructionsPanel )
 
 		-- remove instruções

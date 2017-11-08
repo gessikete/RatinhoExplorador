@@ -24,6 +24,8 @@ local gameScene = require "gameScene"
 
 local fsm = require "com.fsm.src.fsm"
 
+local feedback = require "feedback"
+
 physics.start()
 physics.setGravity( 0, 0 )
 
@@ -47,6 +49,8 @@ local stepDuration = 50
 local house
 
 local puzzle = { bigPieces = { }, littlePieces = { count }, puzzleSensors = { } }
+
+local collision = false 
 
 local miniGameData
 
@@ -79,6 +83,9 @@ end
 
 local function executeTutorial( event, alternativeEvent )
   if ( tutorialFSM ) then 
+    local nextEvent
+
+    if ( alternativeEvent ) then nextEvent = alternativeEvent else nextEvent = tutorialFSM.nextEvent end
 
     if ( ( messageBubble ) and ( messageBubble.text ) ) then
       messageBubble.text:removeSelf()
@@ -88,54 +95,35 @@ local function executeTutorial( event, alternativeEvent )
       messageBubble.blinkingDart = nil
     end
 
-    if ( alternativeEvent ) then
-      if ( alternativeEvent == "showMessage" ) then
-        tutorialFSM.showMessage()
-      elseif ( alternativeEvent == "transitionEvent" ) then
-        tutorialFSM.transitionEvent()
-        --executeTutorial()
-      end
+    if ( nextEvent == "showAnimation" ) then 
+      tutorialFSM.showAnimation()
 
-    else
-      if ( tutorialFSM.nextEvent == "showAnimation" ) then 
-        tutorialFSM.showAnimation()
-        --timer.performWithDelay( animation[tutorialFSM.current](), executeTutorial )
+    elseif ( nextEvent == "showMessage" ) then 
+      tutorialFSM.showMessage()
 
-      elseif ( tutorialFSM.nextEvent == "showMessage" ) then 
-        tutorialFSM.showMessage()
+    elseif ( nextEvent == "showObligatoryMessage" ) then 
+      tutorialFSM.showObligatoryMessage()
+    
+    elseif ( nextEvent == "showMessageAndAnimation" ) then 
+      tutorialFSM.showMessageAndAnimation()
+    
+    elseif ( nextEvent == "transitionEvent" ) then 
+      tutorialFSM.transitionEvent()
 
-      elseif ( tutorialFSM.nextEvent == "showObligatoryMessage" ) then 
-        tutorialFSM.showObligatoryMessage()
-      
-      elseif ( tutorialFSM.nextEvent == "showMessageAndAnimation" ) then 
-        tutorialFSM.showMessageAndAnimation()
+    elseif ( nextEvent == "saveGame" ) then
+      tutorialFSM.saveGame()
 
-        --[[local _, animationName = tutorialFSM.current:match( "([^,]+)_([^,]+)" )
-        local from, wait, n = tutorialFSM.from:match( "([^,]+)_([^,]+)_([^,]+)" )
-        
-        if ( ( from == "transitionState" ) and ( wait ) ) then 
-          timer.performWithDelay( wait, animation[animationName] )
-        else
-          animation[animationName]()
-        end]]
-      
-      elseif ( tutorialFSM.nextEvent == "transitionEvent" ) then 
-        tutorialFSM.transitionEvent()
-        --executeTutorial()
+    elseif ( nextEvent == "showFeedback" ) then
+      tutorialFSM.showFeedback()
 
-      elseif ( tutorialFSM.nextEvent == "saveGame" ) then
-        tutorialFSM.saveGame()
-        --executeTutorial()
-      elseif ( tutorialFSM.nextEvent == "showFeedback" ) then
-        tutorialFSM.showFeedback()
-        --executeTutorial()
+    elseif ( nextEvent == "nextTutorial" ) then
+      tutorialFSM.nextTutorial()
 
-      elseif ( tutorialFSM.nextEvent == "nextTutorial" ) then
-        tutorialFSM.nextTutorial()
+    elseif ( nextEvent == "endTutorial" ) then
+      tutorialFSM.endTutorial()
 
-      elseif ( tutorialFSM.nextEvent == "endTutorial" ) then
-        tutorialFSM.endTutorial()
-      end
+    elseif ( nextEvent == "repeatLevel" ) then 
+      tutorialFSM.repeatLevel()
     end
   end
 end
@@ -337,7 +325,7 @@ local function handExecuteAnimation( )
   hand.y = executeButton.y
   hand.alpha = 1
    
-
+  collision = false 
   handDirectionAnimation( time, wait, hand, executeButton.contentBounds.xMin + 2, executeButton.y, executeButton.contentBounds.xMin + 10, executeButton.y - 5, tutorialFSM.current )
     
 
@@ -415,6 +403,7 @@ local function handExitAnimation()
   hand.rotation = - 80
   hand.alpha = 1
    
+  gamePanel.executeButton.executionsCount = 0
   handDirectionAnimation( time, wait, hand, hand.x, hand.y, hand.x, hand.y + 5, tutorialFSM.current )
   gamePanel.restartExecutionListeners()
 end
@@ -430,7 +419,7 @@ local function goBackAnimation()
   return time
 end
 
-local function showBrotherChallengeAnimation()
+local function brotherChallengeAnimation()
   local brother = house:findObject( "brother" )
   local steps = 4.5
   local time = 400 * steps
@@ -530,7 +519,7 @@ end
 
 local function gotoInitialPosition()
   local stepsX, stepsY 
-  local time = 400
+  local time = 600
   local bike = house:findObject( "bike" )
 
   path:hidePath()
@@ -579,6 +568,7 @@ local function gotoInitialPosition()
               transition.to( character, { time = stepsX2 * time, x = character.x - stepsX2 * tilesSize, 
                 onComplete = 
                   function()
+                    gamePanel:updateBikeMaxCount( 3 )
                     hideBike()
                     delayedflip()
                   end 
@@ -609,7 +599,7 @@ animation["handBikeAnimation1"] = handBikeAnimation1
 animation["handBikeAnimation2"] = handBikeAnimation2 
 animation["handExitAnimation"] = handExitAnimation 
 animation["goBackAnimation"] = goBackAnimation
-animation["showBrotherChallengeAnimation"] = showBrotherChallengeAnimation
+animation["brotherChallengeAnimation"] = brotherChallengeAnimation
 animation["brotherJumpingAnimation"] = brotherJumpingAnimation
 animation["brotherLeavingAnimation"] = brotherLeavingAnimation
 animation["characterLeaveAnimation"] = characterLeaveAnimation
@@ -713,6 +703,7 @@ local function bikeTutorial()
   tutorialFSM = fsm.create({
     initial = "start",
     events = {
+      --{ name = "showFeedback", from = "start", to = "feedbackAnimation", nextEvent = "showObligatoryMessage" },
       {name = "showObligatoryMessage",  from = "start",  to = "momBubble_msg8", nextEvent = "showMessageAndAnimation" },
       {name = "showMessageAndAnimation",  from = "momBubble_msg8",  to = "momBubble_msg9_handDirectionAnimation1", nextEvent = "showMessageAndAnimation" },
       {name = "showMessageAndAnimation",  from = "momBubble_msg9_handDirectionAnimation1",  to = "momBubble_msg10_handBikeAnimation1", nextEvent = "transitionEvent" },
@@ -724,18 +715,25 @@ local function bikeTutorial()
       
       {name = "transitionEvent",  from = "momBubble_msg13_handExecuteAnimation",  to = "transitionState_1800_2", nextEvent = "showObligatoryMessage" },
       {name = "showObligatoryMessage",  from = "transitionState_1800_2",  to = "momBubble_msg14", nextEvent = "showMessageAndAnimation" },
+      {name = "showObligatoryMessage",  from = "repeat",  to = "momBubble_msg14", nextEvent = "showMessageAndAnimation" },
       
 
-      {name = "showMessageAndAnimation",  from = "momBubble_msg14",  to = "momBubble_msg15_handExitAnimation", nextEvent = "showObligatoryMessage" },
+      --{name = "showMessageAndAnimation",  from = "momBubble_msg14",  to = "momBubble_msg15_handExitAnimation", nextEvent = "showObligatoryMessage" },
       
-      {name = "showMessageAndAnimation",  from = "momBubble_msg10",  to = "momBubble_msg15_handExitAnimation", nextEvent = "showObligatoryMessage" },
-      {name = "showObligatoryMessage",  from = "momBubble_msg15_handExitAnimation",  to = "momBubble_msg16", nextEvent = "showAnimation" },
+      {name = "showMessageAndAnimation",  from = "momBubble_msg14",  to = "momBubble_msg15_handExitAnimation", nextEvent = "showFeedback" },
+      {name = "showFeedback",  from = "momBubble_msg15_handExitAnimation",  to = "feedbackAnimation", nextEvent = "showObligatoryMessage" },
+      {name = "showObligatoryMessage",  from = "feedbackAnimation",  to = "momBubble_msg16", nextEvent = "showAnimation" },
+      
+
+      { name = "repeatLevel", from = "feedbackAnimation", to = "repeat", nextEvent = "showObligatoryMessage" },
+      
       {name = "showAnimation",  from = "momBubble_msg16",  to = "goBackAnimation", nextEvent = "showObligatoryMessage" },
       {name = "showObligatoryMessage",  from = "goBackAnimation",  to = "momBubble_msg17", nextEvent = "showAnimation" },
-      {name = "showAnimation",  from = "momBubble_msg17",  to = "momBubble_msg15_showBrotherChallengeAnimation", nextEvent = "showObligatoryMessage" }, 
+      
+      {name = "showAnimation",  from = "momBubble_msg17",  to = "momBubble_msg15_brotherChallengeAnimation", nextEvent = "showObligatoryMessage" }, 
     
-      {name = "showAnimation",  from = "momBubble_msg17",  to = "showBrotherChallengeAnimation", nextEvent = "showObligatoryMessage" }, 
-      {name = "showObligatoryMessage",  from = "showBrotherChallengeAnimation",  to = "brotherBubble_msg18", nextEvent = "showAnimation" },
+      {name = "showAnimation",  from = "momBubble_msg17",  to = "brotherChallengeAnimation", nextEvent = "showObligatoryMessage" }, 
+      {name = "showObligatoryMessage",  from = "brotherChallengeAnimation",  to = "brotherBubble_msg18", nextEvent = "showAnimation" },
       {name = "showAnimation",  from = "brotherBubble_msg18",  to = "brotherJumpingAnimation", nextEvent = "showObligatoryMessage" },
       {name = "showObligatoryMessage",  from = "brotherJumpingAnimation",  to = "brotherBubble_msg19", nextEvent = "showAnimation" },
       {name = "showAnimation",  from = "brotherBubble_msg19",  to = "brotherLeavingAnimation", nextEvent = "showObligatoryMessage" },
@@ -786,9 +784,10 @@ local function bikeTutorial()
             gamePanel.stopExecutionListeners()
           end
 
+
           if ( ( from == "transitionState" ) and ( wait ) ) then 
             timer.performWithDelay( wait, closure )
-          else
+          else 
             closure()
           end
         end,
@@ -836,13 +835,38 @@ local function bikeTutorial()
       on_showFeedback = 
         function( self, event, from, to ) 
             local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+            local executeButton = gamePanel.executeButton
+            local stars = 3
 
             gamePanel.stopExecutionListeners()
             if ( ( from == "transitionState" ) and ( wait ) ) then 
               timer.performWithDelay( wait, executeTutorial )
-            else
-              executeTutorial()
             end
+
+            if ( executeButton.instructionsCount[#executeButton.instructionsCount] ) then 
+              if ( ( executeButton.executionsCount == 1 ) and ( executeButton.instructionsCount[#executeButton.instructionsCount] == 1 ) ) then
+                stars = 3
+              elseif ( gamePanel.bikeWheel.maxCount == 0 ) then
+                stars = 2
+              else 
+                stars = 1
+              end
+            else
+              stars = 1
+            end
+
+            local function closure()
+              path:hidePath()
+              gamePanel:hideInstructions()
+              if ( messageBubble ) then 
+                messageBubble.alpha = 0
+                if ( messageBubble.blinkingDart ) then 
+                  messageBubble.blinkingDart.alpha = 0
+                end
+              end
+            end
+            timer.performWithDelay( 1000, closure )
+            gamePanel.tiled:insert( feedback.showAnimation( "house", stars, executeTutorial ) )
           end,
 
       on_saveGame = 
@@ -860,11 +884,39 @@ local function bikeTutorial()
           gamePanel:stopAllListeners()
           timer.performWithDelay( 800, sceneTransition.gotoMap )
         end,
+
+      on_repeatLevel = 
+        function( self, event, from, to ) 
+          local repeatPoint = house:findObject("repeatPoint")
+          local startingPoint = house:findObject("start")
+
+          physics.pause()
+          physics.removeBody( character )
+          mom.x = startingPoint.x 
+          mom.y = startingPoint.y - tilesSize - 8
+          character.x = repeatPoint.x
+          character.y = repeatPoint.y - 6
+          physics.start()
+          physics.addBody( character )
+          path:hidePath()
+
+          gamePanel:hideInstructions()
+          if ( messageBubble ) then 
+            messageBubble.alpha = 0
+            if ( messageBubble.blinkingDart ) then 
+              messageBubble.blinkingDart.alpha = 0
+            end
+          end
+
+          gamePanel:updateBikeMaxCount( 1 )
+          timer.performWithDelay( 2000, executeTutorial )
+          gamePanel:showDirectionButtons( true )
+      end
     }
   })
 
   tutorialFSM.showObligatoryMessage()
-  --tutorialFSM.showAnimation()
+  --tutorialFSM.showFeedback()
   --tutorialFSM.showMessage() ----tirar
   --executeTutorial()         ----tirar
 
@@ -895,9 +947,8 @@ local function controlsTutorial( )
       { name = "saveGame",  from = "transitionState4",  to = "save", nextEvent = "showObligatoryMessage" },
       { name = "showObligatoryMessage",  from = "save",  to = "momBubble_msg7", nextEvent = "showAnimation" },
       { name = "showAnimation", from = "momBubble_msg7", to = "bikeAnimation", nextEvent = "showAnimation" },
-      { name = "showAnimation", from = "bikeAnimation", to = "gotoInitialPosition", nextEvent = "showFeedback"  },
-      { name = "showFeedback",  from = "gotoInitialPosition",  to = "feedback", nextEvent = "nextTutorial" },
-      { name = "nextTutorial",  from = "feedback",  to = "tutorial" },
+      { name = "showAnimation", from = "bikeAnimation", to = "gotoInitialPosition", nextEvent = "nextTutorial"  },
+      { name = "nextTutorial",  from = "gotoInitialPosition",  to = "tutorial" },
     },
     callbacks = {
       on_showAnimation = 
@@ -1098,10 +1149,10 @@ local function onCollision( event )
       character.steppingY = obj1.y 
       path:showTile( obj1.myName )
 
-
     -- Colisão com os demais objetos e o personagem (rope nesse caso)
     elseif ( ( ( obj1.myName == "collision" ) and ( obj2.myName == "rope" ) ) or ( ( obj1.myName == "rope" ) and ( obj2.myName == "collision" ) ) ) then 
       transition.cancel()
+      collision = true
     end
   end 
   return true 
@@ -1144,8 +1195,9 @@ function scene:create( event )
     character.xScale = -1
   end
 
-  --miniGameData.controlsTutorial = "incomplete"
+  --miniGameData.controlsTutorial = "complete"
   --miniGameData.bikeTutorial = "incomplete"
+  --miniGameData.isComplete = false
 
   sceneGroup:insert( house )
   sceneGroup:insert( gamePanel.tiled )
