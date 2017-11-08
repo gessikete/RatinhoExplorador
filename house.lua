@@ -1193,7 +1193,7 @@ function scene:create( event )
 
   if ( character.flipped == true ) then
     character.xScale = -1
-  end
+  end 
 
   --miniGameData.controlsTutorial = "complete"
   --miniGameData.bikeTutorial = "incomplete"
