@@ -82,9 +82,9 @@ function M.new( executeInstructions )
 
   	executeButton = gamePanel:findObject("executeButton")
 
-  	goBackButton = gamePanel:findObject("goBackButton")
+  	gotoMenuButton = gamePanel:findObject("gotoMenuButton")
 
-  	fitScreen.fitGamePanel( gamePanel, goBackButton )
+  	fitScreen.fitGamePanel( gamePanel, gotoMenuButton )
 
   	-- -----------------------------------------------------------------------------------
 	-- Listeners do game panel
@@ -296,9 +296,9 @@ function M.new( executeInstructions )
 	  return true
 	end
 
-	function M:removeGoBackButton()
-		goBackButton:removeEventListener( "tap", sceneTransition.gotoMenu )
-  		goBackButton = nil
+	function M:removegotoMenuButton()
+		gotoMenuButton:removeEventListener( "tap", sceneTransition.gotoMenu )
+  		gotoMenuButton = nil
 	end
 
   	function M:addDirectionListeners()
@@ -310,7 +310,7 @@ function M.new( executeInstructions )
 
   	function M:addButtonsListeners()
   		executeButton:addEventListener( "tap", executeInstructions )
-    	goBackButton:addEventListener( "tap", sceneTransition.gotoMenu )
+    	gotoMenuButton:addEventListener( "tap", sceneTransition.gotoMenu )
   	end
 
   	function M:addInstructionPanelListeners()
@@ -327,7 +327,7 @@ function M.new( executeInstructions )
 
 		bikeWheel:removeEventListener( "touch", spinBikeWheel )
 
-		goBackButton:removeEventListener( "tap", sceneTransition.gotoMenu )
+		gotoMenuButton:removeEventListener( "tap", sceneTransition.gotoMenu )
   	end
 
   	function M:stopAllListeners( )

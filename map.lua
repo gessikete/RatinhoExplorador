@@ -185,7 +185,7 @@ end
 function scene:destroy( event )
  
   local sceneGroup = self.view
-  --gamePanel:removeGoBackButton()
+  --gamePanel:removegotoMenuButton()
 end
 
 -- -----------------------------------------------------------------------------------

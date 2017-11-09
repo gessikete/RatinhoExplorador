@@ -1897,8 +1897,8 @@
          "margin":0,
          "name":"objects",
          "spacing":0,
-         "tilecount":18,
-         "tileheight":250,
+         "tilecount":17,
+         "tileheight":99,
          "tiles":
             {
              "1":
@@ -1918,12 +1918,6 @@
                  "image":"images\/house\/mom.png",
                  "imageheight":51,
                  "imagewidth":41
-                },
-             "13":
-                {
-                 "image":"images\/game panel\/bikeWheel.png",
-                 "imageheight":250,
-                 "imagewidth":250
                 },
              "19":
                 {
@@ -2010,7 +2004,7 @@
                  "imagewidth":50
                 }
             },
-         "tilewidth":250
+         "tilewidth":100
         }, 
         {
          "columns":15,

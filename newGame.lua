@@ -19,6 +19,7 @@ local fitScreen = require "fitScreen"
 -- -----------------------------------------------------------------------------------
 local textField
 local playButton
+local gotoMenuButton
 
 -- -----------------------------------------------------------------------------------
 -- Funções
@@ -61,6 +62,8 @@ function scene:create( event )
 
 	playButton = newGame:findObject("play")
 
+	gotoMenuButton = newGame:findObject("gotoMenuButton")
+
 	sceneGroup:insert( newGame )
 
 	textField = native.newTextField( 3*display.contentCenterX/4, display.contentCenterY/2, display.contentWidth/2, 30 )
@@ -71,6 +74,7 @@ function scene:create( event )
 
 	textField:addEventListener( "userInput", textListener )
 	playButton:addEventListener( "tap", createFile )
+	gotoMenuButton:addEventListener( "tap", sceneTransition.gotoMenu )
 
 	native.setKeyboardFocus( textField )
 

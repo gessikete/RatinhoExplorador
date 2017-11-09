@@ -57,6 +57,12 @@ function M:set( miniGame, onCollision, sceneGroup )
 	elseif ( miniGame == "house" ) then 
 		fileName = "tiled/house.json"
 		fit = fitScreen.fitDefault
+  elseif ( miniGame == "school" ) then 
+    fileName = "tiled/school.json"
+    fit = fitScreen.fitSchool
+  elseif ( miniGame == "restaurant" ) then 
+    fileName = "tiled/restaurant.json"
+    fit = fitScreen.fitDefault
 	end
 
   	-- Cria mapa a partir do arquivo JSON exportado pelo tiled

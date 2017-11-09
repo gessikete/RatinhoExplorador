@@ -39,6 +39,10 @@ function M.new(  currentMiniGame, character, onCollision )
 	  				gameState.house.isComplete = miniGameData.isComplete
 	  				gameState.house.controlsTutorial = miniGameData.controlsTutorial
 	  				gameState.house.bikeTutorial = miniGameData.bikeTutorial
+	  			elseif ( currentMiniGame == "school" ) then
+	  				gameState.school.isComplete = miniGameData.isComplete
+	  			elseif ( currentMiniGame == "restaurant" ) then
+	  				gameState.restaurant.isComplete = miniGameData.isComplete
 	  			end
 
 	  		end
@@ -87,6 +91,10 @@ function M.new(  currentMiniGame, character, onCollision )
 
 	  		if ( currentMiniGame == "house" ) then
 	  			miniGameData = gameFile.house 
+	  		elseif ( currentMiniGame == "school" ) then
+	  			miniGameData = gameFile.school
+	  		elseif ( currentMiniGame == "restaurant" ) then
+	  			miniGameData = gameFile.restaurant
 	  		end
 	  	end  
 

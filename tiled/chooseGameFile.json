@@ -75,15 +75,15 @@
          "objects":[
                 {
                  "gid":5,
-                 "height":32,
+                 "height":47,
                  "id":29,
-                 "name":"goBackButton",
+                 "name":"gotoMenuButton",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":64,
+                 "width":45,
                  "x":16,
-                 "y":320
+                 "y":290
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -127,9 +127,9 @@
                 },
              "4":
                 {
-                 "image":"images\/goBack.png",
-                 "imageheight":32,
-                 "imagewidth":64
+                 "image":"images\/gotoMenuButton.png",
+                 "imageheight":47,
+                 "imagewidth":45
                 }
             },
          "tilewidth":500

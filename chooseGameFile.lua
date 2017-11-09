@@ -15,7 +15,7 @@ local fitScreen = require "fitScreen"
 -- -----------------------------------------------------------------------------------
 -- Declaração das variáveis
 -- -----------------------------------------------------------------------------------
-local goBackButton
+local gotoMenuButton
 
 local chooseGameFile
 
@@ -40,6 +40,10 @@ local function loadGameFile( event )
 		timer.performWithDelay( 400, sceneTransition.gotoMap )
 	elseif ( gameFile.currentMiniGame == "house" ) then
 		timer.performWithDelay( 400, sceneTransition.gotoHouse )
+	elseif ( gameFile.currentMiniGame == "school" ) then
+		timer.performWithDelay( 400, sceneTransition.gotoSchool )
+	elseif ( gameFile.currentMiniGame == "restaurant" ) then
+		timer.performWithDelay( 400, sceneTransition.gotoRestaurant )
 	end 
 end
 
@@ -90,7 +94,7 @@ function scene:create( event )
 		end 
 	end
 
-	goBackButton = chooseGameFile:findObject("goBackButton")
+	gotoMenuButton = chooseGameFile:findObject("gotoMenuButton")
 
 	fitScreen.fitBackground(chooseGameFile)
 
@@ -104,7 +108,7 @@ function scene:show( event )
 	local phase = event.phase
 
 	if ( phase == "will" ) then
-		goBackButton:addEventListener( "tap", sceneTransition.gotoMenu )
+		gotoMenuButton:addEventListener( "tap", sceneTransition.gotoMenu )
 	elseif ( phase == "did" ) then
 
 	end
@@ -127,8 +131,8 @@ end
 -- destroy()
 function scene:destroy( event )
 	local sceneGroup = self.view
-	goBackButton:removeEventListener( "tap", sceneTransition.gotoMenu )
-	goBackButton = nil
+	gotoMenuButton:removeEventListener( "tap", sceneTransition.gotoMenu )
+	gotoMenuButton = nil
 end
 
 

@@ -39,27 +39,27 @@
          "objects":[
                 {
                  "gid":2,
-                 "height":48,
+                 "height":106,
                  "id":7,
                  "name":"new game",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":128,
-                 "x":80,
-                 "y":224
+                 "width":233,
+                 "x":72,
+                 "y":257
                 }, 
                 {
                  "gid":3,
-                 "height":48,
+                 "height":117,
                  "id":8,
                  "name":"play",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":128,
-                 "x":348,
-                 "y":224
+                 "width":117,
+                 "x":354,
+                 "y":266
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -86,7 +86,7 @@
          "name":"objects",
          "spacing":0,
          "tilecount":3,
-         "tileheight":80,
+         "tileheight":117,
          "tiles":
             {
              "0":
@@ -98,14 +98,14 @@
              "1":
                 {
                  "image":"images\/menu\/new game.png",
-                 "imageheight":48,
-                 "imagewidth":128
+                 "imageheight":106,
+                 "imagewidth":233
                 },
              "2":
                 {
                  "image":"images\/menu\/play.png",
-                 "imageheight":48,
-                 "imagewidth":128
+                 "imageheight":117,
+                 "imagewidth":117
                 }
             },
          "tilewidth":500

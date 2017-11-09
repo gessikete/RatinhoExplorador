@@ -23,7 +23,9 @@ end
 function defaultFile()
 	local character = { steppingX, steppingY, flipped } 
 	local house = { isComplete, controlsTutorial, collectedPieces, bikeTutorial }
-	local default = { character = character, house = house }
+	local school = { isComplete }
+	local restaurant = { isComplete }
+	local default = { character = character, house = house, restaurant = restaurant, school = school }
 
 	default.character.flipped = false
 	default.character.steppingX, default.character.steppingY = M.startingPoint( "house" )
@@ -32,6 +34,10 @@ function defaultFile()
 	default.house.isComplete = false
 	default.house.controlsTutorial = "incomplete"
 	default.house.bikeTutorial = "incomplete"
+
+	default.school.isComplete = false
+
+	default.restaurant.isComplete = false
 
 	return default
 end
@@ -115,6 +121,8 @@ function M.startingPoint( currentMiniGame )
 		return 144, 96
 	elseif ( currentMiniGame == "house" ) then 
 		return 80, 304
+	elseif ( currentMiniGame == "school" ) then 
+		return 80, 272
 	end
 end
 
@@ -122,13 +130,21 @@ end
 -- o jogo anteriormente
 function M.goBackPoint( currentMiniGame, previousMiniGameFile )
 	local houseExitX, houseExitY = 336, 208
-	local houseMapExitX, houseMapExitY = 144, 96 
-	local houseEntranceX, houseEntranceY = 80, 304  
+	local houseEntranceX, houseEntranceY = 80, 304
+	local houseMapExitX, houseMapExitY = 144, 96   
 	local houseMapEntranceX, houseMapEntranceY = 80, 160
+
+	local schoolExitX, schoolExitY = 336, 208
+	local schoolEntranceX, schoolEntranceY = 80, 272
+	local schoolMapExitX, schoolMapExitY = 144, 96   
+	local schoolMapEntranceX, schoolMapEntranceY = 80, 160
+
 	local flipped = false 
 
 	if ( currentMiniGame == previousMiniGameFile.currentMiniGame ) then
 		return previousMiniGameFile.character.steppingX, previousMiniGameFile.character.steppingY, previousMiniGameFile.character.flipped
+	elseif ( ( previousMiniGameFile.currentMiniGame == "house" ) and ( currentMiniGame ~= "map" ) ) then
+		return M.startingPoint( currentMiniGame )
 	elseif ( currentMiniGame == "map" ) then 
 		if ( previousMiniGameFile.currentMiniGame == "house" ) then
 			if ( previousMiniGameFile.character.steppingX == houseExitX  ) then 
@@ -143,6 +159,13 @@ function M.goBackPoint( currentMiniGame, previousMiniGameFile )
 			return houseExitX, houseExitY, flipped
 		else
 			return houseEntranceX, houseEntranceY, flipped
+		end 
+	elseif ( currentMiniGame == "school" ) then
+		if ( previousMiniGameFile.character.steppingX == schoolMapExitX ) then
+			flipped = true 
+			return schoolExitX, schoolExitY, flipped
+		else
+			return schoolEntranceX, schoolEntranceY, flipped
 		end 
 	end 
 end

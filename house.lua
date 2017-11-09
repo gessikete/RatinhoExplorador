@@ -46,8 +46,6 @@ local tilesSize = 32
 
 local stepDuration = 50
 
-local house
-
 local puzzle = { bigPieces = { }, littlePieces = { count }, puzzleSensors = { } }
 
 local collision = false 
@@ -272,8 +270,8 @@ end
 local function handDirectionAnimation1( )
   local hand = gamePanel.hand
   local box = gamePanel.firstBox
-  local time = 1500
-  local wait = 400
+  local time = 3000
+  local wait = 800
 
   hand.x = hand.originalX 
   hand.y = hand.originalY
@@ -288,8 +286,8 @@ end
 local function handDirectionAnimation2( )
   local hand = gamePanel.hand
   local box = gamePanel.secondBox
-  local time = 1500
-  local wait = 400
+  local time = 3000
+  local wait = 800
 
   hand.x = hand.originalX 
   hand.y = hand.originalY
@@ -304,7 +302,7 @@ local function handDirectionAnimation3( )
   local hand = gamePanel.hand
   local box = gamePanel.secondBox
   local time = 3000
-  local wait = 400
+  local wait = 800
 
   hand.x = hand.originalX - 20 
   hand.y = hand.originalY - 20
@@ -326,6 +324,7 @@ local function handExecuteAnimation( )
   hand.alpha = 1
    
   collision = false 
+  transition.fadeIn( executeButton, { time = time } )
   handDirectionAnimation( time, wait, hand, executeButton.contentBounds.xMin + 2, executeButton.y, executeButton.contentBounds.xMin + 10, executeButton.y - 5, tutorialFSM.current )
     
 
@@ -612,14 +611,14 @@ message["msg1"] = { "Tenho um presente para você.",
                   "pela casa para descobrir",
                   "o que é." }
 
-message["msg2"] = { "Arraste a seta da direita para", 
-                    "o retângulo laranja para andar",
-                    "um quadradinho" }
+message["msg2"] = { "Arraste a seta para o retângulo", 
+                    "laranja para andar um",
+                    "quadradinho" }
 
 message["msg3"] = { "Muito bem! Arraste mais uma",
                     "seta para pegar a peça ao lado." }
 
-message["msg4"] = { "Agora aper-te no botão \"andar\"." }
+message["msg4"] = { "Agora aperte no botão \"andar\"." }
 
 message["msg5"] = { "Parabéns! Agora tente pegar as",
                     "outras peças usando", 
@@ -703,7 +702,7 @@ local function bikeTutorial()
   tutorialFSM = fsm.create({
     initial = "start",
     events = {
-      --{ name = "showFeedback", from = "start", to = "feedbackAnimation", nextEvent = "showObligatoryMessage" },
+      { name = "showFeedback", from = "start", to = "feedbackAnimation", nextEvent = "showObligatoryMessage" },
       {name = "showObligatoryMessage",  from = "start",  to = "momBubble_msg8", nextEvent = "showMessageAndAnimation" },
       {name = "showMessageAndAnimation",  from = "momBubble_msg8",  to = "momBubble_msg9_handDirectionAnimation1", nextEvent = "showMessageAndAnimation" },
       {name = "showMessageAndAnimation",  from = "momBubble_msg9_handDirectionAnimation1",  to = "momBubble_msg10_handBikeAnimation1", nextEvent = "transitionEvent" },
@@ -1131,7 +1130,7 @@ local function onCollision( event )
         end
       end
 
-    elseif ( ( ( obj1.myName == "entrace" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "entrance" ) ) ) then 
+    elseif ( ( ( obj1.myName == "entrance" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "entrance" ) ) ) then 
       if ( miniGameData.isComplete == true ) then
         transition.cancel()
         instructions:destroyInstructionsTable()
@@ -1210,7 +1209,6 @@ end
 
 -- show()
 function scene:show( event )
-
 	local sceneGroup = self.view
 	local phase = event.phase
 
@@ -1233,7 +1231,7 @@ function scene:show( event )
       if ( miniGameData.controlsTutorial == "incomplete" ) then
         controlsTutorial()
       end
-      --gamePanel:addGoBackButtonListener()
+      --gamePanel:addgotoMenuButtonListener()
     end
 	end
 end
@@ -1259,7 +1257,7 @@ end
 function scene:destroy( event )
 
 	local sceneGroup = self.view
-	--gamePanel:removeGoBackButton()
+	--gamePanel:removegotoMenuButton()
 end
 
 

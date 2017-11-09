@@ -15,6 +15,14 @@ function M.gotoHouse()
 	composer.gotoScene( "house", { time = 800, effect = "crossFade" } )
 end
 
+function M.gotoSchool()
+	composer.gotoScene( "school", { time = 800, effect = "crossFade" } )
+end
+
+function M.gotoRestaurant()
+	composer.gotoScene( "restaurant", { time = 800, effect = "crossFade" } )
+end
+
 function M.gotoMap()
 	composer.gotoScene( "map", { time = 4000 } )
 end

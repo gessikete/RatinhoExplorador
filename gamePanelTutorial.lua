@@ -92,7 +92,7 @@ function M.new( executeInstructions )
   	bikeLimit = gamePanel:findObject( "bikeLimit" )
   	-----==
 
-  	goBackButton = gamePanel:findObject("goBackButton")
+  	gotoMenuButton = gamePanel:findObject("gotoMenuButton")
 
   	M.hand = gamePanel:findObject("hand")
   	M.hand.originalX = M.hand.x 
@@ -101,7 +101,7 @@ function M.new( executeInstructions )
   	M.firstBox = instructions.boxes[0]
   	M.secondBox = instructions.boxes[1]
 
-  	fitScreen.fitGamePanel( gamePanel, goBackButton )
+  	fitScreen.fitGamePanel( gamePanel, gotoMenuButton )
 
   	function M:showDirectionButtons( fadeIn )
   		if ( fadeIn == true ) then 
@@ -497,13 +497,13 @@ function M.new( executeInstructions )
 	  return true
 	end
 
-	function M:removeGoBackButton()
-		goBackButton:removeEventListener( "tap", sceneTransition.gotoMenu )
-  		goBackButton = nil
+	function M:removegotoMenuButton()
+		gotoMenuButton:removeEventListener( "tap", sceneTransition.gotoMenu )
+  		gotoMenuButton = nil
 	end
 
-	function M:addGoBackButtonListener( )
-		goBackButton:addEventListener( "tap", sceneTransition.gotoMenu )
+	function M:addgotoMenuButtonListener( )
+		gotoMenuButton:addEventListener( "tap", sceneTransition.gotoMenu )
 	end
 
   	function M:addDirectionListeners()
@@ -581,7 +581,7 @@ function M.new( executeInstructions )
 
   	function M:addButtonsListeners()
   		executeButton:addEventListener( "tap", M.executeInstructions )
-    	goBackButton:addEventListener( "tap", sceneTransition.gotoMenu )
+    	gotoMenuButton:addEventListener( "tap", sceneTransition.gotoMenu )
   	end
 
   	function M:addInstructionPanelListeners()
@@ -599,7 +599,7 @@ function M.new( executeInstructions )
 
 		bikeWheel:removeEventListener( "touch", spinBikeWheel )
 
-		goBackButton:removeEventListener( "tap", sceneTransition.gotoMenu )
+		gotoMenuButton:removeEventListener( "tap", sceneTransition.gotoMenu )
   	end
 
   	function M:stopAllListeners( )
