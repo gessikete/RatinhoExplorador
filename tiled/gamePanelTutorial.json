@@ -1004,7 +1004,7 @@
                  "gid":25,
                  "height":45,
                  "id":118,
-                 "name":"hand",
+                 "name":"directionHand",
                  "properties":
                     {
                      "alpha":"0"
@@ -1019,6 +1019,66 @@
                  "width":50,
                  "x":405,
                  "y":265
+                }, 
+                {
+                 "gid":25,
+                 "height":45,
+                 "id":121,
+                 "name":"executeHand",
+                 "properties":
+                    {
+                     "alpha":"0"
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":50,
+                 "x":286,
+                 "y":272
+                }, 
+                {
+                 "gid":25,
+                 "height":45,
+                 "id":122,
+                 "name":"bikeHand",
+                 "properties":
+                    {
+                     "alpha":"0"
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":50,
+                 "x":383,
+                 "y":170
+                }, 
+                {
+                 "gid":25,
+                 "height":45,
+                 "id":123,
+                 "name":"exitHand",
+                 "properties":
+                    {
+                     "alpha":"0"
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":50,
+                 "x":327,
+                 "y":200
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1026,7 +1086,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":121,
+ "nextobjectid":126,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",

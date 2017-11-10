@@ -94,9 +94,21 @@ function M.new( executeInstructions )
 
   	gotoMenuButton = gamePanel:findObject("gotoMenuButton")
 
-  	M.hand = gamePanel:findObject("hand")
-  	M.hand.originalX = M.hand.x 
-  	M.hand.originalY = M.hand.y
+  	M.directionHand = gamePanel:findObject("directionHand")
+  	M.directionHand.originalX = M.directionHand.x 
+  	M.directionHand.originalY = M.directionHand.y
+
+  	M.exitHand = gamePanel:findObject("exitHand")
+	M.exitHand.originalX = M.exitHand.x 
+	M.exitHand.originalY = M.exitHand.y
+
+	M.bikeHand = gamePanel:findObject("bikeHand")
+	M.bikeHand.originalX = M.bikeHand.x 
+	M.bikeHand.originalY = M.bikeHand.y
+
+	M.executeHand = gamePanel:findObject("executeHand")
+	M.executeHand.originalX = M.executeHand.x 
+	M.executeHand.originalY = M.executeHand.y
 
   	M.firstBox = instructions.boxes[0]
   	M.secondBox = instructions.boxes[1]
@@ -202,8 +214,8 @@ function M.new( executeInstructions )
 			    	if ( ( bikeWheel.maxSteps ) and ( bikeWheel.steps == bikeWheel.maxSteps ) ) then
 							local executeTutorial = event.target.executeTutorial
 
-							transition.cancel( M.hand ) 
-							transition.fadeOut( M.hand, { time = 450, onComplete = 
+							transition.cancel( M.bikeHand ) 
+							transition.fadeOut( M.bikeHand, { time = 450, onComplete = 
 	      						function() 
 	        						executeTutorial()
 	        					end } )
@@ -458,7 +470,7 @@ function M.new( executeInstructions )
 			  	end
 			  	---------====
 
-			  	transition.fadeOut( M.hand, { time = 450, onComplete = 
+			  	transition.fadeOut( M.directionHand, { time = 450, onComplete = 
       				function() 
         				event.target.executeTutorial()
         			end } )
@@ -543,12 +555,6 @@ function M.new( executeInstructions )
 
   		table.insert( executeButton.bikeCount, bikeCount )
 
-  		print( "-----" )
-  		for i = 1, #executeButton.instructionsCount do
-  			print( "EXEC #" .. i .. ": " .. executeButton.instructionsCount[i] .. "; Bike #" .. i .. ": " .. executeButton.bikeCount[i] )
-  		end
-  		print( "-----" )
-
   		if ( instructionsTable.steps[ instructionsTable.last ]  > 1 ) then 
   			M:updateBikeMaxCount( bikeWheel.maxCount - 1 )
   		end
@@ -556,12 +562,10 @@ function M.new( executeInstructions )
   		executeInstructions()
   	end
 
-  	-----==
-
   	local function executeTutorialInstructions( )
   		executeInstructions()
 
-  		transition.fadeOut( M.hand, { time = 450, onComplete = 
+  		transition.fadeOut( M.executeHand, { time = 450, onComplete = 
       				function() 
         				executeButton.executeTutorial()
   						executeButton.executeTutorial = nil

@@ -22,9 +22,7 @@ local path = require "path"
 
 local gameScene = require "gameScene"
 
-local fsm = require "com.fsm.src.fsm"
-
-local feedback = require "feedback"
+local schoolFSM = require "fsm.miniGames.schoolFSM"
 
 physics.start()
 physics.setGravity( 0, 0 )
@@ -55,14 +53,6 @@ local tables = { }
 local collision = false 
 
 local miniGameData
-
-local schoolFSM
-
-local messageBubble
-
-local animation = {}
-
-local message = {}
 
 
 local function setObstacles()
@@ -133,11 +123,6 @@ local function onCollision( event )
   phase = event.phase
   local obj1 = event.object1
   local obj2 = event.object2
-
-  print( "---" )
-  print( obj2.path )
-  print( obj1.path )
-  print( "---" )
 
   if ( event.phase == "began" ) then
     if ( ( ( obj1.myName == "character" ) and ( obj2.myName == "rope" ) ) or ( ( obj2.myName == "character" ) and ( obj1.myName == "rope" ) ) ) then 
@@ -284,8 +269,8 @@ function scene:show( event )
     gamePanel:addButtonsListeners()
     gamePanel:addInstructionPanelListeners()
     if ( miniGameData.isComplete == false ) then
-
-      --controlsTutorial()
+      schoolFSM.new( school, miniGameData, gameState, gamePanel, path )
+      schoolFSM.execute()
     end
   end
 end

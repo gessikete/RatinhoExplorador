@@ -33,7 +33,6 @@ local function gotoMenu( event )
 end
 
 local function goForward( event )
-  print( executeFSM )
   removeListeners()
   if ( executeFSM ) then 
     hideFeedback()
