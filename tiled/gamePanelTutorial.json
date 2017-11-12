@@ -230,7 +230,7 @@
          "objects":[
                 {
                  "gid":4,
-                 "height":12,
+                 "height":14,
                  "id":106,
                  "name":"",
                  "properties":
@@ -244,13 +244,13 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":12,
-                 "x":451,
-                 "y":32
+                 "width":14,
+                 "x":449,
+                 "y":33
                 }, 
                 {
                  "gid":4,
-                 "height":12,
+                 "height":14,
                  "id":41,
                  "name":"",
                  "properties":
@@ -264,13 +264,13 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":12,
-                 "x":451,
-                 "y":56
+                 "width":14,
+                 "x":449,
+                 "y":57
                 }, 
                 {
                  "gid":4,
-                 "height":12,
+                 "height":14,
                  "id":43,
                  "name":"",
                  "properties":
@@ -284,13 +284,13 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":12,
-                 "x":451,
-                 "y":80
+                 "width":14,
+                 "x":449,
+                 "y":81
                 }, 
                 {
                  "gid":4,
-                 "height":12,
+                 "height":14,
                  "id":44,
                  "name":"",
                  "properties":
@@ -304,13 +304,13 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":12,
-                 "x":451,
-                 "y":104
+                 "width":14,
+                 "x":449,
+                 "y":105
                 }, 
                 {
                  "gid":4,
-                 "height":12,
+                 "height":14,
                  "id":45,
                  "name":"",
                  "properties":
@@ -324,9 +324,9 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":12,
-                 "x":451,
-                 "y":128
+                 "width":14,
+                 "x":449,
+                 "y":129
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -340,7 +340,7 @@
          "objects":[
                 {
                  "gid":3,
-                 "height":12,
+                 "height":14,
                  "id":102,
                  "name":"",
                  "properties":
@@ -354,13 +354,13 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":12,
-                 "x":451,
-                 "y":32
+                 "width":14,
+                 "x":449,
+                 "y":33
                 }, 
                 {
                  "gid":3,
-                 "height":12,
+                 "height":14,
                  "id":35,
                  "name":"",
                  "properties":
@@ -374,13 +374,13 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":12,
-                 "x":451,
-                 "y":56
+                 "width":14,
+                 "x":449,
+                 "y":57
                 }, 
                 {
                  "gid":3,
-                 "height":12,
+                 "height":14,
                  "id":37,
                  "name":"",
                  "properties":
@@ -394,13 +394,13 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":12,
-                 "x":451,
-                 "y":80
+                 "width":14,
+                 "x":449,
+                 "y":81
                 }, 
                 {
                  "gid":3,
-                 "height":12,
+                 "height":14,
                  "id":38,
                  "name":"",
                  "properties":
@@ -414,13 +414,13 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":12,
-                 "x":451,
-                 "y":104
+                 "width":14,
+                 "x":449,
+                 "y":105
                 }, 
                 {
                  "gid":3,
-                 "height":12,
+                 "height":14,
                  "id":39,
                  "name":"",
                  "properties":
@@ -434,9 +434,9 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":12,
-                 "x":451,
-                 "y":128
+                 "width":14,
+                 "x":449,
+                 "y":129
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -450,7 +450,7 @@
          "objects":[
                 {
                  "gid":5,
-                 "height":12,
+                 "height":14,
                  "id":101,
                  "name":"",
                  "properties":
@@ -464,13 +464,13 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":12,
-                 "x":451,
-                 "y":32
+                 "width":14,
+                 "x":449,
+                 "y":33
                 }, 
                 {
                  "gid":5,
-                 "height":12,
+                 "height":14,
                  "id":27,
                  "name":"",
                  "properties":
@@ -484,13 +484,13 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":12,
-                 "x":451,
-                 "y":56
+                 "width":14,
+                 "x":449,
+                 "y":57
                 }, 
                 {
                  "gid":5,
-                 "height":12,
+                 "height":14,
                  "id":29,
                  "name":"",
                  "properties":
@@ -504,13 +504,13 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":12,
-                 "x":451,
-                 "y":80
+                 "width":14,
+                 "x":449,
+                 "y":81
                 }, 
                 {
                  "gid":5,
-                 "height":12,
+                 "height":14,
                  "id":30,
                  "name":"",
                  "properties":
@@ -524,13 +524,13 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":12,
-                 "x":451,
-                 "y":104
+                 "width":14,
+                 "x":449,
+                 "y":105
                 }, 
                 {
                  "gid":5,
-                 "height":12,
+                 "height":14,
                  "id":31,
                  "name":"",
                  "properties":
@@ -544,9 +544,9 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":12,
-                 "x":451,
-                 "y":128
+                 "width":14,
+                 "x":449,
+                 "y":129
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1104,7 +1104,7 @@
          "margin":0,
          "name":"instructions",
          "spacing":0,
-         "tilecount":19,
+         "tilecount":16,
          "tileheight":250,
          "tiles":
             {
@@ -1123,24 +1123,6 @@
              "11":
                 {
                  "image":"images\/game panel\/buttonLeft.png",
-                 "imageheight":36,
-                 "imagewidth":36
-                },
-             "12":
-                {
-                 "image":"images\/game panel\/buttonRight.png",
-                 "imageheight":36,
-                 "imagewidth":36
-                },
-             "13":
-                {
-                 "image":"images\/game panel\/buttonUp.png",
-                 "imageheight":36,
-                 "imagewidth":36
-                },
-             "14":
-                {
-                 "image":"images\/game panel\/buttonDown.png",
                  "imageheight":36,
                  "imagewidth":36
                 },
@@ -1177,8 +1159,8 @@
              "2":
                 {
                  "image":"images\/game panel\/leftInstruction.png",
-                 "imageheight":32,
-                 "imagewidth":32
+                 "imageheight":14,
+                 "imagewidth":14
                 },
              "21":
                 {
@@ -1213,14 +1195,14 @@
              "3":
                 {
                  "image":"images\/game panel\/rightInstruction.png",
-                 "imageheight":32,
-                 "imagewidth":32
+                 "imageheight":14,
+                 "imagewidth":14
                 },
              "4":
                 {
                  "image":"images\/game panel\/upInstruction.png",
-                 "imageheight":32,
-                 "imagewidth":32
+                 "imageheight":14,
+                 "imagewidth":14
                 }
             },
          "tilewidth":250

@@ -3,7 +3,7 @@ module(..., package.seeall)
 -- -----------------------------------------------------------------------------------
 -- Declaração das variáveis
 -- -----------------------------------------------------------------------------------
-local M = { }
+local M = { gameFlow }
 
 local slowStep = 400
 
@@ -12,7 +12,7 @@ local slowStep = 400
 -- -----------------------------------------------------------------------------------
 
 -- Retorna a lista das instruções
-function M.new( tilesSize, character, markedPath )
+function M.new( tilesSize, character, markedPath, miniGame )
   local instructionsTable = { executing = 1, last = 0,  direction = { }, steps = { } }
   local stopExecutionListeners
   local restartExecutionListeners
@@ -100,6 +100,9 @@ function M.new( tilesSize, character, markedPath )
         -- Reestabelece os listeners do painel de instruções
         if ( restartExecutionListeners ) then 
           restartExecutionListeners()
+          if ( M.updateFSM ) then
+            timer.performWithDelay( slowStep, M.updateFSM )
+          end
         else print( "Listener nulo (instructions.lua)" )
         end
         return 0
@@ -118,6 +121,12 @@ function M.new( tilesSize, character, markedPath )
     -- Pausa os listeners do painel de instruções, para impedir adição de instruções
     if ( stopExecutionListeners ) then 
       stopExecutionListeners()
+      --[[for k, v in pairs( instructionsTable.steps ) do
+        print( "-----" )
+        print( "steps: " .. instructionsTable.steps[k] )
+        print( "dir: " ..  instructionsTable.direction[k] )
+        print( "-----" )
+      end]]
     else print( "Listener nulo (instructions.lua)" )
     end
     -- Desmarca caminho anterior

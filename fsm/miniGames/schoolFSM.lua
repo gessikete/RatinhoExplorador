@@ -16,7 +16,7 @@ local animation = {}
 
 local message = {}
 
-function M.new( school, miniGameData, gameState, gamePanel, path )
+function M.new( school, supplies, collision, instructionsTable, miniGameData, gameState, gamePanel, path )
 	local schoolFSM
 	local character = school:findObject( "character" )
 	local teacher = school:findObject( "teacher" )  
@@ -32,13 +32,34 @@ function M.new( school, miniGameData, gameState, gamePanel, path )
 		organizerHand.originalX = organizerHand.x  
 		organizerHand.originalY = organizerHand.y 
 
+		gamePanel.tiled.alpha = 0
+
+		M.waitFeedback = false
+
 		schoolFSM = fsm.create({
 	  	  initial = "start",
 	  	  events = {
-	  	    {name = "showObligatoryMessage",  from = "start",  to = "teacherBubble_msg1", nextEvent = "showAnimation" },
-	  	    {name = "showAnimation",  from = "teacherBubble_msg1",  to = "handOrganizerAnimation", nextEvent = "showObligatoryMessage" },
-	  	  	{name = "showObligatoryMessage",  from = "handOrganizerAnimation",  to = "teacherBubble_msg2", nextEvent = "enableListeners" },
-	  	  	{name = "enableListeners",  from = "teacherBubble_msg2",  to = "restartListeners"},-- nextEvent = "enableListeners" },
+	  	    { name = "showObligatoryMessage",  from = "start",  to = "teacherBubble_msg1", nextEvent = "showAnimation" },
+	  	    { name = "showAnimation",  from = "teacherBubble_msg1",  to = "handOrganizerAnimation", nextEvent = "showObligatoryMessage" },
+	  	  	{ name = "showObligatoryMessage",  from = "handOrganizerAnimation",  to = "teacherBubble_msg2", nextEvent = "showAnimation" },
+	  	  	
+	  	  	{ name = "showAnimation", from = "teacherBubble_msg2", to = "teacherOrganizerAnimation", nextEvent = "showObligatoryMessage" },
+
+	  	  	--{ name = "showAnimation", from = "start", to = "teacherOrganizerAnimation", nextEvent = "showObligatoryMessage"},
+	  	  	{ name = "showObligatoryMessage",  from = "teacherOrganizerAnimation",  to = "teacherBubble_msg3", nextEvent = "showAnimation" },
+	  	  	
+	  	  	{ name = "showAnimation", from = "teacherBubble_msg3", to = "teacherChairCollision", nextEvent = "showObligatoryMessage" },
+	  	  	--{ name = "showAnimation", from = "start", to = "teacherChairCollision", nextEvent = "showObligatoryMessage"},
+	  	  	{ name = "showObligatoryMessage",  from = "teacherChairCollision",  to = "teacherBubble_msg4", nextEvent = "showAnimation" },
+	  	  	{ name = "showAnimation", from = "teacherBubble_msg4", to = "fixChair", nextEvent = "showObligatoryMessage" },
+	  	  	{ name = "showObligatoryMessage",  from = "fixChair",  to = "teacherBubble_msg5", nextEvent = "showAnimation" },
+	  	  	{ name = "showAnimation", from = "teacherBubble_msg5", to = "teacherGotoInitialPosition", nextEvent = "showGamePanel" },
+	  	  	{ name = "showGamePanel", from = "start", to = "gamePanel", nextEvent = "enableListeners" },
+	  	  	{ name = "enableListeners",  from = "gamePanel",  to = "restartListeners", nextEvent = "checkFeedbackWait" },
+	  	  	{ name = "checkFeedbackWait",  from = "restartListeners",  to = "checkWait", nextEvent = "showFeedback" },
+	  	  	{ name = "showFeedback",  from = "checkWait",  to = "feedbackAnimation"},--, nextEvent = "repeatLevel" },
+	  	  	{ name = "checkFeedbackWait",  from = "repeat",  to = "checkWait", nextEvent = "showFeedback" },
+	  	  	{ name = "repeatLevel", from = "feedbackAnimation", to = "repeat", nextEvent = "checkFeedbackWait" },
 	  	  },
 	  	  callbacks = {
 	  	  	on_before_event = 
@@ -56,14 +77,16 @@ function M.new( school, miniGameData, gameState, gamePanel, path )
 	  	      function( self, event, from, to ) 
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
 	  	        local function closure() 
-	  	          gamePanel.stopExecutionListeners()
-	  	          timer.performWithDelay( animation[self.current](), gameFlow.updateFSM ) 
+	  	          	gamePanel.stopExecutionListeners()
+	  	          	if ( animation[self.current]() ~= math.huge ) then 
+	  	          		timer.performWithDelay( animation[self.current](), gameFlow.updateFSM ) 
+	  	      	  end
 	  	        end
 
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
-	  	          timer.performWithDelay( wait, closure )
+	  	          	timer.performWithDelay( wait, closure )
 	  	        else
-	  	          closure()
+	  	          	closure()
 	  	        end
 	  	      end,
 
@@ -72,14 +95,14 @@ function M.new( school, miniGameData, gameState, gamePanel, path )
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
 	  	        local function closure() 
-	  	          gamePanel.stopExecutionListeners()
-	  	          gameFlow.showText( school:findObject( messageBubble ), message[ msg ] ) 
+	  	          	gamePanel.stopExecutionListeners()
+	  	          	gameFlow.showText( school:findObject( messageBubble ), message[ msg ] ) 
 	  	        end
 
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
-	  	          timer.performWithDelay( wait, closure )
+	  	          	timer.performWithDelay( wait, closure )
 	  	        else
-	  	          closure()
+	  	          	closure()
 	  	        end
 
 	  	      end,
@@ -89,14 +112,14 @@ function M.new( school, miniGameData, gameState, gamePanel, path )
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
 	  	        local function closure() 
-	  	          gameFlow.showText( school:findObject( messageBubble ), message[ msg ] ) 
-	  	          gamePanel.stopExecutionListeners()
+	  	          	gameFlow.showText( school:findObject( messageBubble ), message[ msg ] ) 
+	  	          	gamePanel.stopExecutionListeners()
 	  	        end
 
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
-	  	          timer.performWithDelay( wait, closure )
+	  	          	timer.performWithDelay( wait, closure )
 	  	        else 
-	  	          closure()
+	  	          	closure()
 	  	        end
 	  	      end,
 
@@ -108,9 +131,9 @@ function M.new( school, miniGameData, gameState, gamePanel, path )
 	  	        gameFlow.showText( school:findObject( messageBubble ), message[ msg ] )
 	  	        gamePanel.stopExecutionListeners()
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
-	  	          timer.performWithDelay( wait, animation[animationName] )
+	  	          	timer.performWithDelay( wait, animation[animationName] )
 	  	        else
-	  	          animation[animationName]()
+	  	          	animation[animationName]()
 	  	        end
 	  	      end,
 
@@ -120,56 +143,56 @@ function M.new( school, miniGameData, gameState, gamePanel, path )
 	  	        
 	  	        gamePanel.stopExecutionListeners()
 	  	        if ( ( animationName ) and ( animationName == "handExecuteAnimation" ) ) then
-	  	          transition.fadeOut( messageBubble, { time = 400 } )
+	  	          	transition.fadeOut( messageBubble, { time = 400 } )
 	  	        end
 
 	  	        if ( ( messageBubble ) and ( messageBubble.text ) ) then
-	  	          transition.fadeOut( messageBubble.text, { time = 400 } )
-	  	          transition.fadeOut( messageBubble, { time = 400 } )
-	  	          messageBubble.text:removeSelf()
-	  	          messageBubble.text = nil
-	  	          transition.cancel( messageBubble.blinkingDart )
-	  	          messageBubble.blinkingDart.alpha = 0
-	  	          messageBubble.blinkingDart = nil
+	  	          	transition.fadeOut( messageBubble.text, { time = 400 } )
+	  	          	transition.fadeOut( messageBubble, { time = 400 } )
+	  	          	messageBubble.text:removeSelf()
+	  	          	messageBubble.text = nil
+	  	          	transition.cancel( messageBubble.blinkingDart )
+	  	          	messageBubble.blinkingDart.alpha = 0
+	  	          	messageBubble.blinkingDart = nil
 	  	        end
 	  	        gameFlow.updateFSM()
 	  	      end,
 
 	  	    on_showFeedback = 
 	  	      function( self, event, from, to ) 
-	  	          local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
-	  	          local executeButton = gamePanel.executeButton
-	  	          local stars = 3
+	  	          	local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+	  	          	local executeButton = gamePanel.executeButton
+	  	          	local stars = 0
+	  	          	local msg = 1 
 
-	  	          gamePanel.stopExecutionListeners()
-	  	          if ( ( from == "transitionState" ) and ( wait ) ) then 
-	  	            timer.performWithDelay( wait, gameFlow.updateFSM )
-	  	          end
+	  	          	
+	  	          	if ( ( from == "transitionState" ) and ( wait ) ) then 
+	  	          	  timer.performWithDelay( wait, gameFlow.updateFSM )
+	  	          	end
 
-	  	          if ( executeButton.instructionsCount[#executeButton.instructionsCount] ) then 
-	  	            if ( ( executeButton.executionsCount == 1 ) and ( executeButton.instructionsCount[#executeButton.instructionsCount] == 1 ) ) then
-	  	              stars = 3
-	  	            elseif ( gamePanel.bikeWheel.maxCount == 0 ) then
-	  	              stars = 2
-	  	            else 
-	  	              stars = 1
-	  	            end
-	  	          else
-	  	            stars = 1
-	  	          end
+	  	          	if ( collision.organizedNone == true ) then 
+	  	          		stars = 0
+	  	          	elseif ( ( instructionsTable.last == 6 ) and ( collision.table == false ) and ( collision.table == false ) ) then
+	  	          	    stars = 3
+	  	          	elseif ( instructionsTable.last == 6 ) then
+	  	          	    stars = 2
+	  	          	else 
+	  	          	    stars = 1
+	  	          	end
+	  	          	
 
-	  	          local function closure()
-	  	            path:hidePath()
-	  	            gamePanel:hideInstructions()
-	  	            if ( messageBubble ) then 
-	  	              messageBubble.alpha = 0
-	  	              if ( messageBubble.blinkingDart ) then 
-	  	                messageBubble.blinkingDart.alpha = 0
-	  	              end
-	  	            end
-	  	          end
-	  	          timer.performWithDelay( 1000, closure )
-	  	          gamePanel.tiled:insert( feedback.showAnimation( "school", stars, gameFlow.updateFSM ) )
+	  	          	local function closure()
+	  	          	  --path:hidePath()
+	  	          	  --gamePanel:hideInstructions()
+	  	          	  if ( messageBubble ) then 
+	  	          	    messageBubble.alpha = 0
+	  	          	    if ( messageBubble.blinkingDart ) then 
+	  	          	      messageBubble.blinkingDart.alpha = 0
+	  	          	    end
+	  	          	  end
+	  	          	end
+	  	          	timer.performWithDelay( 1000, closure )
+	  	          	gamePanel.tiled:insert( feedback.showAnimation( "school", stars, msg, gameFlow.updateFSM ) )
 	  	        end,
 
 	  	    on_saveGame = 
@@ -189,47 +212,99 @@ function M.new( school, miniGameData, gameState, gamePanel, path )
 
 	  	    on_repeatLevel = 
 	  	      function( self, event, from, to ) 
-	  	        local repeatPoint = school:findObject("repeatPoint")
 	  	        local startingPoint = school:findObject("start")
+	  	        local chairs = school:findLayer( "chairs" )
+	  	        local tables = school:findLayer( "tables" )
 
-	  	        physics.pause()
+	  	        --physics.pause()
+	  	        character.ropeJoint:removeSelf()
 	  	        physics.removeBody( character )
-	  	        mom.x = startingPoint.x 
-	  	        mom.y = startingPoint.y - tilesSize - 8
-	  	        character.x = repeatPoint.x
-	  	        character.y = repeatPoint.y - 6
+	  	        physics.removeBody( character.rope )
+	  	        character.x = startingPoint.x
+	  	        character.y = startingPoint.y - 6
+	  	        character.rope.x, character.rope.y = character.x, character.y + 4
 	  	        physics.start()
 	  	        physics.addBody( character )
-	  	        path:hidePath()
+	  	        physics.addBody( character.rope )
+	  	        character.ropeJoint = physics.newJoint( "rope", character.rope, character, 0, 0 )
+	  	        character.isFixedRotation = true 
+	  	        character.xScale = 1
 
-	  	        gamePanel:hideInstructions()
-	  	        if ( messageBubble ) then 
-	  	          messageBubble.alpha = 0
-	  	          if ( messageBubble.blinkingDart ) then 
-	  	            messageBubble.blinkingDart.alpha = 0
-	  	          end
+	  	        collision.table = false
+	  	        collision.chair = false
+	  	        collision.organizer = false
+	  	        collision.organizedAll = false 
+	  	        collision.organizedNone = true
+
+	  	        for i = 1, chairs.numChildren do 
+	  	        	if ( chairs[i].isPhysics ) then 
+	  	        		physics.removeBody( chairs[i] )
+	  	        		chairs[i].isPhysics = nil
+	  	        	end
+	  	        	chairs[i].x = chairs[i].originalX
+	  	        	chairs[i].y = chairs[i].originalY
 	  	        end
 
+	  	        for i = 1, tables.numChildren do 
+	  	        	if ( tables[i].isPhysics ) then 
+	  	        		physics.removeBody( tables[i] )
+	  	        		tables[i].isPhysics = nil 
+	  	        	end
+	  	        	tables[i].x = tables[i].originalX
+	  	        	tables[i].y = tables[i].originalY
+	  	        end
+
+	  	        if ( messageBubble ) then 
+	  	          	messageBubble.alpha = 0
+	  	          	if ( messageBubble.blinkingDart ) then 
+	  	          	  messageBubble.blinkingDart.alpha = 0
+	  	          	end
+	  	        end
+
+	  	        for k, v in pairs( supplies.collected ) do
+	  	        	supplies.collected[k] = nil 
+	  	        end
+
+	  	        for k, v in pairs( supplies.remaining ) do
+	  	        	supplies.remaining[k] = nil 
+	  	        end
 	  	        --gamePanel:updateBikeMaxCount( 1 )
-	  	        timer.performWithDelay( 2000, gameFlow.updateFSM )
+	  	        --timer.performWithDelay( 2000, gameFlow.updateFSM )
 	  	        --gamePanel:showDirectionButtons( true )
 	  	    end,
 
 	  	    on_enableListeners = 
 	  	      function( self, event, from, to ) 
 	  	        if ( to == "restartListeners" ) then 
-	  	        	gamePanel.restartExecutionListeners()
+	  	        	--gamePanel.restartExecutionListeners()
 	  	        end
-	  	    end
+	  	    end,
+
+	  	    on_showGamePanel = 
+	  	      	function( self, event, from, to ) 
+	  	        	transition.fadeIn( gamePanel.tiled, { time = 400 } )
+	  	        	gameFlow.updateFSM()
+	  	    	end,
+
+	  	    on_checkFeedbackWait = 
+	  	    	function( self, event, from, to ) 
+	  	        	--transition.fadeOut( gamePanel.tiled, { time = 400 } )
+	  	        	if ( M.waitFeedback == false ) then 
+		  	        	gameFlow.updateFSM()
+		  	        	print( "organizedAll: " .. tostring(collision.organizedAll) .. "; organizedNone: ".. tostring(collision.organizedNone) .. " ; chair: " .. tostring(collision.chair) .. "; table: " .. tostring(collision.table) .. "; organizer: " .. tostring(collision.organizer) )
+	  	    		else
+	  	    			M.waitFeedback = false
+	  	    		end
+	  	    	end,
 	  	  }
 	  	})
 
 		gameFlow.new( schoolFSM, school )
-		M.update = gameFlow.updateFSM
-		M.schoolFSM = schoolFSM
+		M.updateFSM = gameFlow.updateFSM
+		M.fsm = schoolFSM
 		animation = schoolAnimations.new( school, gamePanel, path, schoolFSM, gameFlow )
-	  	schoolFSM.showObligatoryMessage()
-
+	  	--schoolFSM.showObligatoryMessage()
+	  	schoolFSM.showGamePanel()
 	end
 end
 

@@ -202,6 +202,64 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
+         "visible":false,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"school",
+         "objects":[
+                {
+                 "gid":3,
+                 "height":106,
+                 "id":17,
+                 "name":"",
+                 "properties":
+                    {
+                     "alpha":0,
+                     "msg":1,
+                     "stars":3
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"int",
+                     "msg":"int",
+                     "stars":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":264,
+                 "x":111,
+                 "y":221
+                }, 
+                {
+                 "gid":8,
+                 "height":91,
+                 "id":18,
+                 "name":"",
+                 "properties":
+                    {
+                     "alpha":"0",
+                     "msg":1,
+                     "stars":0
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"string",
+                     "msg":"int",
+                     "stars":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":270,
+                 "x":114,
+                 "y":213
+                }],
+         "opacity":1,
+         "type":"objectgroup",
          "visible":true,
          "x":0,
          "y":0
@@ -276,7 +334,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":17,
+ "nextobjectid":19,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",
@@ -380,6 +438,31 @@
                 }
             },
          "tilewidth":576
+        }, 
+        {
+         "columns":0,
+         "firstgid":8,
+         "grid":
+            {
+             "height":1,
+             "orientation":"orthogonal",
+             "width":1
+            },
+         "margin":0,
+         "name":"school",
+         "spacing":0,
+         "tilecount":1,
+         "tileheight":94,
+         "tiles":
+            {
+             "0":
+                {
+                 "image":"images\/feedback\/school_0stars_msg1.png",
+                 "imageheight":91,
+                 "imagewidth":270
+                }
+            },
+         "tilewidth":270
         }],
  "tilewidth":16,
  "type":"map",

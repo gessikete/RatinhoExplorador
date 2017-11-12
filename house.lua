@@ -200,7 +200,7 @@ function scene:create( event )
     character.xScale = -1
   end 
    
-  --miniGameData.controlsTutorial = "complete"
+  miniGameData.controlsTutorial = "incomplete"
   --miniGameData.bikeTutorial = "incomplete"
   --miniGameData.isComplete = false
 

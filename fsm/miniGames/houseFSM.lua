@@ -152,7 +152,6 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	  	  transition.to( character, { time = 0, x = 80, y = 296} )
 	  	  mom.x, mom.y = character.x, character.y - tilesSize
 	  	  gamePanel:showDirectionButtons( false )
-	  	  gamePanel:updateBikeMaxCount( 3 )
 	  	else 
 	  	  path:hidePath()
 
@@ -160,6 +159,7 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	  	  gamePanel:hideInstructions()
 	  	end
 	  	
+	  	gamePanel:updateBikeMaxCount( 3 )
 	  	gamePanel:stopAllListeners()
 
 	  	tutorialFSM = fsm.create({
@@ -178,7 +178,7 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	  	    {name = "showMessageAndAnimation",  from = "momBubble_msg14",  to = "momBubble_msg15_handExitAnimation", nextEvent = "showFeedback" },
 	  	    {name = "showFeedback",  from = "momBubble_msg15_handExitAnimation",  to = "feedbackAnimation", nextEvent = "showObligatoryMessage" },
 	  	    {name = "showObligatoryMessage",  from = "feedbackAnimation",  to = "momBubble_msg16", nextEvent = "showAnimation" },
-	  	    { name = "repeatLevel", from = "feedbackAnimation", to = "repeat", nextEvent = "showObligatoryMessage" },
+	  	    {name = "repeatLevel", from = "feedbackAnimation", to = "repeat", nextEvent = "showObligatoryMessage" },
 	  	    {name = "showAnimation",  from = "momBubble_msg16",  to = "goBackAnimation", nextEvent = "showObligatoryMessage" },
 	  	    {name = "showObligatoryMessage",  from = "goBackAnimation",  to = "momBubble_msg17", nextEvent = "showAnimation" },
 	  	    {name = "showAnimation",  from = "momBubble_msg17",  to = "momBubble_msg15_brotherChallengeAnimation", nextEvent = "showObligatoryMessage" }, 
@@ -298,8 +298,8 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	  	            timer.performWithDelay( wait, gameFlow.updateFSM )
 	  	          end
 
-	  	          if ( executeButton.instructionsCount[#executeButton.instructionsCount] ) then 
-	  	            if ( ( executeButton.executionsCount == 1 ) and ( executeButton.instructionsCount[#executeButton.instructionsCount] == 1 ) ) then
+	  	          if ( executeButton.executionsCount[#executeButton.executionsCount] ) then 
+	  	            if ( ( executeButton.executionsCount == 1 ) and ( executeButton.executionsCount[#executeButton.executionsCount] == 1 ) ) then
 	  	              stars = 3
 	  	            elseif ( gamePanel.bikeWheel.maxCount == 0 ) then
 	  	              stars = 2
@@ -321,7 +321,7 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	  	            end
 	  	          end
 	  	          timer.performWithDelay( 1000, closure )
-	  	          gamePanel.tiled:insert( feedback.showAnimation( "house", stars, gameFlow.updateFSM ) )
+	  	          gamePanel.tiled:insert( feedback.showAnimation( "house", stars, _, gameFlow.updateFSM ) )
 	  	        end,
 
 	  	    on_saveGame = 
@@ -346,15 +346,14 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 
 	  	        physics.pause()
 	  	        physics.removeBody( character )
-	  	        mom.x = startingPoint.x 
-	  	        mom.y = startingPoint.y - tilesSize - 8
-	  	        character.x = repeatPoint.x
-	  	        character.y = repeatPoint.y - 6
+	  	        character.x = startingPoint.x 
+	  	        character.y = startingPoint.y - tilesSize - 8
+	  	        
 	  	        physics.start()
 	  	        physics.addBody( character )
-	  	        path:hidePath()
+	  	        --path:hidePath()
 
-	  	        gamePanel:hideInstructions()
+	  	        --gamePanel:hideInstructions()
 	  	        if ( messageBubble ) then 
 	  	          messageBubble.alpha = 0
 	  	          if ( messageBubble.blinkingDart ) then 
@@ -362,9 +361,9 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	  	          end
 	  	        end
 
-	  	        gamePanel:updateBikeMaxCount( 1 )
+	  	        gamePanel:updateBikeMaxCount( 5 )
 	  	        timer.performWithDelay( 2000, gameFlow.updateFSM )
-	  	        gamePanel:showDirectionButtons( true )
+
 	  	    end
 	  	  }
 	  	})

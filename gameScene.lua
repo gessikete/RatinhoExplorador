@@ -36,8 +36,10 @@ local function setCharacter( tileMap, character )
   	rope.gravityScale = 0 
   	rope.myName = "rope"
   	rope.isVisible = false
+    character.rope = rope 
   	ropeJoint = physics.newJoint( "rope", rope, character, 0, 0 )
-
+    character.ropeJoint = ropeJoint
+    
   	return rope, ropeJoint
 end
 
@@ -96,7 +98,7 @@ function M:set( miniGame, onCollision, sceneGroup )
       gamePanel = require "gamePanel"
     end
 
-  	gamePanel.tiled = gamePanel.new( instructions.executeInstructions )
+  	gamePanel.tiled = gamePanel.new( instructions.executeInstructions, miniGameData )
   	instructions:setGamePanelListeners( gamePanel.stopExecutionListeners, gamePanel.restartExecutionListeners )
   	
     Runtime:addEventListener( "collision", onCollision )

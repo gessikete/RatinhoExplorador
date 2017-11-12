@@ -82,20 +82,20 @@ local function showFeedback( starNumber, nextStar )
     end
 
     local function closure()
-      showFeedback( starNumber, nextStar + 1 )
+      showFeedback( starNumber, nextStar + 1, msg )
     end
 
     transition.fadeIn( star, { time = time, onComplete = closure } )
   else
+    addListeners()
     if ( message ) then
-      addListeners()
       transition.fadeIn( message, { time = time * 3 } )
     end
   end
 end
 
 -- Retorna a lista das instruções
-function M.showAnimation( miniGame, stars, executeFSM_ )
+function M.showAnimation( miniGame, stars, msg, executeFSM_ )
   local time = 1000
   
   -- Carrega o arquivo tiled
@@ -106,7 +106,7 @@ function M.showAnimation( miniGame, stars, executeFSM_ )
   executeFSM = executeFSM_
   local miniGameLayer = feedback:findLayer( miniGame )
   for i = 1, miniGameLayer.numChildren do
-    if ( miniGameLayer[i].stars == stars ) then
+    if ( ( miniGameLayer[i].stars == stars ) and ( miniGameLayer[i].msg == msg ) ) then
       message = miniGameLayer[i]
     end
   end

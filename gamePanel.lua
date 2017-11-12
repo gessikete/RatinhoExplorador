@@ -60,6 +60,9 @@ function M.new( executeInstructions )
   	bikeWheel.radius = bikeWheel.width/2
   	bikeWheel.quadrant = 1
   	bikeWheel.steps = 1
+  	bikeWheel.maxCount = math.huge
+  	M.bikeWheel = bikeWheel
+  	bikeLimit = gamePanel:findObject( "bikeLimit" )
 
   	-- Setas que definem a direção
   	directionButtons.right = gamePanel:findObject("directionRight") 
@@ -81,6 +84,10 @@ function M.new( executeInstructions )
  	instructionsPanel = gamePanel:findObject("instructionsPanel")
 
   	executeButton = gamePanel:findObject("executeButton")
+  	executeButton.executionsCount = 0
+  	executeButton.instructionsCount = {}
+  	executeButton.bikeCount = {}
+  	M.executeButton = executeButton
 
   	gotoMenuButton = gamePanel:findObject("gotoMenuButton")
 
@@ -112,6 +119,22 @@ function M.new( executeInstructions )
 	  	elseif ( ( dx < 0 ) and ( dy < 0 ) ) then
 	    	return 4
 	  	end
+	end
+
+	function M:updateBikeMaxCount( count )
+		bikeWheel.maxCount = count
+
+		if ( bikeLimit.text ) then 
+			bikeLimit.text.text = count 
+		else
+			bikeLimit.text = display.newText( gamePanel:findLayer( "bikeLimit" ), " ", bikeLimit.x, bikeLimit.y, system.nativeFontBold, 12 )
+			bikeLimit.text.alpha = 0
+			bikeLimit.text.text = count
+		end
+
+		transition.fadeIn( bikeLimit.text, { time = 400 } ) 
+		transition.fadeIn( bikeLimit, { time = 400 } ) 
+
 	end
 
 	-- Gira a roda da bicicleta
@@ -208,7 +231,7 @@ function M.new( executeInstructions )
 
 			-- Esconde as instruções anteriores e reseta a lista de instruções após uma execução
 			if ( instructionsTable.executing ~= 1 ) then 
-			   	hideInstructions()
+			   	M:hideInstructions()
 			   	instructionsTable:reset() 
 			end
 
@@ -308,8 +331,30 @@ function M.new( executeInstructions )
 	    directionButtons.up:addEventListener( "touch", createInstruction )
   	end
 
+  	function M.executeInstructions()
+  		local bikeCount = 0
+
+  		if ( instructionsTable.last ~= 0 ) then 
+	  		executeButton.executionsCount = executeButton.executionsCount + 1
+	  		table.insert( executeButton.instructionsCount, instructionsTable.last )
+	  		
+	  		
+	  		for i = 1, #instructionsTable.steps do 
+	  			if ( instructionsTable.steps[i] ) > 1 then bikeCount = bikeCount + 1 end 
+	  		end
+
+	  		table.insert( executeButton.bikeCount, bikeCount )
+
+	  		if ( instructionsTable.steps[ instructionsTable.last ]  > 1 ) then 
+	  			M:updateBikeMaxCount( bikeWheel.maxCount - 1 )
+	  		end
+
+	  		executeInstructions()
+  		end
+  	end
+
   	function M:addButtonsListeners()
-  		executeButton:addEventListener( "tap", executeInstructions )
+  		executeButton:addEventListener( "tap", M.executeInstructions )
     	gotoMenuButton:addEventListener( "tap", sceneTransition.gotoMenu )
   	end
 
@@ -323,7 +368,7 @@ function M.new( executeInstructions )
 		directionButtons.down:removeEventListener( "touch", createInstruction )
 		directionButtons.up:removeEventListener( "touch", createInstruction )
 
-		executeButton:removeEventListener( "tap", executeInstructions )
+		executeButton:removeEventListener( "tap", M.executeInstructions )
 
 		bikeWheel:removeEventListener( "touch", spinBikeWheel )
 
@@ -337,7 +382,7 @@ function M.new( executeInstructions )
 		directionButtons.down:removeEventListener( "touch", createInstruction )
 		directionButtons.up:removeEventListener( "touch", createInstruction )
 
-		executeButton:removeEventListener( "tap", executeInstructions )
+		executeButton:removeEventListener( "tap", M.executeInstructions )
 
 		bikeWheel:removeEventListener( "touch", spinBikeWheel )
   	end
@@ -358,7 +403,7 @@ function M.new( executeInstructions )
 
 		bikeWheel:removeEventListener( "touch", spinBikeWheel )
 
-		executeButton:removeEventListener( "tap", executeInstructions )
+		executeButton:removeEventListener( "tap", M.executeInstructions )
 		instructionsPanel:removeEventListener( "touch", scrollInstructionsPanel )
 
 		-- remove instruções
@@ -459,7 +504,7 @@ function M.new( executeInstructions )
 	end
 
 	-- Esconde as instruções após a execução
-	function hideInstructions()
+	function M:hideInstructions()
 	  local boxNum = instructions.shownBox
 
 	  	if ( instructions.shownBox ~= -1 ) then
@@ -469,13 +514,12 @@ function M.new( executeInstructions )
 		      instructions.boxes[i].alpha = 0
 		      instructions.shownBox = -1
 		    end
-	  	end 
 
-	  	for i = boxNum, #instructions.boxes do
-	  		instructions.boxes[i].alpha = 0
+		    for i = boxNum, #instructions.boxes do
+	  			instructions.boxes[i].alpha = 0
+	  		end 
+	  		instructions.boxes[0].alpha = 1
 	  	end 
-
-	  	instructions.boxes[0].alpha = 1
 	end
 
 	-- Mostra as instruções à medida que são feitas

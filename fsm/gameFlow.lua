@@ -4,7 +4,6 @@ local M = { }
 
 function M.new( miniGameFSM, miniGame ) 
   function M.updateFSM( event, alternativeEvent )
-
     if ( miniGameFSM ) then 
       local nextEvent
 
@@ -42,7 +41,14 @@ function M.new( miniGameFSM, miniGame )
         
       elseif ( nextEvent == "enableListeners" ) then 
         miniGameFSM.enableListeners()
+
+      elseif ( nextEvent == "showGamePanel" ) then 
+        miniGameFSM.showGamePanel()
+
+      elseif ( nextEvent == "checkFeedbackWait" ) then
+        miniGameFSM.checkFeedbackWait()
       end
+
     end
   end
 
