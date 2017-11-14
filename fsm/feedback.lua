@@ -105,7 +105,7 @@ function M.showAnimation( miniGame, stars, msg, executeFSM_ )
   -- Carrega o arquivo tiled
   local feedbackData = json.decodeFile(system.pathForFile("tiled/feedback.json", system.ResourceDirectory))  -- load from json export
   feedback = tiled.new(feedbackData, "tiled")
-
+  feedback.y = feedback.y - 32
 
   executeFSM = executeFSM_
   local miniGameLayer = feedback:findLayer( miniGame )

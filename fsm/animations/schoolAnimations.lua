@@ -30,6 +30,7 @@ function M.new( school, gamePanel, path, schoolFSM, gameFlow )
 	  	teacher.y = character.y 
 	  	teacher.alpha = 1
 	  	character.alpha = 1
+	  	character.xScale = 1
 
 	  	path:hidePath()
 	  	transition.to( teacher, { time = time * 2, x = teacher.x + tilesSize * 2 + 5, 

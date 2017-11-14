@@ -355,7 +355,7 @@ end
 function scene:create( event )
 
   local sceneGroup = self.view
-  persistence.setCurrentFileName( "ana" )
+  --persistence.setCurrentFileName( "ana" )
 
   school, character, rope, ropeJoint, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "school", onCollision )
 
@@ -371,7 +371,7 @@ function scene:create( event )
   setObstacles()
 
   -- Sem usar a bicicleta
-  instructionsTable.steps = { 
+  --[[instructionsTable.steps = { 
     1, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1,
@@ -385,9 +385,9 @@ function scene:create( event )
   "up", "up", "up", "up",
   "left", "left", "left", "left", "left", "left", "left", "left",
   "up", "up",
-  "left", "left" }
+  "left", "left" }]]
 
-  instructionsTable.last = 27
+  --instructionsTable.last = 27
 
   --[[instructionsTable.steps = { 
     1, 1, 1,

@@ -285,7 +285,7 @@ end
 function scene:create( event )
   sceneGroup = self.view
 
-  persistence.setCurrentFileName("ana")
+  --persistence.setCurrentFileName("ana")
 
   map, character, rope, ropeJoint, gamePanel, gameState, path, instructions, instructionsTable, gameFileData = gameScene:set( "map", onCollision )
   map.x = map.x - 20

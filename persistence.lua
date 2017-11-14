@@ -89,7 +89,7 @@ end
 -- Retorna um arquivo salvo
 function M.loadGameFile()
 	local fileName = M.getCurrentFileName()
-	GBCDataCabinet.load(fileName)
+	GBCDataCabinet.load( fileName )
 	return GBCDataCabinet.get( fileName, "gameState" )
 end
 
@@ -111,12 +111,32 @@ function M.deleteFiles()
 
 	files = GBCDataCabinet.get( "files", "names" )
 	for i = #files, 1, -1 do
+		GBCDataCabinet.load( files[i] )
 		GBCDataCabinet.deleteCabinet(files[i], true)
 		table.remove( files )
 	end
 
 	GBCDataCabinet.save( "files" )
 end
+
+-- Deleta arquivo único
+function M.deleteFile( fileName )
+	local files
+	GBCDataCabinet.load( "files" )
+
+	files = GBCDataCabinet.get( "files", "names" )
+	
+	GBCDataCabinet.load( fileName )
+	GBCDataCabinet.deleteCabinet( fileName, true )
+	for i = 1, #files do
+		if ( files[i] == fileName ) then 
+			table.remove( files, i )
+			break
+		end
+	end
+
+	GBCDataCabinet.save( "files" )
+end 
 
 -- -----------------------------------------------------------------------------------
 -- Funções referentes à persistência dos estados do jogo
@@ -165,12 +185,12 @@ function M.goBackPoint( currentMiniGame, previousMiniGameFile )
 
 	if ( currentMiniGame == previousMiniGameFile.currentMiniGame ) then
 		--return schoolEntranceX, schoolEntranceY, flipped --TIRAR
-		return houseMapExitX, houseMapExitY, flipped --TIRAR
-		--return previousMiniGameFile.character.steppingX, previousMiniGameFile.character.steppingY, previousMiniGameFile.character.flipped
+		--return houseMapExitX, houseMapExitY, flipped --TIRAR
+		return previousMiniGameFile.character.steppingX, previousMiniGameFile.character.steppingY, previousMiniGameFile.character.flipped
 	elseif ( ( previousMiniGameFile.currentMiniGame == "house" ) and ( currentMiniGame ~= "map" ) ) then
 		return M.startingPoint( currentMiniGame )
 	elseif ( currentMiniGame == "map" ) then 
-		--[[if ( previousMiniGameFile.currentMiniGame == "house" ) then
+		if ( previousMiniGameFile.currentMiniGame == "house" ) then
 			if ( previousMiniGameFile.character.steppingX == houseExitX  ) then 
 				return houseMapExitX, houseMapExitY, flipped
 			else 
@@ -183,7 +203,7 @@ function M.goBackPoint( currentMiniGame, previousMiniGameFile )
 				flipped = true 
 				return schoolMapEntranceX, schoolMapEntranceY, flipped
 			end
-		end]]
+		end
 		return houseMapExitX, houseMapExitY, flipped
 	elseif ( currentMiniGame == "house" ) then
 		if ( previousMiniGameFile.character.steppingX == houseMapExitX ) then

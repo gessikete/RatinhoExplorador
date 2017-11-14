@@ -11,7 +11,7 @@ message["msg2"] = { "Ha! Eu sabia que eu iria",
 					"setas demais, não foi?",
 					"Até mais tarde!" }
 
-message["msg3"] = { "Haha, como você é lento!",
+message["msg3"] = { "Haha, que devagar!",
 					 "Você vai precisar usar",
 					 "mais a sua bicicleta se",
 					 "quiser chegar antes de mim." }

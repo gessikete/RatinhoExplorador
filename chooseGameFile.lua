@@ -19,7 +19,7 @@ local gotoMenuButton
 
 local chooseGameFile
 
-local gameFiles = { box = { }, text = { } }
+local gameFiles = { box = { }, text = { }, trashcan = { } }
 
 -- -----------------------------------------------------------------------------------
 -- Funções
@@ -35,7 +35,7 @@ local function loadGameFile( event )
 	print( "-------------------------------------------------------------------" )
 	print( "ARQUIVO ESCOLHIDO: " .. fileName )
 
-	-- Verifica em qual minigame o jogo estava quando foi salvo
+	--[[ Verifica em qual minigame o jogo estava quando foi salvo
 	if ( gameFile.currentMiniGame == "map" ) then
 		timer.performWithDelay( 400, sceneTransition.gotoMap )
 	elseif ( gameFile.currentMiniGame == "house" ) then
@@ -44,7 +44,8 @@ local function loadGameFile( event )
 		timer.performWithDelay( 400, sceneTransition.gotoSchool )
 	elseif ( gameFile.currentMiniGame == "restaurant" ) then
 		timer.performWithDelay( 400, sceneTransition.gotoRestaurant )
-	end 
+	end ]]
+	timer.performWithDelay( 400, sceneTransition.gotoProgress )
 end
 
 -- Remove os objetos
@@ -64,6 +65,65 @@ local function destroyScene()
 	gameFiles = nil 
 end
 
+local function deleteGameFile( event )
+	local fileName = event.target.myName
+	local gameFilesLayer = chooseGameFile:findLayer("gameFiles listeners")
+	local trashcanLayer = chooseGameFile:findLayer("trash listeners")
+	local trashcanImagesLayer = chooseGameFile:findLayer("trash")
+	local filesNames
+
+	persistence.deleteFile( fileName )
+
+	filesNames = persistence.filesNames()
+	for i = 1, #gameFiles.box do
+		if ( ( filesNames ) and ( filesNames[i] ) ) then
+			gameFiles.text[i].text = filesNames[i]
+			gameFiles.box[i].myName = filesNames[i]
+			gameFiles.trashcan[i].myName = filesNames[i]
+		else
+			if ( gameFiles.text[i] ) then 
+				gameFiles.text[i]:removeSelf()
+				gameFiles.text[i] = nil
+				trashcanImagesLayer[i].alpha = 0 
+				gameFiles.box[i]:removeEventListener( "tap", loadGameFile )
+				gameFiles.trashcan[i]:removeEventListener( "tap", deleteGameFile )
+			end
+		end 
+	end 
+	
+	return true 
+end
+
+local function setFiles()
+	local filesNames = persistence.filesNames()
+
+	local gameFilesLayer = chooseGameFile:findLayer("gameFiles listeners")
+
+	local trashcanLayer = chooseGameFile:findLayer("trash listeners")
+
+	local trashcanImagesLayer = chooseGameFile:findLayer("trash")
+
+	local gameFilesImagesLayer = chooseGameFile:findLayer("gameFiles")
+
+	for i = 1, gameFilesLayer.numChildren do
+		local text
+
+		table.insert( gameFiles.box, gameFilesLayer[i] )
+
+		if ( ( filesNames ) and ( filesNames[i] ) ) then
+			text = display.newText( chooseGameFile, filesNames[i], gameFilesImagesLayer[i].x, gameFilesImagesLayer[i].y, system.nativeFont, 30 )
+			table.insert( gameFiles.text, text ) 
+			table.insert( gameFiles.trashcan, trashcanLayer[i] )
+			trashcanLayer[i].myName = filesNames[i]
+			gameFiles.box[i].myName = filesNames[i]
+			gameFiles.box[i]:addEventListener( "tap", loadGameFile )
+			trashcanLayer[i]:addEventListener( "tap", deleteGameFile )
+		else 
+			trashcanImagesLayer[i].alpha = 0
+		end 
+	end
+end
+
 -- -----------------------------------------------------------------------------------
 -- Cenas
 -- -----------------------------------------------------------------------------------
@@ -77,26 +137,11 @@ function scene:create( event )
 
 	chooseGameFile = tiled.new(chooseGameData, "tiled")
 
-	local filesNames = persistence.filesNames()
-
-	local gameFilesLayer = chooseGameFile:findLayer("gameFiles")
-
-	for i = 1, gameFilesLayer.numChildren do
-		local text
-
-		table.insert( gameFiles.box, gameFilesLayer[i] )
-
-		if ( ( filesNames ~= nil ) and ( filesNames[i] ~= nil ) ) then
-			text = display.newText( chooseGameFile, filesNames[i], gameFilesLayer[i].x, gameFilesLayer[i].y, system.nativeFont, 30 )
-			table.insert(gameFiles.text, text ) 
-			gameFiles.box[#gameFiles.box].myName = filesNames[i]
-			gameFiles.box[#gameFiles.box]:addEventListener( "tap", loadGameFile )
-		end 
-	end
-
 	gotoMenuButton = chooseGameFile:findObject("gotoMenuButton")
 
 	fitScreen.fitBackground(chooseGameFile)
+
+	setFiles()
 
 	sceneGroup:insert( chooseGameFile )
 end

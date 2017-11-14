@@ -16,6 +16,7 @@ local sceneTransition = require "sceneTransition"
 
 local miniGamesData
 
+local menuButton
 
 local function gotoHouse()
 	miniGamesData.house.onRepeat = true 
@@ -54,11 +55,13 @@ function scene:create( event )
   	progress = tiled.new( progressData, "tiled" )
   	fitScreen.fitProgress( progress )
 
-  	persistence.setCurrentFileName( "ana" )
+  	--persistence.setCurrentFileName( "ana" )
   	miniGamesData = persistence.loadGameFile()
 
   	sceneGroup:insert( progress )
 
+
+  	menuButton = progress:findObject( "menuButton" )
 
   	if ( miniGamesData.house.stars > 0 ) then progress:findObject( "star_level1_1" ).alpha = 1 end
   	if ( miniGamesData.house.stars >= 2 ) then progress:findObject( "star_level1_2" ).alpha = 1 end
@@ -105,6 +108,7 @@ function scene:show( event )
 			level3:addEventListener( "tap", gotoRestaurant )
 		end
 		
+		menuButton:addEventListener( "tap", sceneTransition.gotoMenu )
 	elseif ( phase == "did" ) then
 		-- Code here runs when the scene is entirely on screen
 

@@ -194,7 +194,7 @@ function scene:create( event )
   --print( display.actualContentWidth )
   --print( display.actualContentHeight )
 
-  persistence.setCurrentFileName( "ana" )
+  --persistence.setCurrentFileName( "ana" )
 
 	house, character, rope, ropeJoint, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "house", onCollision )
    

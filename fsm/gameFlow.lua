@@ -47,6 +47,9 @@ function M.new( miniGameFSM, miniGame )
 
       elseif ( nextEvent == "checkFeedbackWait" ) then
         miniGameFSM.checkFeedbackWait()
+
+      elseif ( nextEvent == "finishLevel" ) then
+        miniGameFSM.finishLevel()
       end
 
     end
