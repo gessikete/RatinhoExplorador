@@ -7,6 +7,10 @@ local M = { }
 -- -----------------------------------------------------------------------------------
 -- Todas as funções de transição
 -- -----------------------------------------------------------------------------------
+function M.gotoProgress()
+	composer.gotoScene( "progress", { time = 800, effect = "crossFade" } )
+end
+
 function M.gotoMenu()
 	composer.gotoScene( "menu", { time = 800, effect = "crossFade" } )
 end

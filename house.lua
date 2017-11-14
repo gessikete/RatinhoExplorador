@@ -50,6 +50,8 @@ local collision = false
 
 local miniGameData
 
+local originalMiniGameData
+
 local tutorialFSM
 
 local messageBubble
@@ -195,19 +197,22 @@ function scene:create( event )
   persistence.setCurrentFileName( "ana" )
 
 	house, character, rope, ropeJoint, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "house", onCollision )
-
-  if ( character.flipped == true ) then
-    character.xScale = -1
-  end 
    
-  miniGameData.controlsTutorial = "incomplete"
+  --miniGameData.controlsTutorial = "incomplete"
   --miniGameData.bikeTutorial = "incomplete"
   --miniGameData.isComplete = false
 
   sceneGroup:insert( house )
   sceneGroup:insert( gamePanel.tiled )
 
-  if ( miniGameData.controlsTutorial == "incomplete" ) then 
+  if ( miniGameData.onRepeat == true ) then
+    miniGameData.controlsTutorial = "incomplete"
+    miniGameData.bikeTutorial = "incomplete"
+    miniGameData.isComplete = false 
+    originalMiniGameData = miniGameData
+  end
+
+  if ( miniGameData.controlsTutorial == "incomplete" )  then 
     setPuzzle()
   end
 
@@ -235,7 +240,7 @@ function scene:show( event )
       end
 
     else
-      if ( miniGameData.controlsTutorial == "incomplete" ) then
+      if ( miniGameData.controlsTutorial == "incomplete" )  then
         houseFSM.new( house, puzzle, miniGameData, gameState, gamePanel, path )
         houseFSM.controlsTutorial()
       end
@@ -252,6 +257,14 @@ function scene:hide( event )
 
 	if ( phase == "will" ) then
 		physics.stop( )
+    if ( miniGameData.onRepeat == true ) then
+      miniGameData.onRepeat = false
+
+      if ( miniGameData.isComplete == false ) then 
+        miniGameData = originalMiniGameData
+      end
+    end
+  
 		gameState:save( miniGameData )
 		destroyScene()
 	elseif ( phase == "did" ) then

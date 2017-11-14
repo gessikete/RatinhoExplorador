@@ -208,14 +208,14 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	  	      function( self, event, from, to ) 
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
 	  	        local function closure() 
-	  	          gamePanel.stopExecutionListeners()
-	  	          timer.performWithDelay( animation[self.current](), gameFlow.updateFSM ) 
+	  	            gamePanel.stopExecutionListeners()
+	  	            timer.performWithDelay( animation[self.current](), gameFlow.updateFSM ) 
 	  	        end
 
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
-	  	          timer.performWithDelay( wait, closure )
+	  	            timer.performWithDelay( wait, closure )
 	  	        else
-	  	          closure()
+	  	            closure()
 	  	        end
 	  	      end,
 
@@ -224,14 +224,14 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
 	  	        local function closure() 
-	  	          gamePanel.stopExecutionListeners()
-	  	          showText( house:findObject( messageBubble ), message[ msg ] ) 
+	  	            gamePanel.stopExecutionListeners()
+	  	            showText( house:findObject( messageBubble ), message[ msg ] ) 
 	  	        end
 
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
-	  	          timer.performWithDelay( wait, closure )
+	  	            timer.performWithDelay( wait, closure )
 	  	        else
-	  	          closure()
+	  	            closure()
 	  	        end
 
 	  	      end,
@@ -241,14 +241,14 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
 	  	        local function closure() 
-	  	          showText( house:findObject( messageBubble ), message[ msg ] ) 
-	  	          gamePanel.stopExecutionListeners()
+	  	            showText( house:findObject( messageBubble ), message[ msg ] ) 
+	  	            gamePanel.stopExecutionListeners()
 	  	        end
 
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
-	  	          timer.performWithDelay( wait, closure )
+	  	            timer.performWithDelay( wait, closure )
 	  	        else 
-	  	          closure()
+	  	            closure()
 	  	        end
 	  	      end,
 
@@ -260,9 +260,9 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	  	        showText( house:findObject( messageBubble ), message[ msg ] )
 	  	        gamePanel.stopExecutionListeners()
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
-	  	          timer.performWithDelay( wait, animation[animationName] )
+	  	            timer.performWithDelay( wait, animation[animationName] )
 	  	        else
-	  	          animation[animationName]()
+	  	            animation[animationName]()
 	  	        end
 	  	      end,
 
@@ -272,56 +272,54 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	  	        
 	  	        gamePanel.stopExecutionListeners()
 	  	        if ( ( animationName ) and ( animationName == "handExecuteAnimation" ) ) then
-	  	          transition.fadeOut( messageBubble, { time = 400 } )
+	  	            transition.fadeOut( messageBubble, { time = 400 } )
 	  	        end
 
 	  	        if ( ( messageBubble ) and ( messageBubble.text ) ) then
-	  	          transition.fadeOut( messageBubble.text, { time = 400 } )
-	  	          transition.fadeOut( messageBubble, { time = 400 } )
-	  	          messageBubble.text:removeSelf()
-	  	          messageBubble.text = nil
-	  	          transition.cancel( messageBubble.blinkingDart )
-	  	          messageBubble.blinkingDart.alpha = 0
-	  	          messageBubble.blinkingDart = nil
+	  	            transition.fadeOut( messageBubble.text, { time = 400 } )
+	  	            transition.fadeOut( messageBubble, { time = 400 } )
+	  	            messageBubble.text:removeSelf()
+	  	            messageBubble.text = nil
+	  	            transition.cancel( messageBubble.blinkingDart )
+	  	            messageBubble.blinkingDart.alpha = 0
+	  	            messageBubble.blinkingDart = nil
 	  	        end
 	  	        gameFlow.updateFSM()
 	  	      end,
 
 	  	    on_showFeedback = 
 	  	      function( self, event, from, to ) 
-	  	          local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
-	  	          local executeButton = gamePanel.executeButton
-	  	          local stars = 3
+	  	            local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+	  	            local executeButton = gamePanel.executeButton
+	  	            local stars
 
-	  	          gamePanel.stopExecutionListeners()
-	  	          if ( ( from == "transitionState" ) and ( wait ) ) then 
-	  	            timer.performWithDelay( wait, gameFlow.updateFSM )
-	  	          end
-
-	  	          if ( executeButton.executionsCount[#executeButton.executionsCount] ) then 
-	  	            if ( ( executeButton.executionsCount == 1 ) and ( executeButton.executionsCount[#executeButton.executionsCount] == 1 ) ) then
-	  	              stars = 3
-	  	            elseif ( gamePanel.bikeWheel.maxCount == 0 ) then
-	  	              stars = 2
-	  	            else 
-	  	              stars = 1
+	  	            gamePanel.stopExecutionListeners()
+	  	            if ( ( from == "transitionState" ) and ( wait ) ) then 
+	  	              	timer.performWithDelay( wait, gameFlow.updateFSM )
 	  	            end
-	  	          else
-	  	            stars = 1
-	  	          end
 
-	  	          local function closure()
-	  	            path:hidePath()
-	  	            gamePanel:hideInstructions()
-	  	            if ( messageBubble ) then 
-	  	              messageBubble.alpha = 0
-	  	              if ( messageBubble.blinkingDart ) then 
-	  	                messageBubble.blinkingDart.alpha = 0
+	  	            --executeButton.executionsCount MUDAR
+	  	            if ( executeButton.instructionsCount[#executeButton.instructionsCount] ) then 
+	  	              	if ( ( executeButton.executionsCount == 1 ) and ( executeButton.instructionsCount[#executeButton.instructionsCount] == 1 ) ) then
+	  	                	stars = 3
+	  	              elseif ( gamePanel.bikeWheel.maxCount == 0 ) then
+	  	                	stars = 2
+	  	              else 
+	  	                	stars = 1
 	  	              end
 	  	            end
-	  	          end
-	  	          timer.performWithDelay( 1000, closure )
-	  	          gamePanel.tiled:insert( feedback.showAnimation( "house", stars, _, gameFlow.updateFSM ) )
+
+	  	            local function closure()
+	  	              	if ( messageBubble ) then 
+	  	                	messageBubble.alpha = 0
+	  	                	if ( messageBubble.blinkingDart ) then 
+	  	                 		messageBubble.blinkingDart.alpha = 0
+	  	                	end
+	  	              end
+	  	            end
+	  	            timer.performWithDelay( 1000, closure )
+	  	            gamePanel.tiled:insert( feedback.showAnimation( "house", stars, 1, gameFlow.updateFSM ) )
+	  	        	miniGameData.stars = stars
 	  	        end,
 
 	  	    on_saveGame = 
@@ -344,26 +342,32 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	  	        local repeatPoint = house:findObject("repeatPoint")
 	  	        local startingPoint = house:findObject("start")
 
-	  	        physics.pause()
+	  	        --[[physics.pause()
 	  	        physics.removeBody( character )
 	  	        character.x = startingPoint.x 
 	  	        character.y = startingPoint.y - tilesSize - 8
 	  	        
 	  	        physics.start()
-	  	        physics.addBody( character )
+	  	        physics.addBody( character )]]
 	  	        --path:hidePath()
 
 	  	        --gamePanel:hideInstructions()
-	  	        if ( messageBubble ) then 
-	  	          messageBubble.alpha = 0
-	  	          if ( messageBubble.blinkingDart ) then 
-	  	            messageBubble.blinkingDart.alpha = 0
-	  	          end
-	  	        end
 
-	  	        gamePanel:updateBikeMaxCount( 5 )
+	  	        character.ropeJoint:removeSelf()
+	  	        physics.removeBody( character )
+	  	        physics.removeBody( character.rope )
+	  	        character.x = startingPoint.x + tilesSize * 2
+	  	        character.y = startingPoint.y - tilesSize * 3 - 6
+	  	        character.rope.x, character.rope.y = character.x, character.y + 4
+	  	        physics.start()
+	  	        physics.addBody( character )
+	  	        physics.addBody( character.rope )
+	  	        character.ropeJoint = physics.newJoint( "rope", character.rope, character, 0, 0 )
+	  	        character.isFixedRotation = true 
+	  	        character.xScale = 1
+
+	  	        gamePanel:updateBikeMaxCount( 1 )
 	  	        timer.performWithDelay( 2000, gameFlow.updateFSM )
-
 	  	    end
 	  	  }
 	  	})
@@ -413,14 +417,14 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	  	      function( self, event, from, to ) 
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
 	  	        local function closure() 
-	  	          gamePanel.stopExecutionListeners()
-	  	          timer.performWithDelay( animation[self.current](), gameFlow.updateFSM ) 
+	  	            gamePanel.stopExecutionListeners()
+	  	            timer.performWithDelay( animation[self.current](), gameFlow.updateFSM ) 
 	  	        end
 
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
-	  	          timer.performWithDelay( wait, closure )
+	  	            timer.performWithDelay( wait, closure )
 	  	        else
-	  	          closure()
+	  	            closure()
 	  	        end
 	  	      end,
 
@@ -429,14 +433,14 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
 	  	        local function closure() 
-	  	          gamePanel.stopExecutionListeners()
-	  	          showText( house:findObject( messageBubble ), message[ msg ] ) 
+	  	            gamePanel.stopExecutionListeners()
+	  	            showText( house:findObject( messageBubble ), message[ msg ] ) 
 	  	        end
 
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
-	  	          timer.performWithDelay( wait, closure )
+	  	            timer.performWithDelay( wait, closure )
 	  	        else
-	  	          closure()
+	  	            closure()
 	  	        end
 
 	  	      end,
@@ -446,14 +450,14 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
 	  	        local function closure() 
-	  	          showText( house:findObject( messageBubble ), message[ msg ] ) 
-	  	          gamePanel.stopExecutionListeners()
+	  	            showText( house:findObject( messageBubble ), message[ msg ] ) 
+	  	            gamePanel.stopExecutionListeners()
 	  	        end
 
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
-	  	          timer.performWithDelay( wait, closure )
+	  	            timer.performWithDelay( wait, closure )
 	  	        else
-	  	          closure()
+	  	            closure()
 	  	        end
 	  	      end,
 
@@ -466,9 +470,9 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 
 	  	        gamePanel.stopExecutionListeners()
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
-	  	          timer.performWithDelay( wait, animation[animationName] )
+	  	            timer.performWithDelay( wait, animation[animationName] )
 	  	        else
-	  	          animation[animationName]()
+	  	            animation[animationName]()
 	  	        end
 	  	      end,
 
@@ -478,27 +482,27 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	  	        
 	  	        gamePanel.stopExecutionListeners()
 	  	        if ( ( messageBubble ) and ( messageBubble.text ) ) then
-	  	          transition.fadeOut( messageBubble.text, { time = 400 } )
-	  	          transition.fadeOut( messageBubble, { time = 400 } )
-	  	          messageBubble.text:removeSelf()
-	  	          messageBubble.text = nil
-	  	          transition.cancel( messageBubble.blinkingDart )
-	  	          messageBubble.blinkingDart.alpha = 0
-	  	          messageBubble.blinkingDart = nil
+	  	            transition.fadeOut( messageBubble.text, { time = 400 } )
+	  	            transition.fadeOut( messageBubble, { time = 400 } )
+	  	            messageBubble.text:removeSelf()
+	  	            messageBubble.text = nil
+	  	            transition.cancel( messageBubble.blinkingDart )
+	  	            messageBubble.blinkingDart.alpha = 0
+	  	            messageBubble.blinkingDart = nil
 	  	        end
 	  	        gameFlow.updateFSM()
 	  	      end,
 
 	  	    on_showFeedback = 
 	  	      function( self, event, from, to ) 
-	  	          local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+	  	            local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
 
-	  	          gamePanel.stopExecutionListeners()
-	  	          if ( ( from == "transitionState" ) and ( wait ) ) then 
-	  	            timer.performWithDelay( wait, gameFlow.updateFSM )
-	  	          else
-	  	            gameFlow.updateFSM()
-	  	          end
+	  	            gamePanel.stopExecutionListeners()
+	  	            if ( ( from == "transitionState" ) and ( wait ) ) then 
+	  	              timer.performWithDelay( wait, gameFlow.updateFSM )
+	  	            else
+	  	              gameFlow.updateFSM()
+	  	            end
 	  	        end,
 
 	  	    on_nextTutorial = 

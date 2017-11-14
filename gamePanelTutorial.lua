@@ -140,7 +140,7 @@ function M.new( executeInstructions )
 
   	function M:showBikewheel ( fadeIn )
   		if ( fadeIn == true ) then
-  			transition.fadeIn( bikeWheel, { time = 400 } )
+  			transition.fadeIn( bikeWheel, { time = 1200 } )
   		else
   			bikeWheel.alpha = 1
   		end
@@ -185,8 +185,8 @@ function M.new( executeInstructions )
 			bikeLimit.text.text = count
 		end
 
-		transition.fadeIn( bikeLimit.text, { time = 400 } ) 
-		transition.fadeIn( bikeLimit, { time = 400 } ) 
+		transition.fadeIn( bikeLimit.text, { time = 1200 } ) 
+		transition.fadeIn( bikeLimit, { time = 1200 } ) 
 
 	end
 
@@ -359,11 +359,9 @@ function M.new( executeInstructions )
 				-- A caixa selecionada é escondida
 			  	selectedBox.alpha = 0
 
-			  	---------====
 			  	if ( ( bikeWheel.maxCount ~= math.huge ) and ( instructionsTable.last ~= 1 ) and ( instructionsTable.steps[ instructionsTable.last - 1 ]  > 1 ) )  then
 			  		M:updateBikeMaxCount( bikeWheel.maxCount - 1 )
 			  	end
-			  	---------====
 			else
 				-- Caso o movimento de toque acabe e a seta não seja colocada na caixa correta, ela 
 				-- volta para a posição original

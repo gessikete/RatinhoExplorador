@@ -15,6 +15,15 @@ function M.fitDefault( screen )
   	screen.y = screen.y - 48
 end
 
+function M.fitProgress( screen )
+  if (  display.actualContentWidth > 512 ) then 
+     screen.x = screen.x + 44
+    elseif (  display.actualContentWidth == 512 ) then
+      screen.x = screen.x + 16
+    end
+    screen.y = screen.y - 16
+end
+
 function M.fitSchool( screen )
   if (  display.actualContentWidth > 512 ) then 
       screen.x = screen.x - 44

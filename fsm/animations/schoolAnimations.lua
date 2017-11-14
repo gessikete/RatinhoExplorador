@@ -9,16 +9,135 @@ function M.new( school, gamePanel, path, schoolFSM, gameFlow )
 	local character = school:findObject( "character" )
 	local tilesSize = 32
 
+	local function flip( delay, character )
+		local function closure()
+			if ( character.xScale == 1 ) then character.xScale = -1
+			else character.xScale = 1 end 
+		end
+		
+		timer.performWithDelay( delay, closure )
+	end
+
+	local function enterHouseAnimation()
+		local startingPoint = school:findObject("start")
+		local time = 800
+		character.ropeJoint:removeSelf()
+	  	physics.removeBody( character )
+	  	physics.removeBody( character.rope )
+	  	character.x = startingPoint.x - tilesSize * 2 - 6
+	  	character.y = startingPoint.y - 6
+	  	teacher.x = character.x 
+	  	teacher.y = character.y 
+	  	teacher.alpha = 1
+	  	character.alpha = 1
+
+	  	path:hidePath()
+	  	transition.to( teacher, { time = time * 2, x = teacher.x + tilesSize * 2 + 5, 
+	  		onComplete = 
+	  			function()
+	  				transition.to( teacher, { time = time, y = teacher.y - tilesSize } )
+	  				transition.to( character, { time = time * 2, x = character.x + tilesSize * 2 + 6,
+	  				onComplete =
+	  					function()
+	  						character.rope.x, character.rope.y = character.x, character.y + 4
+	  						physics.addBody( character )
+						  	physics.addBody( character.rope )
+						  	character.ropeJoint = physics.newJoint( "rope", character.rope, character, 0, 0 )
+						  	character.isFixedRotation = true 
+						  	timer.performWithDelay( 800, gameFlow.updateFSM )
+	  					end
+	  				} )
+	  			end
+	  		} )
+	  	return math.huge
+	end
+
+	local function brotherJumpingAnimation()
+		local brother = school:findObject( "brother" )
+
+		local time = 1500
+
+		gameFlow.updateFSM()
+		transition.to( brother, { rotation = 7, time = time, y = brother.y - 5, transition = easing.inBounce,
+		onComplete =  
+		  function()
+		    transition.to( brother, { rotation = 0, time = time, y = brother.y + 5, transition = easing.outBounce } )
+		  end
+		 } )
+	end
+
+	local function brotherAnimation( stars, message )
+		local brother = school:findObject( "brother" )
+		local time = 450
+
+		if ( stars == 3 ) then 
+			brother.alpha = 1
+			brother.x = character.x - tilesSize * 2
+        	brother.y = character.y - 3
+        	flip( 0, brother )
+
+			transition.to( brother, { time = time, x = brother.x + tilesSize, 
+				onComplete = 
+					function()
+						transition.to( brother, { time = time * 2, y = brother.y + tilesSize * 2 ,
+							onComplete = 
+								function()
+									transition.to( brother, { time = time * 6, x = brother.x + tilesSize * 6, 
+										onComplete = 
+											function()
+												flip( 300, brother )
+												timer.performWithDelay( 800, gameFlow.updateFSM )
+											end 
+										} )
+								end
+
+							} )
+					end
+				} )
+		elseif ( stars == 2 ) then 
+			message["msg1"] = message["msg2"]
+			brotherJumpingAnimation()
+		elseif ( stars == 1 ) then
+			message["msg1"] = message["msg3"] 
+			brotherJumpingAnimation()
+		else
+			gameFlow.updateFSM( _, "transitionEvent" )
+		end 
+
+		
+		return math.huge
+
+	end
+
+	local function brotherLeaveAnimation()
+		local brother = school:findObject( "brother" )
+		local time = 500
+
+		flip( 300, brother )
+		local function closure()
+			transition.to( brother, { time = time * 15, x = brother.x + tilesSize * 15, 
+				onComplete =  
+					function()
+						brother.alpha = 0 
+					end
+				})
+		end
+		timer.performWithDelay( 600, closure )
+
+		return time * 12
+	end
+
 	local function handAnimation( time, count, wait, hand, initialX, initialY, x, y, state )
-		--[[if ( count <= 0 ) then
+		if ( hand.stop == true ) then
+			hand.alpha = 0
 		  return
-		else]] 
+		else 
 		  hand.x = initialX
 		  hand.y = initialY
 		  transition.to( hand, { time = time, x = x, y = y } )
 		  local closure = function ( ) return handAnimation( time, count - 1, wait, hand, initialX, initialY, x, y, state ) end
 		  timer.performWithDelay( time + wait, closure )
-		--end
+		end
 	end
 
 	local function handOrganizerAnimation()
@@ -73,7 +192,7 @@ function M.new( school, gamePanel, path, schoolFSM, gameFlow )
 			transition.to( teacher, { time = time * 2, y = teacher.y - tilesSize * 2, 
 				onComplete = 
 					function()
-						teacher.xScale = -1
+						flip( 0, teacher )
 						transition.to( teacher, { time = time * 1.5, x = teacher.x - tilesSize * 1.5, onComplete = releaseSupply } )
 					end
 			 	} )
@@ -105,10 +224,9 @@ function M.new( school, gamePanel, path, schoolFSM, gameFlow )
 	local function teacherChairCollision()
 		local time = 500 
 		local chair = school:findObject( "teacherChair" )
-		teacher.xScale = -1
 
 		local function goForward()
-			teacher.xScale = 1
+			flip( 0, teacher )
 			transition.to( teacher, { time = time, x = teacher.x - tilesSize * .25, onComplete = gameFlow.updateFSM } )
 		end
 
@@ -141,12 +259,12 @@ function M.new( school, gamePanel, path, schoolFSM, gameFlow )
 		transition.to( teacher, { time = time * 2, y = teacher.y + tilesSize * 2, 
 			onComplete = 
 				function()
-					teacher.xScale = -1
+					flip( 0, teacher )
 					transition.to( teacher, { time = time, x = teacher.x - tilesSize, 
 						onComplete =  
 							function()
 								local teacherBubble = school:findObject( "teacherBubble" )
-								teacher.xScale = 1
+								flip( 0, teacher )
 								teacherBubble.y = teacherBubble.y + tilesSize * 1.7
 								gameFlow.updateFSM()
 							end
@@ -157,12 +275,75 @@ function M.new( school, gamePanel, path, schoolFSM, gameFlow )
 		return math.huge
 	end
 
+	local function teacherJumpingAnimation()
+		local time = 1800
+
+		transition.to( teacher, { time = time, y = teacher.y - 7, transition = easing.inBounce,
+		onComplete =  
+		  function()
+		    transition.to( teacher, { time = time, y = teacher.y + 7, transition = easing.outBounce } )
+		  end
+		 } )
+
+		return time * 2 
+	end
+
+	local function leaveSchoolAnimation( organizer )
+		local time = 500 
+		local stepsX
+		local stepsY 
+
+		if ( organizer.direction == "right" ) then
+			stepsX = 1
+		else 
+			stepsX = 2
+		end
+
+		flip( 0, character )
+		transition.to( character, { time = stepsX * time, x = character.x + stepsX * tilesSize,
+			onComplete =
+				function()
+					stepsX = 8
+					if ( organizer.number == 1 ) then 
+						if ( organizer.direction == "right" ) then 
+							stepsY = 9
+						else
+							stepsY = 8
+						end
+					elseif ( organizer.number == 2 ) then 
+						stepsY = 7
+					elseif ( organizer.number == 3 ) then 
+						stepsY = 6 
+					elseif ( organizer.number == 4 ) then 
+						if ( organizer.direction == "right" ) then stepsY = 5
+						else
+							stepsY = 4
+						end
+					end
+
+					transition.to( character, { time = time * stepsY, y = character.y + stepsY * tilesSize, 
+						onComplete = 
+							function()
+								transition.to( character, { time = time * stepsX, x = character.x + stepsX * tilesSize, onComplete = gameFlow.updateFSM } )
+							end
+						} )
+				end
+			} )
+
+		return math.huge
+	end
+
 	animation["handOrganizerAnimation"] = handOrganizerAnimation
 	animation["teacherOrganizerAnimation"] = teacherOrganizerAnimation
 	animation["teacherChairCollision"] = teacherChairCollision
 	animation["fixChair"] = fixChair
 	animation["teacherGotoInitialPosition"] = teacherGotoInitialPosition
-
+	animation["teacherJumpingAnimation"] = teacherJumpingAnimation
+	animation["enterHouseAnimation"] = enterHouseAnimation
+	animation["brotherAnimation"] = brotherAnimation
+	animation["brotherLeaveAnimation"] = brotherLeaveAnimation
+	animation["leaveSchoolAnimation"] = leaveSchoolAnimation
+ 
 	return animation
 end
 

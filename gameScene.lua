@@ -92,7 +92,7 @@ function M:set( miniGame, onCollision, sceneGroup )
 
   	instructionsTable = instructions.new( tilesSize, character, markedPath )
 
-    if ( ( miniGame == "house" ) and ( miniGameData.isComplete == false ) ) then 
+    if ( ( miniGame == "house" ) and ( ( miniGameData.isComplete == false ) or ( miniGameData.onRepeat == true ) ) ) then 
       gamePanel = require "gamePanelTutorial" 
     else
       gamePanel = require "gamePanel"

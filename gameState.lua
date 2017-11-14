@@ -36,13 +36,23 @@ function M.new(  currentMiniGame, character, onCollision )
 
 	  		if ( miniGameData ) then
 	  			if ( currentMiniGame == "house" ) then
-	  				gameState.house.isComplete = miniGameData.isComplete
+	  				--[[gameState.house.isComplete = miniGameData.isComplete
 	  				gameState.house.controlsTutorial = miniGameData.controlsTutorial
 	  				gameState.house.bikeTutorial = miniGameData.bikeTutorial
+	  				gameState.house.stars = miniGameData.stars]]
+	  				gameState.house = miniGameData
 	  			elseif ( currentMiniGame == "school" ) then
-	  				gameState.school.isComplete = miniGameData.isComplete
+	  				--[[gameState.school.isComplete = miniGameData.isComplete
+	  				gameState.school.stars = miniGameData.stars
+	  				gameState.school.previousStars = gameState.house.stars]]
+	  				gameState.school = miniGameData
 	  			elseif ( currentMiniGame == "restaurant" ) then
-	  				gameState.restaurant.isComplete = miniGameData.isComplete
+	  				--[[gameState.restaurant.isComplete = miniGameData.isComplete
+	  				gameState.restaurant.stars = miniGameData.stars
+	  				gameState.restaurant.previousStars = gameState.school.stars]]
+	  				gameState.restaurant = miniGameData
+	  			else
+	  				gameState = miniGameData
 	  			end
 
 	  		end
@@ -63,7 +73,15 @@ function M.new(  currentMiniGame, character, onCollision )
 	  	if ( gameFile ~= nil ) then 
 	  		if ( ( currentMiniGame ~= "house" ) or ( gameFile.house.controlsTutorial == "complete" ) ) then 
 		  		local startingPointX, startingPointY = persistence.startingPoint( loadingMiniGame )
-		  		local goBackPointX, goBackPointY, flipped = persistence.goBackPoint( loadingMiniGame, gameFile )
+		  		local goBackPointX, goBackPointY, flipped
+
+		  		if ( ( gameFile.house.onRepeat == true )  or ( gameFile.restaurant.onRepeat == true ) or ( gameFile.school.onRepeat == true ) ) then
+		  		 	goBackPointX = startingPointX
+		  		 	goBackPointY = startingPointY
+		  		 	flipped = false 
+		  		else
+		  			goBackPointX, goBackPointY, flipped = persistence.goBackPoint( loadingMiniGame, gameFile )
+		  		end
 		  		-- Apresenta uma imagem de carregamento enquanto o personagem é posicionado
 			    --[[if ( gameFile.currentMiniGame == loadingMiniGame ) then 
 			      local defaultLoadingData = json.decodeFile(system.pathForFile("tiled/loading.json", system.ResourceDirectory))  -- load from json export
@@ -86,6 +104,10 @@ function M.new(  currentMiniGame, character, onCollision )
 		  		character.steppingX = goBackPointX
 		  		character.steppingY = goBackPointY
 
+		  		if ( character.flipped == true ) then
+    				character.xScale = -1
+  				end 
+
 		  		gameFile.currentMiniGame = currentMiniGame
 		  	end
 
@@ -95,6 +117,8 @@ function M.new(  currentMiniGame, character, onCollision )
 	  			miniGameData = gameFile.school
 	  		elseif ( currentMiniGame == "restaurant" ) then
 	  			miniGameData = gameFile.restaurant
+	  		elseif ( currentMiniGame == "map" ) then
+	  			miniGameData = gameFile
 	  		end
 	  	end  
 

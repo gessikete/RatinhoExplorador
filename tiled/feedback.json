@@ -8,7 +8,7 @@
                  "gid":7,
                  "height":466,
                  "id":11,
-                 "name":"background",
+                 "name":"gui",
                  "properties":
                     {
                      "alpha":0,
@@ -21,10 +21,22 @@
                     },
                  "rotation":0,
                  "type":"",
+                 "visible":false,
+                 "width":500,
+                 "x":-5,
+                 "y":368
+                }, 
+                {
+                 "gid":15,
+                 "height":280,
+                 "id":19,
+                 "name":"background",
+                 "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":500,
-                 "x":-4,
-                 "y":368
+                 "x":-5,
+                 "y":279
                 }],
          "opacity":1,
          "properties":
@@ -75,24 +87,16 @@
          "name":"repeat",
          "objects":[
                 {
-                 "ellipse":true,
-                 "height":42.2903225806452,
-                 "id":2,
+                 "gid":16,
+                 "height":46,
+                 "id":20,
                  "name":"repeat",
-                 "properties":
-                    {
-                     "isHitTestable":true
-                    },
-                 "propertytypes":
-                    {
-                     "isHitTestable":"bool"
-                    },
                  "rotation":0,
                  "type":"",
-                 "visible":false,
-                 "width":42.2903225806452,
-                 "x":226,
-                 "y":221
+                 "visible":true,
+                 "width":46,
+                 "x":223,
+                 "y":266
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -105,24 +109,16 @@
          "name":"forward",
          "objects":[
                 {
-                 "ellipse":true,
-                 "height":42.2903225806452,
-                 "id":3,
+                 "gid":17,
+                 "height":46,
+                 "id":21,
                  "name":"forward",
-                 "properties":
-                    {
-                     "isHitTestable":"true"
-                    },
-                 "propertytypes":
-                    {
-                     "isHitTestable":"string"
-                    },
                  "rotation":0,
                  "type":"",
-                 "visible":false,
-                 "width":42.2903225806452,
-                 "x":289,
-                 "y":220
+                 "visible":true,
+                 "width":46,
+                 "x":286,
+                 "y":266
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -142,11 +138,13 @@
                  "properties":
                     {
                      "alpha":0,
+                     "msg":1,
                      "stars":1
                     },
                  "propertytypes":
                     {
                      "alpha":"int",
+                     "msg":"int",
                      "stars":"int"
                     },
                  "rotation":0,
@@ -164,11 +162,13 @@
                  "properties":
                     {
                      "alpha":0,
+                     "msg":1,
                      "stars":2
                     },
                  "propertytypes":
                     {
                      "alpha":"int",
+                     "msg":"int",
                      "stars":"int"
                     },
                  "rotation":0,
@@ -186,11 +186,13 @@
                  "properties":
                     {
                      "alpha":0,
+                     "msg":1,
                      "stars":3
                     },
                  "propertytypes":
                     {
                      "alpha":"int",
+                     "msg":"int",
                      "stars":"int"
                     },
                  "rotation":0,
@@ -202,7 +204,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -211,9 +213,153 @@
          "name":"school",
          "objects":[
                 {
-                 "gid":3,
-                 "height":106,
-                 "id":17,
+                 "gid":8,
+                 "height":91,
+                 "id":18,
+                 "name":"",
+                 "properties":
+                    {
+                     "alpha":0,
+                     "msg":1,
+                     "stars":0
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"int",
+                     "msg":"int",
+                     "stars":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":270,
+                 "x":114,
+                 "y":213
+                }, 
+                {
+                 "gid":9,
+                 "height":89,
+                 "id":26,
+                 "name":"",
+                 "properties":
+                    {
+                     "alpha":0,
+                     "msg":1,
+                     "stars":1
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"int",
+                     "msg":"int",
+                     "stars":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":290,
+                 "x":108,
+                 "y":217
+                }, 
+                {
+                 "gid":10,
+                 "height":100,
+                 "id":27,
+                 "name":"",
+                 "properties":
+                    {
+                     "alpha":0,
+                     "msg":2,
+                     "stars":1
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"int",
+                     "msg":"int",
+                     "stars":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":290,
+                 "x":104,
+                 "y":223
+                }, 
+                {
+                 "gid":11,
+                 "height":103,
+                 "id":23,
+                 "name":"",
+                 "properties":
+                    {
+                     "alpha":0,
+                     "msg":1,
+                     "stars":2
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"int",
+                     "msg":"int",
+                     "stars":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":290,
+                 "x":110,
+                 "y":228
+                }, 
+                {
+                 "gid":12,
+                 "height":103,
+                 "id":24,
+                 "name":"",
+                 "properties":
+                    {
+                     "alpha":0,
+                     "msg":2,
+                     "stars":2
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"int",
+                     "msg":"int",
+                     "stars":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":290,
+                 "x":105,
+                 "y":224
+                }, 
+                {
+                 "gid":13,
+                 "height":103,
+                 "id":25,
+                 "name":"",
+                 "properties":
+                    {
+                     "alpha":0,
+                     "msg":3,
+                     "stars":2
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"int",
+                     "msg":"int",
+                     "stars":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":290,
+                 "x":108,
+                 "y":221
+                }, 
+                {
+                 "gid":14,
+                 "height":77,
+                 "id":22,
                  "name":"",
                  "properties":
                     {
@@ -230,33 +376,9 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":264,
-                 "x":111,
-                 "y":221
-                }, 
-                {
-                 "gid":8,
-                 "height":91,
-                 "id":18,
-                 "name":"",
-                 "properties":
-                    {
-                     "alpha":"0",
-                     "msg":1,
-                     "stars":0
-                    },
-                 "propertytypes":
-                    {
-                     "alpha":"string",
-                     "msg":"int",
-                     "stars":"int"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":270,
-                 "x":114,
-                 "y":213
+                 "width":280,
+                 "x":107,
+                 "y":208
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -285,7 +407,7 @@
                  "type":"",
                  "visible":true,
                  "width":48,
-                 "x":163,
+                 "x":162,
                  "y":122
                 }, 
                 {
@@ -305,8 +427,8 @@
                  "type":"",
                  "visible":true,
                  "width":57,
-                 "x":219,
-                 "y":115
+                 "x":218,
+                 "y":116
                 }, 
                 {
                  "gid":6,
@@ -325,8 +447,8 @@
                  "type":"",
                  "visible":true,
                  "width":48,
-                 "x":284,
-                 "y":120
+                 "x":283,
+                 "y":121
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -334,7 +456,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":19,
+ "nextobjectid":28,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",
@@ -451,8 +573,8 @@
          "margin":0,
          "name":"school",
          "spacing":0,
-         "tilecount":1,
-         "tileheight":94,
+         "tilecount":7,
+         "tileheight":103,
          "tiles":
             {
              "0":
@@ -460,9 +582,82 @@
                  "image":"images\/feedback\/school_0stars_msg1.png",
                  "imageheight":91,
                  "imagewidth":270
+                },
+             "1":
+                {
+                 "image":"images\/feedback\/school_1star_msg1.png",
+                 "imageheight":89,
+                 "imagewidth":290
+                },
+             "2":
+                {
+                 "image":"images\/feedback\/school_1star_msg2.png",
+                 "imageheight":100,
+                 "imagewidth":290
+                },
+             "3":
+                {
+                 "image":"images\/feedback\/school_2stars_msg1.png",
+                 "imageheight":103,
+                 "imagewidth":290
+                },
+             "4":
+                {
+                 "image":"images\/feedback\/school_2stars_msg2.png",
+                 "imageheight":103,
+                 "imagewidth":290
+                },
+             "5":
+                {
+                 "image":"images\/feedback\/school_2stars_msg3.png",
+                 "imageheight":103,
+                 "imagewidth":290
+                },
+             "6":
+                {
+                 "image":"images\/feedback\/school_3stars_msg1.png",
+                 "imageheight":77,
+                 "imagewidth":280
                 }
             },
-         "tilewidth":270
+         "tilewidth":290
+        }, 
+        {
+         "columns":0,
+         "firstgid":15,
+         "grid":
+            {
+             "height":1,
+             "orientation":"orthogonal",
+             "width":1
+            },
+         "margin":0,
+         "name":"background",
+         "spacing":0,
+         "tilecount":3,
+         "tileheight":280,
+         "tiles":
+            {
+             "0":
+                {
+                 "image":"images\/feedback\/background.png",
+                 "imageheight":280,
+                 "imagewidth":500
+                },
+             "1":
+                {
+                 "image":"images\/feedback\/repeatButton.png",
+                 "imageheight":46,
+                 "imagewidth":46
+                },
+             "2":
+                {
+                 "image":"images\/feedback\/forwardButton.png",
+                 "imageheight":46,
+                 "imagewidth":46
+                }
+            },
+         "tilewidth":500
         }],
  "tilewidth":16,
  "type":"map",

@@ -56,6 +56,8 @@ local collision
 
 local miniGameData
 
+local originalMiniGameData
+
 local function setSupplies()
   local suppliesLayer = school:findLayer( "supplies" )
   local suppliesSensorsLayer = school:findLayer( "supplies sensors" )
@@ -63,6 +65,8 @@ local function setSupplies()
   supplies = { collected = { }, list = { }, sensors = { }, remaining = { } }
 
   for i = 1, suppliesLayer.numChildren do
+    suppliesLayer[i].originalX = suppliesLayer[i].x 
+    suppliesLayer[i].originalY = suppliesLayer[i].y 
     supplies.list[suppliesLayer[i].number] = suppliesLayer[i] 
     supplies.sensors[suppliesSensorsLayer[i].number] = suppliesSensorsLayer[i] 
   end
@@ -167,12 +171,10 @@ local function onCollision( event )
     elseif ( ( obj1.myName == "supply" ) and ( obj2.myName == "character" ) ) then
       supplies.collected[ obj1.number ] = supplies.list[ obj1.number ]
       transition.fadeOut( supplies.list[ obj1.number ], { time = 400 } )
-      print( "supply" )
 
     elseif ( ( obj2.myName == "supply" ) and ( obj1.myName == "character" ) ) then
       supplies.collected[ obj1.number ] = supplies.list[ obj2.number ]
       transition.fadeOut( supplies.list[ obj2.number ], { time = 400 } )
-      print( "supply" )
 
     elseif ( obj1.myName == "table" ) then    
       if ( not tables[obj1.number].isPhysics ) then
@@ -245,9 +247,10 @@ local function onCollision( event )
 
       local function showSupply( i )
         if ( i > #list ) then 
-          for j = 1, #list  do 
-            transition.fadeOut( list[j], { time = 800, onComplete = schoolFSM.updateFSM } )
+          for j = 1, #list - 1  do 
+              transition.fadeOut( list[j], { time = 800 } )
           end
+          transition.fadeOut( list[#list], { time = 800, onComplete = schoolFSM.updateFSM } )
           return 
         end  
         list[i].x = organizerPositions[obj.number].x 
@@ -288,6 +291,7 @@ local function onCollision( event )
       end
       
       collision.organizer = true 
+      collision.obj = obj 
       local organizedAll = true 
       local organizedNone = true 
       local remaining = { }
@@ -359,12 +363,58 @@ function scene:create( event )
   sceneGroup:insert( school )
   sceneGroup:insert( gamePanel.tiled )
 
+  if ( miniGameData.onRepeat == true ) then
+    miniGameData.isComplete = false 
+    originalMiniGameData = miniGameData
+  end
+
   setObstacles()
 
+  -- Sem usar a bicicleta
+  instructionsTable.steps = { 
+    1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1,
+    1, 1
+     }
+  instructionsTable.direction = { 
+  "down", "down",
+  "right", "right", "right", "right", "right", "right", "right", "right", "right",
+  "up", "up", "up", "up",
+  "left", "left", "left", "left", "left", "left", "left", "left",
+  "up", "up",
+  "left", "left" }
+
+  instructionsTable.last = 27
+
+  --[[instructionsTable.steps = { 
+    1, 1, 1,
+    1, 1, 1,
+    1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1,
+    1, 1
+     }
+  instructionsTable.direction = { 
+  "right", "right", "right",
+  "left", "left",
+  "down", "down",
+  "right", "right", "right", "right", "right", "right", "right", "right", "right",
+  "up", "up", "up", "up",
+  "left", "left", "left", "left", "left", "left", "left", "left",
+  "up", "up",
+  "left", "left" }
+
+  instructionsTable.last = 33]]
+
   -- Perfect
-  instructionsTable.steps = { 2, 9, 4, 8, 2, 2 }
+  --[[instructionsTable.steps = { 2, 9, 4, 8, 2, 2 }
   instructionsTable.direction = { "down", "right", "up", "left", "up", "left" }
-  instructionsTable.last = 6
+  instructionsTable.last = 6]]
 
   --[[instructionsTable.steps = { 2, 3, 3, 8, 2, 2 }
   instructionsTable.direction = { "down", "right", "up", "left", "up", "left" }
@@ -372,7 +422,7 @@ function scene:create( event )
 
   --[[instructionsTable.steps = { 4, 3, 4 }
   instructionsTable.direction = { "right", "up", "down" }
-  instructionsTable.last = 3]]
+  instructionsTable.last = 1]]
 
 
   -- Organizador de baixo
@@ -419,13 +469,24 @@ function scene:show( event )
   local phase = event.phase
 
   if ( phase == "will" ) then
-    gamePanel:addDirectionListeners()
+    if ( ( miniGameData.isComplete == false ) or ( miniGameData.onRepeat == true ) ) then
+      setSupplies()
+      gamePanel.tiled.alpha = 0
+      local brother = school:findObject( "brother" )
+      if ( ( miniGameData.previousStars == 1 ) or ( miniGameData.previousStars == 2 ) )  then 
+        brother.alpha = 1
+      end
+    else
+      teacher = school:findObject( "teacher" )
+      teacher.alpha = 1
+      character.alpha = 1
+      gamePanel:addDirectionListeners()
+    end
 
   elseif ( phase == "did" ) then
     gamePanel:addButtonsListeners()
     gamePanel:addInstructionPanelListeners()
-    if ( miniGameData.isComplete == false ) then
-      setSupplies()
+    if ( ( miniGameData.isComplete == false ) or ( miniGameData.onRepeat == true ) ) then
       collision = { table = false, chair = false, organizer = false, organizedAll = false, organizedNone = true }
       schoolFSM.new( school, supplies , collision, instructionsTable, miniGameData, gameState, gamePanel, path )
       schoolFSM.execute()
@@ -442,8 +503,17 @@ function scene:hide( event )
   local phase = event.phase
 
   if ( phase == "will" ) then
-    -- Code here runs when the scene is on screen (but is about to go off screen)
+    physics.stop( )
+    if ( miniGameData.onRepeat == true ) then
+      miniGameData.onRepeat = false
 
+      if ( miniGameData.isComplete == false ) then 
+        miniGameData = originalMiniGameData
+      end
+    end
+  
+    gameState:save( miniGameData )
+    destroyScene()
   elseif ( phase == "did" ) then
     -- Code here runs immediately after the scene goes entirely off screen
 

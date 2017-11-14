@@ -140,7 +140,6 @@ function M.new( miniGameFSM, miniGame )
         if ( bubble == miniGame:findObject( "momBubble" ) ) then 
           bubble.blinkingDart = miniGame:findObject( "momBlinkingDart" ) 
         elseif ( bubble == miniGame:findObject( "teacherBubble" ) ) then
-          print( "hmm" )
           bubble.blinkingDart = miniGame:findObject( "teacherBlinkingDart" ) 
         end
       end

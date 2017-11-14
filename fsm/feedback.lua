@@ -49,19 +49,23 @@ local function repeatLevel( event )
   end
 end
 
-local function addListeners()
+local function addListeners( starNumber )
   local menuButton = feedback:findObject( "menu" )
   local forwardButton = feedback:findObject( "forward" )
   local repeatButton = feedback:findObject( "repeat" )
 
   menuButton:addEventListener( "tap", gotoMenu )
-  forwardButton:addEventListener( "tap", goForward )
   repeatButton:addEventListener( "tap", repeatLevel )
+  if ( starNumber > 0 ) then
+    forwardButton:addEventListener( "tap", goForward )
+  end 
 
   removeListeners = function ()
     menuButton:removeEventListener( "tap", gotoMenu )
-    forwardButton:removeEventListener( "tap", goForward )
     repeatButton:removeEventListener( "tap", repeatLevel )
+    if ( starNumber > 0 ) then
+      forwardButton:removeEventListener( "tap", goForward )
+    end 
   end
 end
 
@@ -87,7 +91,7 @@ local function showFeedback( starNumber, nextStar )
 
     transition.fadeIn( star, { time = time, onComplete = closure } )
   else
-    addListeners()
+    addListeners( starNumber )
     if ( message ) then
       transition.fadeIn( message, { time = time * 3 } )
     end
@@ -116,6 +120,14 @@ function M.showAnimation( miniGame, stars, msg, executeFSM_ )
   end
   
   transition.fadeIn( feedback:findObject( "background" ), { time = time } )
+  if ( stars == 0 ) then 
+    local repeatButton = feedback:findObject( "repeat" )
+    local forwardButton = feedback:findObject( "forward" )
+    
+    repeatButton.x = forwardButton.x 
+    repeatButton.y = forwardButton.y 
+    forwardButton.alpha = 0
+  end
   timer.performWithDelay( time, showFeedbackClosure )
 
   return feedback

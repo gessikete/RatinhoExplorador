@@ -157,37 +157,39 @@ function M.new( executeInstructions )
 		  
 		elseif ( "moved" == phase ) then
 		    if ( adjustment ) then 
+				if ( bikeWheel.maxCount > 0 ) then  
+			      	local dx = event.x - centerX 
+			      	local dy = event.y - centerY
+			      	local radius = math.sqrt( math.pow( dx, 2 ) + math.pow( dy, 2 ) )
+			      	local ds, dt = ( circle.radius * dx ) / radius, ( circle.radius * dy ) / radius
+			      	local quadrant = getQuadrant( dx, dy )
 
-		      	local dx = event.x - centerX 
-		      	local dy = event.y - centerY
-		      	local radius = math.sqrt( math.pow( dx, 2 ) + math.pow( dy, 2 ) )
-		      	local ds, dt = ( circle.radius * dx ) / radius, ( circle.radius * dy ) / radius
-		      	local quadrant = getQuadrant( dx, dy )
+			      	if ( ( quadrant ) and ( circle.quadrant ) ) then 
+				      	if ( quadrant ~= circle.quadrant ) then
+				      	  	if ( ( circle.quadrant == 4 ) and ( quadrant == 1 ) ) then 
+				      	    	circle.steps = circle.steps + 0.5
+				      		elseif ( ( circle.quadrant == 1 ) and ( quadrant == 4 ) ) then 
+				      	    	if ( circle.steps > 0 ) then
+				      	      		circle.steps = circle.steps - 0.5
+				      	    	end
+				      	  	elseif ( quadrant > circle.quadrant ) then 
+				      	    	circle.steps = circle.steps + 0.5
+				      	  	elseif ( quadrant < circle.quadrant ) then 
+				      	    	if ( circle.steps > 0 ) then
+				      	      		circle.steps = circle.steps - 0.5
+				      	    	end
+				      	  	end 
+				      	end
 
-		      	if ( ( quadrant ) and ( circle.quadrant ) ) then 
-			      	if ( quadrant ~= circle.quadrant ) then
-			      	  	if ( ( circle.quadrant == 4 ) and ( quadrant == 1 ) ) then 
-			      	    	circle.steps = circle.steps + 0.5
-			      		elseif ( ( circle.quadrant == 1 ) and ( quadrant == 4 ) ) then 
-			      	    	if ( circle.steps > 0 ) then
-			      	      		circle.steps = circle.steps - 0.5
-			      	    	end
-			      	  	elseif ( quadrant > circle.quadrant ) then 
-			      	    	circle.steps = circle.steps + 0.5
-			      	  	elseif ( quadrant < circle.quadrant ) then 
-			      	    	if ( circle.steps > 0 ) then
-			      	      		circle.steps = circle.steps - 0.5
-			      	    	end
-			      	  	end 
+				      	circle.quadrant = quadrant
+
+				      	if ( circle.steps > 0 ) then
+				      	  circle.rotation = ( math.atan2( dt, ds ) * 180 / math.pi ) - adjustment 
+				      	end
+				 
+				      	updateSteps( circle )
+				      	
 			      	end
-
-			      	circle.quadrant = quadrant
-
-			      	if ( circle.steps > 0 ) then
-			      	  circle.rotation = ( math.atan2( dt, ds ) * 180 / math.pi ) - adjustment 
-			      	end
-			 
-			      	updateSteps( circle )
 		      	end
 		    end 
 		  
@@ -287,6 +289,10 @@ function M.new( executeInstructions )
 
 				-- A caixa selecionada é escondida
 			  	selectedBox.alpha = 0
+
+			  	if ( ( bikeWheel.maxCount ~= math.huge ) and ( instructionsTable.last ~= 1 ) and ( instructionsTable.steps[ instructionsTable.last - 1 ]  > 1 ) )  then
+			  		M:updateBikeMaxCount( bikeWheel.maxCount - 1 )
+			  	end
 			else
 				-- Caso o movimento de toque acabe e a seta não seja colocada na caixa correta, ela 
 				-- volta para a posição original

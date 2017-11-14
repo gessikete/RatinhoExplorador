@@ -13,7 +13,7 @@ local slowStep = 400
 
 -- Retorna a lista das instruções
 function M.new( tilesSize, character, markedPath, miniGame )
-  local instructionsTable = { executing = 1, last = 0,  direction = { }, steps = { } }
+  local instructionsTable = { executing = 1, last = 0,  direction = { }, steps = { }, stop = false }
   local stopExecutionListeners
   local restartExecutionListeners
 
@@ -96,7 +96,7 @@ function M.new( tilesSize, character, markedPath, miniGame )
   local function executeSingleInstruction()
     if ( instructionsTable ~= nil ) then
       -- Condição de parada (fila de instruções vazia)
-      if ( instructionsTable.last < instructionsTable.executing )  then
+      if ( ( instructionsTable.last < instructionsTable.executing ) or ( instructionsTable.stop == true ) )  then
         -- Reestabelece os listeners do painel de instruções
         if ( restartExecutionListeners ) then 
           restartExecutionListeners()
@@ -121,6 +121,7 @@ function M.new( tilesSize, character, markedPath, miniGame )
     -- Pausa os listeners do painel de instruções, para impedir adição de instruções
     if ( stopExecutionListeners ) then 
       stopExecutionListeners()
+      instructionsTable.stop = false 
       --[[for k, v in pairs( instructionsTable.steps ) do
         print( "-----" )
         print( "steps: " .. instructionsTable.steps[k] )
