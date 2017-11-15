@@ -36,10 +36,6 @@ local character
 
 local mom 
 
-local rope 
-
-local ropeJoint
-
 local tilesSize = 32
 
 local stepDuration = 50
@@ -122,12 +118,12 @@ local function onCollision( event )
 
     -- Volta para o mapa quando o personagem chega na saída/entrada da casa
     elseif ( ( ( obj1.myName == "exit" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "exit" ) ) ) then 
-      print( houseFSM.tutorialFSM )
       if ( miniGameData.isComplete == true ) then
         transition.cancel()
+        character.stepping.point = "exit"
         instructions:destroyInstructionsTable()
         gamePanel:stopAllListeners()
-        timer.performWithDelay( 800, sceneTransition.gotoMap )
+        timer.performWithDelay( 1000, sceneTransition.gotoMap )
 
       elseif ( ( miniGameData.controlsTutorial == "complete" ) and ( houseFSM.tutorialFSM ) )then
         local _, animationName = houseFSM.tutorialFSM.current:match( "([^,]+)_([^,]+)" ) 
@@ -141,19 +137,22 @@ local function onCollision( event )
     elseif ( ( ( obj1.myName == "entrance" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "entrance" ) ) ) then 
       if ( miniGameData.isComplete == true ) then
         transition.cancel()
+        character.stepping.point = "entrance"
         instructions:destroyInstructionsTable()
         gamePanel:stopAllListeners()
-        timer.performWithDelay( 800, sceneTransition.gotoMap )
+        timer.performWithDelay( 1000, sceneTransition.gotoMap )
       end
     -- Colisão entre o personagem e os sensores dos tiles do caminho
-    elseif ( ( obj1.myName == "character" ) and ( obj2.myName ~= "collision" ) ) then 
-      character.steppingX = obj2.x 
-      character.steppingY = obj2.y 
+    elseif ( ( obj1.myName == "character" ) and ( obj2.isPath ) ) then 
+      character.stepping.x = obj2.x 
+      character.stepping.y = obj2.y 
+      character.stepping.point = "point"
       path:showTile( obj2.myName )
 
-    elseif ( ( obj2.myName == "character" ) and ( obj1.myName ~= "collision" ) ) then 
-      character.steppingX = obj1.x 
-      character.steppingY = obj1.y 
+    elseif ( ( obj2.myName == "character" ) and ( obj1.isPath ) ) then 
+      character.stepping.x = obj1.x 
+      character.stepping.y = obj1.y 
+      character.stepping.point = "point"
       path:showTile( obj1.myName )
 
     -- Colisão com os demais objetos e o personagem (rope nesse caso)
@@ -194,9 +193,7 @@ function scene:create( event )
   --print( display.actualContentWidth )
   --print( display.actualContentHeight )
 
-  --persistence.setCurrentFileName( "ana" )
-
-	house, character, rope, ropeJoint, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "house", onCollision )
+	house, character, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "house" )
    
   --miniGameData.controlsTutorial = "incomplete"
   --miniGameData.bikeTutorial = "incomplete"
@@ -227,6 +224,7 @@ function scene:show( event )
     if ( miniGameData.controlsTutorial == "complete" ) then
 		  gamePanel:addDirectionListeners()
     end
+    Runtime:addEventListener( "collision", onCollision )
 
 	elseif ( phase == "did" ) then
     if ( miniGameData.controlsTutorial == "complete" ) then
@@ -256,7 +254,6 @@ function scene:hide( event )
 	local phase = event.phase
 
 	if ( phase == "will" ) then
-		physics.stop( )
     if ( miniGameData.onRepeat == true ) then
       miniGameData.onRepeat = false
 

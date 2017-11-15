@@ -82,11 +82,18 @@ function M.new( school, supplies, collision, instructionsTable, miniGameData, ga
 	  	  	on_before_event = 
 	  	      function( self, event, from, to ) 
 	  	        if ( ( messageBubble ) and ( messageBubble.text ) ) then
+	  	        	messageBubble:removeSelf()
 			        messageBubble.text:removeSelf()
 			        messageBubble.text = nil
 			        transition.cancel( messageBubble.blinkingDart )
 			        messageBubble.blinkingDart.alpha = 0
 			        messageBubble.blinkingDart = nil
+			        if ( messageBubble.listener == true ) then
+			        	messageBubble:removeEventListener( "tap", messageBubble.showSubText )
+			       		messageBubble.listener = false 
+			        end
+
+			        messageBubble = nil
 			    end
 	  	      end,
 
@@ -231,6 +238,7 @@ function M.new( school, supplies, collision, instructionsTable, miniGameData, ga
 	  	      function( self, event, from, to ) 
 	  	        transition.cancel()
 	  	        gamePanel:stopAllListeners()
+	  	        character.stepping.point = "exit"
 	  	        timer.performWithDelay( 800, sceneTransition.gotoMap )
 	  	      end,
 
@@ -268,6 +276,7 @@ function M.new( school, supplies, collision, instructionsTable, miniGameData, ga
 	  	        	end
 	  	        	chairs[i].x = chairs[i].originalX
 	  	        	chairs[i].y = chairs[i].originalY
+	  	        	chairs[i].rotation = 0
 	  	        end
 
 	  	        for i = 1, tables.numChildren do 
@@ -277,6 +286,7 @@ function M.new( school, supplies, collision, instructionsTable, miniGameData, ga
 	  	        	end
 	  	        	tables[i].x = tables[i].originalX
 	  	        	tables[i].y = tables[i].originalY
+	  	        	tables[i].rotation = 0 
 	  	        end
 
 	  	        if ( messageBubble ) then 
@@ -315,10 +325,8 @@ function M.new( school, supplies, collision, instructionsTable, miniGameData, ga
 	  	    on_checkFeedbackWait = 
 	  	    	function( self, event, from, to ) 
 	  	        	--transition.fadeOut( gamePanel.tiled, { time = 400 } )
-	  	        	print( "wait: " .. tostring(M.waitFeedback) )
 	  	        	if ( M.waitFeedback == false ) then 
 		  	        	gameFlow.updateFSM()
-		  	        	print( "organizedAll: " .. tostring(collision.organizedAll) .. "; organizedNone: ".. tostring(collision.organizedNone) .. " ; chair: " .. tostring(collision.chair) .. "; table: " .. tostring(collision.table) .. "; organizer: " .. tostring(collision.organizer) )
 	  	    		else
 	  	    			M.waitFeedback = false
 	  	    		end

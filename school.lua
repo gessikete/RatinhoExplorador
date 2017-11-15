@@ -36,13 +36,7 @@ local character
 
 local teacher 
 
-local rope 
-
-local ropeJoint
-
 local tilesSize = 32
-
-local stepDuration = 50
 
 local supplies
 
@@ -159,16 +153,18 @@ local function onCollision( event )
     elseif ( ( ( obj1.myName == "exit" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "exit" ) ) ) then 
       if ( miniGameData.isComplete == true ) then
         transition.cancel( character )
+        character.stepping.point = "exit"
         instructions:destroyInstructionsTable()
         gamePanel:stopAllListeners()
-        timer.performWithDelay( 800, sceneTransition.gotoMap )
+        timer.performWithDelay( 1000, sceneTransition.gotoMap )
       end
     elseif ( ( ( obj1.myName == "entrance" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "entrance" ) ) ) then 
       if ( miniGameData.isComplete == true ) then
         transition.cancel( character )
+        character.stepping.point = "entrance"
         instructions:destroyInstructionsTable()
         gamePanel:stopAllListeners()
-        timer.performWithDelay( 800, sceneTransition.gotoMap )
+        timer.performWithDelay( 1000, sceneTransition.gotoMap )
       end
 
     elseif ( ( obj1.myName == "supply" ) and ( obj2.myName == "character" ) ) then
@@ -176,7 +172,7 @@ local function onCollision( event )
       transition.fadeOut( supplies.list[ obj1.number ], { time = 400 } )
 
     elseif ( ( obj2.myName == "supply" ) and ( obj1.myName == "character" ) ) then
-      supplies.collected[ obj1.number ] = supplies.list[ obj2.number ]
+      supplies.collected[ obj2.number ] = supplies.list[ obj2.number ]
       transition.fadeOut( supplies.list[ obj2.number ], { time = 400 } )
 
     elseif ( obj1.myName == "table" ) then    
@@ -188,7 +184,7 @@ local function onCollision( event )
         end 
 
         timer.performWithDelay( 100, closure )
-        collision.table = true 
+        if ( collision ) then collision.table = true end 
       end
 
     elseif ( obj2.myName == "table" ) then
@@ -199,7 +195,7 @@ local function onCollision( event )
           tables[obj2.number].isPhysics = true 
         end 
         timer.performWithDelay( 100, closure )
-        collision.table = true 
+        if ( collision ) then collision.table = true end  
       end 
 
     elseif ( obj1.myName == "chair" ) then 
@@ -212,7 +208,7 @@ local function onCollision( event )
 
         timer.performWithDelay( 100, closure )
 
-        collision.chair = true 
+        if ( collision ) then collision.chair = true end
       end
 
     elseif ( obj2.myName == "chair" ) then
@@ -224,101 +220,104 @@ local function onCollision( event )
         end
         timer.performWithDelay( 100, closure )
 
-        collision.chair = true 
+        if ( collision ) then collision.chair = true end 
       end
 
-    elseif ( ( obj1.myName == "organizer" ) or ( obj2.myName == "organizer" ) ) then
+    elseif ( ( miniGameData.isComplete == false ) and ( ( obj1.myName == "organizer" ) or ( obj2.myName == "organizer" ) ) ) then
       local obj 
       if ( obj1.myName == "organizer" ) then obj = obj1 else obj = obj2 end 
       local list = { }
-        
-      if ( instructionsTable.last < instructionsTable.executing ) then 
-        schoolFSM.waitFeedback = true 
-      end
-
-      if ( collision.organizer == false ) then 
-        for k, v in pairs( supplies.collected ) do
-          table.insert( list, v )
-        end
-      else 
-        for k, v in pairs( supplies.remaining ) do
-          if ( v == supplies.collected[k] ) then
-            table.insert( list, v )
-          end
-        end
-      end
-
-      local function showSupply( i )
-        if ( i > #list ) then 
-          for j = 1, #list - 1  do 
-              transition.fadeOut( list[j], { time = 800 } )
-          end
-          transition.fadeOut( list[#list], { time = 800, onComplete = schoolFSM.updateFSM } )
-          return 
-        end  
-        list[i].x = organizerPositions[obj.number].x 
-        list[i].y = organizerPositions[obj.number].y
-        list[i]:toFront()
-        transition.fadeIn( list[i], { time = 800, 
-          onComplete = 
-            function()
-              showSupply( i + 1 )
-            end 
-        } )
-      end
-
+      
       transition.cancel( character )
 
-      if ( ( obj.direction == "right" ) ) then 
-        transition.to( character, { time = 0, x = character.x + .25 * tilesSize, 
-          onComplete = 
-            function()
-              showSupply(1)
-            end
-          } )
-        
-      elseif ( ( obj.direction == "down" ) ) then 
-        transition.to( character, { time = 0, y = character.y + .06 * tilesSize, 
-          onComplete = 
-            function()
-              showSupply(1)
-            end
-          } )
-      else
-        transition.to( character, { time = 0, y = character.y - .35 * tilesSize, 
-          onComplete = 
-            function()
-              showSupply(1)
-            end
-          } )
-      end
-      
-      collision.organizer = true 
-      collision.obj = obj 
-      local organizedAll = true 
-      local organizedNone = true 
-      local remaining = { }
-      for k, v in pairs( supplies.list ) do 
-        if ( supplies.list[k] ~= supplies.collected[k] ) then 
-          organizedAll = false
-          remaining[k] = supplies.list[k]
-        else 
-           organizedNone = false 
+      if ( collision ) then 
+        if ( instructionsTable.last < instructionsTable.executing ) then 
+          schoolFSM.waitFeedback = true 
         end
-      end
-      supplies.remaining = remaining
-      collision.organizedAll = organizedAll
-      collision.organizedNone = organizedNone
 
+        if ( collision.organizer == false ) then 
+          for k, v in pairs( supplies.collected ) do
+            table.insert( list, v )
+          end
+        else 
+          for k, v in pairs( supplies.remaining ) do
+            if ( v == supplies.collected[k] ) then
+              table.insert( list, v )
+            end
+          end
+        end
+
+        local function showSupply( i )
+          if ( i > #list ) then 
+            for j = 1, #list - 1  do 
+                transition.fadeOut( list[j], { time = 800 } )
+            end
+            transition.fadeOut( list[#list], { time = 800, onComplete = schoolFSM.updateFSM } )
+            return 
+          end  
+          list[i].x = organizerPositions[obj.number].x 
+          list[i].y = organizerPositions[obj.number].y
+          list[i]:toFront()
+          transition.fadeIn( list[i], { time = 800, 
+            onComplete = 
+              function()
+                showSupply( i + 1 )
+              end 
+          } )
+        end
+
+        if ( ( obj.direction == "right" ) ) then 
+          transition.to( character, { time = 0, x = character.x + .25 * tilesSize, 
+            onComplete = 
+              function()
+                showSupply(1)
+              end
+            } )
+          
+        elseif ( ( obj.direction == "down" ) ) then 
+          transition.to( character, { time = 0, y = character.y + .06 * tilesSize, 
+            onComplete = 
+              function()
+                showSupply(1)
+              end
+            } )
+        else
+          transition.to( character, { time = 0, y = character.y - .35 * tilesSize, 
+            onComplete = 
+              function()
+                showSupply(1)
+              end
+            } )
+        end
+        
+        collision.organizer = true 
+        collision.obj = obj 
+        local organizedAll = true 
+        local organizedNone = true 
+        local remaining = { }
+        for k, v in pairs( supplies.list ) do 
+          if ( supplies.list[k] ~= supplies.collected[k] ) then 
+            organizedAll = false
+            remaining[k] = supplies.list[k]
+          else 
+             organizedNone = false 
+          end
+        end
+        supplies.remaining = remaining
+        collision.organizedAll = organizedAll
+        collision.organizedNone = organizedNone
+      end
     -- Colisão entre o personagem e os sensores dos tiles do caminho
     elseif ( ( obj1.myName == "character" ) and ( obj2.isPath ) ) then
-      character.steppingX = obj2.x 
-      character.steppingY = obj2.y 
+      character.stepping.x = obj2.x 
+      character.stepping.y = obj2.y 
+      character.stepping.point = "point"
       path:showTile( obj2.myName )
 
     elseif ( ( obj2.myName == "character" ) and ( obj1.isPath ) ) then 
-      character.steppingX = obj1.x 
-      character.steppingY = obj1.y 
+      character.stepping.x = obj1.x 
+      character.stepping.y = obj1.y 
+      character.stepping.point = "point"
       path:showTile( obj1.myName )
 
     -- Colisão com os demais objetos e o personagem (rope nesse caso)
@@ -335,6 +334,7 @@ end
 -- -----------------------------------------------------------------------------------
 local function destroyScene()
   Runtime:removeEventListener( "collision", onCollision )
+  print( "oncol: " .. tostring( onCollision ) )
   gamePanel:destroy()
 
   instructions:destroyInstructionsTable()
@@ -346,8 +346,6 @@ local function destroyScene()
     messageBubble.text:removeSelf()
     messageBubble.text = nil 
   end
-
-  schoolFSM = nil 
 end
 
 -- -----------------------------------------------------------------------------------
@@ -358,9 +356,9 @@ end
 function scene:create( event )
 
   local sceneGroup = self.view
-  persistence.setCurrentFileName( "ana" )
+  --persistence.setCurrentFileName( "ana" )
 
-  school, character, rope, ropeJoint, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "school", onCollision )
+  school, character, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "school" )
 
 
   sceneGroup:insert( school )
@@ -473,7 +471,7 @@ function scene:show( event )
   local phase = event.phase
 
   if ( phase == "will" ) then
-    if ( ( miniGameData.isComplete == false ) or ( miniGameData.onRepeat == true ) ) then
+    if ( miniGameData.isComplete == false ) then
       setSupplies()
       gamePanel.tiled.alpha = 0
       local brother = school:findObject( "brother" )
@@ -491,11 +489,12 @@ function scene:show( event )
         physics.removeBody( suppliesSensorsLayer[i] )
       end
     end
+    Runtime:addEventListener( "collision", onCollision )
 
   elseif ( phase == "did" ) then
     gamePanel:addButtonsListeners()
     gamePanel:addInstructionPanelListeners()
-    if ( ( miniGameData.isComplete == false ) or ( miniGameData.onRepeat == true ) ) then
+    if ( miniGameData.isComplete == false ) then
       collision = { table = false, chair = false, organizer = false, organizedAll = false, organizedNone = true }
       schoolFSM.new( school, supplies , collision, instructionsTable, miniGameData, gameState, gamePanel, path )
       schoolFSM.execute()
@@ -511,7 +510,6 @@ function scene:hide( event )
   local phase = event.phase
 
   if ( phase == "will" ) then
-    physics.stop( )
     if ( miniGameData.onRepeat == true ) then
       miniGameData.onRepeat = false
 

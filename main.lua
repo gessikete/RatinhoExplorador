@@ -18,8 +18,8 @@ math.randomseed( os.time() )
 
 -- go to the menu screen
 --composer.gotoScene( "house" )
-composer.gotoScene( "school" )
---composer.gotoScene( "menu" )
+--composer.gotoScene( "school" )
+composer.gotoScene( "menu" )
 --composer.gotoScene( "map" )
 --composer.gotoScene( "progress" )
 --composer.gotoScene("newGame")

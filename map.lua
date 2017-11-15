@@ -36,13 +36,6 @@ local map
 
 local character
 
-local rope 
-
-local ropeJoint
-
--- delay e tempo dos movimentos
-local stepDuration = 80
-
 -- tamanho dos tiles usados no tiled
 local tilesSize = 32
 
@@ -98,6 +91,7 @@ local function gotoNextLevel()
       else 
         gameFileData.school.previousStars = 1
       end
+
   end 
 end
 
@@ -200,22 +194,27 @@ local function onCollision( event )
   if ( event.phase == "began" ) then
     if ( ( ( obj1.myName == "house" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "house" ) ) ) then 
       transition.cancel()
+      if ( obj1.point ) then character.stepping.point = obj1.point else character.stepping.point = obj2.point end 
       instructions:destroyInstructionsTable()
       gamePanel:stopAllListeners()
-      timer.performWithDelay( 800, sceneTransition.gotoHouse ) 
+      timer.performWithDelay( 800, sceneTransition.gotoHouse )
+
     elseif ( ( ( obj1.myName == "school" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "school" ) ) ) then 
       transition.cancel()
+      if ( obj1.point ) then character.stepping.point = obj1.point else character.stepping.point = obj2.point end 
       instructions:destroyInstructionsTable()
       gamePanel:stopAllListeners()
       timer.performWithDelay( 800, sceneTransition.gotoSchool ) 
     -- Colisão entre o personagem e os sensores dos tiles do caminho
     elseif ( ( obj1.myName == "character" ) and ( obj2.isPath ) ) then 
-      character.steppingX = obj2.x 
-      character.steppingY = obj2.y 
+      character.stepping.x = obj2.x 
+      character.stepping.y = obj2.y 
+      character.stepping.point = "point"
       path:showTile( obj2.myName )
     elseif ( ( obj2.myName == "character" ) and ( obj1.isPath ) ) then 
-      character.steppingX = obj1.x 
-      character.steppingY = obj1.y 
+      character.stepping.x = obj1.x 
+      character.stepping.y = obj1.y 
+      character.stepping.point = "point"
       path:showTile( obj1.myName )
     
     elseif ( ( obj1.myName == "teacher" ) and ( obj2.myName == "character" ) ) then 
@@ -242,13 +241,13 @@ local function destroyMap()
   camera:destroy()
   camera = nil 
   map:removeSelf()
-  ropeJoint:removeSelf()
-  rope:removeSelf()
+  character.ropeJoint:removeSelf()
+  character.rope:removeSelf()
 
   map = nil 
+  character.ropeJoint = nil 
+  character.rope = nil 
   character = nil 
-  ropeJoint = nil 
-  rope = nil 
 
   path:destroy()
 end
@@ -293,7 +292,7 @@ function scene:create( event )
 
   --persistence.setCurrentFileName("ana")
 
-  map, character, rope, ropeJoint, gamePanel, gameState, path, instructions, instructionsTable, gameFileData = gameScene:set( "map", onCollision )
+  map, character, gamePanel, gameState, path, instructions, instructionsTable, gameFileData = gameScene:set( "map" )
   map.x = map.x - 20
   map.y = map.y - 15
 
@@ -318,9 +317,9 @@ function scene:show( event )
 
   if ( phase == "will" ) then
     --setCamera()
+    Runtime:addEventListener( "collision", onCollision )
     gamePanel:addDirectionListeners()
 
-    gameFileData.house.isComplete = true 
     setNextLevelCharacter()
 
   elseif ( phase == "did" ) then
@@ -347,7 +346,7 @@ function scene:hide( event )
   local sceneGroup = self.view
   local phase = event.phase
   if ( phase == "will" ) then
-    physics.stop( )
+    gameFileData.character = character
     gameState:save( gameFileData )
     destroyScene()
   elseif ( phase == "did" ) then

@@ -545,12 +545,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -569,12 +571,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -593,12 +597,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -617,12 +623,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -641,12 +649,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -665,12 +675,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -689,12 +701,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -713,12 +727,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -737,12 +753,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -761,12 +779,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -785,12 +805,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -809,12 +831,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -833,12 +857,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -857,12 +883,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -881,12 +909,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -905,12 +935,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -929,12 +961,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -953,12 +987,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -977,12 +1013,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -1001,12 +1039,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -1025,12 +1065,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -1049,12 +1091,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -1073,12 +1117,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -1097,12 +1143,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -1121,12 +1169,14 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "isPath":true,
                      "isSensor":"true"
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "isPath":"bool",
                      "isSensor":"string"
                     },
                  "rotation":0,
@@ -1138,7 +1188,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -1565,52 +1615,6 @@
          "draworder":"topdown",
          "name":"exits",
          "objects":[
-                {
-                 "height":32,
-                 "id":92,
-                 "name":"",
-                 "properties":
-                    {
-                     "bodyType":"static",
-                     "isSensor":"true",
-                     "myName":"exit"
-                    },
-                 "propertytypes":
-                    {
-                     "bodyType":"string",
-                     "isSensor":"string",
-                     "myName":"string"
-                    },
-                 "rotation":0,
-                 "type":"physics",
-                 "visible":true,
-                 "width":14,
-                 "x":404,
-                 "y":192
-                }, 
-                {
-                 "height":26,
-                 "id":108,
-                 "name":"",
-                 "properties":
-                    {
-                     "bodyType":"static",
-                     "isSensor":"true",
-                     "myName":"entrance"
-                    },
-                 "propertytypes":
-                    {
-                     "bodyType":"string",
-                     "isSensor":"string",
-                     "myName":"string"
-                    },
-                 "rotation":0,
-                 "type":"physics",
-                 "visible":true,
-                 "width":11,
-                 "x":-4,
-                 "y":291
-                }, 
                 {
                  "height":32,
                  "id":109,

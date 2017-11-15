@@ -122,10 +122,9 @@ function M.new( executeInstructions )
 	end
 
 	function M:updateBikeMaxCount( count )
-		print( "max count" )
-		if ( bikeWheel.maxCount ~= math.huge ) then 
-			bikeWheel.maxCount = count
+		bikeWheel.maxCount = count
 
+		if ( bikeWheel.maxCount ~= math.huge ) then 
 			if ( bikeLimit.text ) then 
 				bikeLimit.text.text = count 
 			else
@@ -402,53 +401,55 @@ function M.new( executeInstructions )
   	end
 
   	function M:destroy() 
-  		gamePanel:removeSelf()
+  		if ( gamePanel ) then 
+	  		gamePanel:removeSelf()
 
-		directionButtons.right:removeEventListener( "touch", createInstruction )
-		directionButtons.left:removeEventListener( "touch", createInstruction )
-		directionButtons.down:removeEventListener( "touch", createInstruction )
-		directionButtons.up:removeEventListener( "touch", createInstruction )
+			directionButtons.right:removeEventListener( "touch", createInstruction )
+			directionButtons.left:removeEventListener( "touch", createInstruction )
+			directionButtons.down:removeEventListener( "touch", createInstruction )
+			directionButtons.up:removeEventListener( "touch", createInstruction )
 
-		bikeWheel:removeEventListener( "touch", spinBikeWheel )
+			bikeWheel:removeEventListener( "touch", spinBikeWheel )
 
-		executeButton:removeEventListener( "tap", M.executeInstructions )
-		instructionsPanel:removeEventListener( "touch", scrollInstructionsPanel )
+			executeButton:removeEventListener( "tap", M.executeInstructions )
+			instructionsPanel:removeEventListener( "touch", scrollInstructionsPanel )
 
-		-- remove instruções
-		for k0, v0 in pairs( instructions ) do
-			if ( type(v0) == "table" ) then 
-				for k1, v1 in pairs(v0) do
-				table.remove( v0, k1 )
-				end
-			end
-			instructions[k0] = nil 
-		end
-		instructions = nil 
-
-		-- remove botões de direção
-		for k, v in pairs( directionButtons ) do
-			directionButtons[k] = nil 
-		end
-		directionButtons = nil
-
-		-- remove tabela de instruções
-		for k0, v0 in pairs( instructionsTable ) do
-			if ( type(v0) == "table" ) then 
-				for k1, v1 in pairs(v0) do
+			-- remove instruções
+			for k0, v0 in pairs( instructions ) do
+				if ( type(v0) == "table" ) then 
+					for k1, v1 in pairs(v0) do
 					table.remove( v0, k1 )
+					end
 				end
-				instructionsTable[k0] = nil 
+				instructions[k0] = nil 
 			end
+			instructions = nil 
+
+			-- remove botões de direção
+			for k, v in pairs( directionButtons ) do
+				directionButtons[k] = nil 
+			end
+			directionButtons = nil
+
+			-- remove tabela de instruções
+			for k0, v0 in pairs( instructionsTable ) do
+				if ( type(v0) == "table" ) then 
+					for k1, v1 in pairs(v0) do
+						table.remove( v0, k1 )
+					end
+					instructionsTable[k0] = nil 
+				end
+			end
+			instructionsTable = nil 
+
+			executeButton = nil  
+
+			bikeWheel = nil
+
+			instructionsPanel = nil 
+
+			gamePanel = nil
 		end
-		instructionsTable = nil 
-
-		executeButton = nil  
-
-		bikeWheel = nil
-
-		instructionsPanel = nil 
-
-		gamePanel = nil
   	end
 
 	-- -----------------------------------------------------------------------------------

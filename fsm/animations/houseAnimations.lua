@@ -84,7 +84,7 @@ function M.new( house, puzzle, gamePanel, path, tutorialFSM, gameFlow )
 		hand.alpha = 1
 		 
 		collision = false 
-		transition.fadeIn( executeButton, { time = time } )
+		transition.fadeIn( executeButton, { time = wait } )
 		handDirectionAnimation( time, wait, hand, executeButton.contentBounds.xMin + 2, executeButton.y, executeButton.contentBounds.xMin + 10, executeButton.y - 5, tutorialFSM.current )
 		  
 

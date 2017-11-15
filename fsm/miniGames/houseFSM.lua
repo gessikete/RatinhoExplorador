@@ -309,14 +309,6 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	  	              end
 	  	            end
 
-	  	            local function closure()
-	  	              	if ( messageBubble ) then 
-	  	                	messageBubble.alpha = 0
-	  	                	if ( messageBubble.blinkingDart ) then 
-	  	                 		messageBubble.blinkingDart.alpha = 0
-	  	                	end
-	  	              end
-	  	            end
 	  	            timer.performWithDelay( 1000, closure )
 	  	            gamePanel.tiled:insert( feedback.showAnimation( "house", stars, 1, gameFlow.updateFSM ) )
 	  	        	miniGameData.stars = stars
@@ -334,6 +326,7 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	  	      function( self, event, from, to ) 
 	  	        transition.cancel()
 	  	        gamePanel:stopAllListeners()
+	  	        character.stepping.point = "exit"
 	  	        timer.performWithDelay( 800, sceneTransition.gotoMap )
 	  	      end,
 

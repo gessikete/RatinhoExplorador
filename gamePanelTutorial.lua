@@ -175,9 +175,9 @@ function M.new( executeInstructions )
 	end
 
 	function M:updateBikeMaxCount( count )
-		if ( bikeWheel.maxCount ~= math.huge ) then 
-			bikeWheel.maxCount = count
+		bikeWheel.maxCount = count
 
+		if ( bikeWheel.maxCount ~= math.huge ) then 
 			if ( bikeLimit.text ) then 
 				bikeLimit.text.text = count 
 			else
@@ -188,7 +188,7 @@ function M.new( executeInstructions )
 
 			transition.fadeIn( bikeLimit.text, { time = 1200 } ) 
 			transition.fadeIn( bikeLimit, { time = 1200 } ) 
-		end 
+		end
 	end
 
 	-- Gira a roda da bicicleta
@@ -212,16 +212,7 @@ function M.new( executeInstructions )
 		elseif ( "moved" == phase ) then
 		    if ( adjustment ) then 
 		    	if ( bikeWheel.maxCount > 0 ) then 
-			    	if ( ( bikeWheel.maxSteps ) and ( bikeWheel.steps == bikeWheel.maxSteps ) ) then
-							local executeTutorial = event.target.executeTutorial
-
-							transition.cancel( M.bikeHand ) 
-							transition.fadeOut( M.bikeHand, { time = 450, onComplete = 
-	      						function() 
-	        						executeTutorial()
-	        					end } )
-						
-					elseif ( ( not bikeWheel.maxSteps ) or ( ( bikeWheel.maxSteps ) and ( bikeWheel.steps < bikeWheel.maxSteps ) ) ) then  
+			    	if ( ( not bikeWheel.maxSteps ) or ( ( bikeWheel.maxSteps ) and ( bikeWheel.steps < bikeWheel.maxSteps ) ) ) then  
 				      	local dx = event.x - centerX 
 				      	local dy = event.y - centerY
 				      	local radius = math.sqrt( math.pow( dx, 2 ) + math.pow( dy, 2 ) )
@@ -261,8 +252,15 @@ function M.new( executeInstructions )
 		elseif ( "ended" == phase or "cancelled" == phase ) then
 			display.currentStage:setFocus( nil )
 			if ( ( bikeWheel.executeTutorial ) and ( bikeWheel.steps == bikeWheel.maxSteps ) ) then 
+				transition.cancel( M.bikeHand ) 
+				transition.fadeOut( M.bikeHand, { time = 450 } )
+
+				local function closure()
+					bikeWheel.executeTutorial()
+					bikeWheel.executeTutorial = nil 
+				end
+				timer.performWithDelay( 900, closure )
 				bikeWheel:removeEventListener( "touch", spinBikeWheel )
-				bikeWheel.executeTutorial = nil 
 				bikeWheel.maxSteps = nil
 			end
 		end

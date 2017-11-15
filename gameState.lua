@@ -30,10 +30,9 @@ function M.new(  currentMiniGame, character, onCollision )
 	  	if ( gameState ) then
 	  		print( "SALVANDO ESTADO DO JOGO" )
 	  		gameState.currentMiniGame = currentMiniGame
-	  		gameState.character.steppingX = character.steppingX 
-	  		gameState.character.steppingY = character.steppingY
+	  		gameState.character.stepping = character.stepping
 	  		gameState.character.flipped = character.flipped 
-
+ 
 	  		if ( miniGameData ) then
 	  			if ( currentMiniGame == "house" ) then
 	  				--[[gameState.house.isComplete = miniGameData.isComplete
@@ -51,13 +50,16 @@ function M.new(  currentMiniGame, character, onCollision )
 	  				gameState.restaurant.stars = miniGameData.stars
 	  				gameState.restaurant.previousStars = gameState.school.stars]]
 	  				gameState.restaurant = miniGameData
-	  			else
+	  			elseif ( currentMiniGame == "map" ) then 
 	  				gameState = miniGameData
+	  				gameState.character.stepping = character.stepping
+	  				gameState.character.flipped = character.flipped  
 	  			end
 
 	  		end
 
 	  		persistence.saveGameFile( gameState )
+
 		end
 	end
 
@@ -71,16 +73,14 @@ function M.new(  currentMiniGame, character, onCollision )
 		print( "CARREGANDO MINIGAME: " .. currentMiniGame )
 
 	  	if ( gameFile ~= nil ) then 
-	  		if ( ( currentMiniGame ~= "house" ) or ( gameFile.house.controlsTutorial == "complete" ) ) then 
+	  		--if ( ( currentMiniGame ~= "house" ) or ( gameFile.house.controlsTutorial == "complete" ) ) then 
 		  		local startingPointX, startingPointY = persistence.startingPoint( loadingMiniGame )
-		  		local goBackPointX, goBackPointY, flipped
+		  		local goBackPointX, goBackPointY, flipped, point 
 
 		  		if ( ( gameFile.house.onRepeat == true )  or ( gameFile.restaurant.onRepeat == true ) or ( gameFile.school.onRepeat == true ) ) then
-		  		 	goBackPointX = startingPointX
-		  		 	goBackPointY = startingPointY
-		  		 	flipped = false 
+		  		 	goBackPointX, goBackPointY, point, flipped = persistence.goBackPoint( loadingMiniGame, gameFile, true ) 
 		  		else
-		  			goBackPointX, goBackPointY, flipped = persistence.goBackPoint( loadingMiniGame, gameFile )
+		  			goBackPointX, goBackPointY, point, flipped = persistence.goBackPoint( loadingMiniGame, gameFile, false )
 		  		end
 		  		-- Apresenta uma imagem de carregamento enquanto o personagem é posicionado
 			    --[[if ( gameFile.currentMiniGame == loadingMiniGame ) then 
@@ -101,15 +101,17 @@ function M.new(  currentMiniGame, character, onCollision )
 				character.x = character.x + ( goBackPointX - startingPointX )
 				character.y = character.y + (goBackPointY - startingPointY )
 				character.flipped = flipped
-		  		character.steppingX = goBackPointX
-		  		character.steppingY = goBackPointY
+				character.stepping = { }
+		  		character.stepping.x = goBackPointX
+		  		character.stepping.y = goBackPointY
+				character.stepping.point = point 
 
 		  		if ( character.flipped == true ) then
     				character.xScale = -1
   				end 
 
 		  		gameFile.currentMiniGame = currentMiniGame
-		  	end
+		  	--end
 
 	  		if ( currentMiniGame == "house" ) then
 	  			miniGameData = gameFile.house 

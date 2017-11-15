@@ -21,14 +21,15 @@ end
 
 -- Retorna um arquivo de jogo com os valores "default" de um jogo novo
 function defaultFile()
-	local character = { steppingX, steppingY, flipped } 
+	local character = { stepping = { x, y, point }, flipped } 
 	local house = { isComplete, controlsTutorial, collectedPieces, bikeTutorial, stars }
 	local school = { isComplete, stars }
 	local restaurant = { isComplete }
 	local default = { character = character, house = house, restaurant = restaurant, school = school }
 
 	default.character.flipped = false
-	default.character.steppingX, default.character.steppingY = M.startingPoint( "house" )
+	default.character.stepping.x, default.character.stepping.y = M.startingPoint( "house" )
+	default.character.stepping.point = "exit"
 	default.currentMiniGame = "house" 
 
 	default.house.isComplete = false
@@ -166,7 +167,7 @@ end
 
 -- Informa onde o character irá se posicionar dependendo de onde ele entrou/saiu ou pausou
 -- o jogo anteriormente
-function M.goBackPoint( currentMiniGame, previousMiniGameFile )
+function M.goBackPoint( currentMiniGame, previousMiniGameFile, onRepeat )
 	local houseExitX, houseExitY = 336, 208
 	local houseEntranceX, houseEntranceY = 80, 304
 	local houseMapExitX, houseMapExitY = M.mapProgress( "exit", "house" )   
@@ -180,44 +181,47 @@ function M.goBackPoint( currentMiniGame, previousMiniGameFile )
 	local restaurantMapExitX, restaurantMapExitY = M.mapProgress( "exit", "restaurant" )   
 	local restaurantMapEntranceX, restaurantMapEntranceY =  M.mapProgress( "entrance", "restaurant" )
 
+	local startingPointX, startingPointY = M.startingPoint( currentMiniGame )
+
+	local entrance, exit = "entrance", "exit"
 
 	local flipped = false 
 
-	if ( currentMiniGame == previousMiniGameFile.currentMiniGame ) then
+	if ( onRepeat == true ) then
+		return startingPointX, startingPointY, entrance, flipped
+	elseif ( currentMiniGame == previousMiniGameFile.currentMiniGame ) then
 		--return schoolEntranceX, schoolEntranceY, flipped --TIRAR
 		--return houseMapExitX, houseMapExitY, flipped --TIRAR
-		return previousMiniGameFile.character.steppingX, previousMiniGameFile.character.steppingY, previousMiniGameFile.character.flipped
-	elseif ( ( previousMiniGameFile.currentMiniGame == "house" ) and ( currentMiniGame ~= "map" ) ) then
-		return M.startingPoint( currentMiniGame )
+		return previousMiniGameFile.character.stepping.x, previousMiniGameFile.character.stepping.y, previousMiniGameFile.character.stepping.point, previousMiniGameFile.character.flipped
 	elseif ( currentMiniGame == "map" ) then 
 		if ( previousMiniGameFile.currentMiniGame == "house" ) then
-			if ( previousMiniGameFile.character.steppingX == houseExitX  ) then 
-				return houseMapExitX, houseMapExitY, flipped
+			if ( previousMiniGameFile.character.stepping.point == exit  ) then 
+				return houseMapExitX, houseMapExitY, exit, flipped
 			else 
-				return houseMapEntranceX, houseMapEntranceY, flipped
+				return houseMapEntranceX, houseMapEntranceY, entrance, flipped
 			end
 		elseif ( previousMiniGameFile.currentMiniGame == "school" ) then 
-			if ( previousMiniGameFile.character.steppingX == schoolExitX  ) then 
-				return schoolMapExitX, schoolMapExitY, flipped
+			if ( previousMiniGameFile.character.stepping.point == exit  ) then 
+				return schoolMapExitX, schoolMapExitY, exit, flipped
 			else 
 				flipped = true 
-				return schoolMapEntranceX, schoolMapEntranceY, flipped
+				return schoolMapEntranceX, schoolMapEntranceY, entrance, flipped
 			end
 		end
 		return houseMapExitX, houseMapExitY, flipped
 	elseif ( currentMiniGame == "house" ) then
-		if ( previousMiniGameFile.character.steppingX == houseMapExitX ) then
+		if ( previousMiniGameFile.character.stepping.point == exit ) then
 			flipped = true 
-			return houseExitX, houseExitY, flipped
+			return houseExitX, houseExitY, exit, flipped
 		else
-			return houseEntranceX, houseEntranceY, flipped
+			return houseEntranceX, houseEntranceY, entrance, flipped
 		end 
 	elseif ( currentMiniGame == "school" ) then
-		if ( previousMiniGameFile.character.steppingX == schoolMapExitX ) then
+		if ( previousMiniGameFile.character.stepping.point == exit ) then
 			flipped = true 
-			return schoolExitX, schoolExitY, flipped
+			return schoolExitX, schoolExitY, exit, flipped
 		else
-			return schoolEntranceX, schoolEntranceY, flipped
+			return schoolEntranceX, schoolEntranceY, entrance, flipped
 		end 
 	end 
 end

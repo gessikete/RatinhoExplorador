@@ -16,6 +16,8 @@ local path = require "path"
 
 local fitScreen = require "fitScreen"
 
+physics.start()
+
 -- -----------------------------------------------------------------------------------
 -- Declaração das variáveis
 -- -----------------------------------------------------------------------------------
@@ -39,18 +41,14 @@ local function setCharacter( tileMap, character )
     character.rope = rope 
   	ropeJoint = physics.newJoint( "rope", rope, character, 0, 0 )
     character.ropeJoint = ropeJoint
-    
-  	return rope, ropeJoint
 end
 
-function M:set( miniGame, onCollision, sceneGroup )
+function M:set( miniGame )
   local miniGameData
 	local tileMap 
 	local fileName
 	local fitTiled 
 	local character
-	local rope 
-	local ropeJoint
 	local instructionsTable
 
 	if ( miniGame == "map" ) then 
@@ -85,7 +83,7 @@ function M:set( miniGame, onCollision, sceneGroup )
   	gameState.new( miniGame, character, onCollision )
 
   	miniGameData = gameState:load()
-    rope, ropeJoint = setCharacter( tileMap, character )
+    setCharacter( tileMap, character )
 
   	markedPath = path.new( tileMap )
   	path:setSensors()
@@ -101,11 +99,7 @@ function M:set( miniGame, onCollision, sceneGroup )
   	gamePanel.tiled = gamePanel.new( instructions.executeInstructions, miniGameData )
   	instructions:setGamePanelListeners( gamePanel.stopExecutionListeners, gamePanel.restartExecutionListeners )
   	
-    Runtime:addEventListener( "collision", onCollision )
-  	--@TODO: TIRAR ISSO QUANDO ACABAREM OS TESTES COM A TELA
-  	--local dragable = require "com.ponywolf.plugins.dragable"
-  	--map = dragable.new(map)
-  	return tileMap, character, rope, ropeJoint, gamePanel, gameState, path, instructions, instructionsTable, miniGameData
+  	return tileMap, character, gamePanel, gameState, path, instructions, instructionsTable, miniGameData
 end
 
 return M

@@ -120,14 +120,24 @@ function M.showAnimation( miniGame, stars, msg, executeFSM_ )
   end
   
   transition.fadeIn( feedback:findObject( "background" ), { time = time } )
+  local blackBackgroundLayer = feedback:findLayer( "blackBackground" )
+  for i = 1, blackBackgroundLayer.numChildren do
+    transition.fadeIn( blackBackgroundLayer[i], { time = time } )
+  end
+  local repeatButton = feedback:findObject( "repeat" )
+  local forwardButton = feedback:findObject( "forward" )
+
   if ( stars == 0 ) then 
     local repeatButton = feedback:findObject( "repeat" )
     local forwardButton = feedback:findObject( "forward" )
     
     repeatButton.x = forwardButton.x 
     repeatButton.y = forwardButton.y 
-    forwardButton.alpha = 0
+  else
+    transition.fadeIn( forwardButton, { time = time } )
   end
+  transition.fadeIn( repeatButton, { time = time } )
+
   timer.performWithDelay( time, showFeedbackClosure )
 
   return feedback

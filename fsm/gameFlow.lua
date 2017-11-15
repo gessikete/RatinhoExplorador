@@ -154,8 +154,14 @@ function M.new( miniGameFSM, miniGame )
     end
 
     if ( ( messageBubble ) and ( messageBubble ~= bubble ) ) then
+      print( messageBubble.myName )
+      print( bubble.myName )
       messageBubble.listener = false 
-      messageBubble:removeEventListener( "tap", showSubText )
+      messageBubble.showSubText = showSubText
+
+      if ( messageBubble.listener == true ) then
+        messageBubble:removeEventListener( "tap", showSubText )
+      end
 
       messageBubble = bubble
     elseif ( not messageBubble ) then 

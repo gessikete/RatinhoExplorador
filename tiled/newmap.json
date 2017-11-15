@@ -1361,7 +1361,7 @@
                  "id":612,
                  "name":"house",
                  "rotation":0,
-                 "type":"physics",
+                 "type":"",
                  "visible":true,
                  "width":88,
                  "x":33,
@@ -1373,7 +1373,7 @@
                  "id":615,
                  "name":"school",
                  "rotation":0,
-                 "type":"physics",
+                 "type":"",
                  "visible":true,
                  "width":68,
                  "x":259,
@@ -1409,20 +1409,22 @@
                     {
                      "bodyType":"static",
                      "isSensor":true,
-                     "myName":"house"
+                     "myName":"house",
+                     "point":"entrance"
                     },
                  "propertytypes":
                     {
                      "bodyType":"string",
                      "isSensor":"bool",
-                     "myName":"string"
+                     "myName":"string",
+                     "point":"string"
                     },
                  "rotation":0,
                  "type":"physics",
                  "visible":true,
                  "width":19,
                  "x":71,
-                 "y":88
+                 "y":93
                 }, 
                 {
                  "height":18,
@@ -1432,24 +1434,76 @@
                     {
                      "bodyType":"static",
                      "isSensor":true,
-                     "myName":"school"
+                     "myName":"school",
+                     "point":"entrance"
                     },
                  "propertytypes":
                     {
                      "bodyType":"string",
                      "isSensor":"bool",
-                     "myName":"string"
+                     "myName":"string",
+                     "point":"string"
                     },
                  "rotation":0,
                  "type":"physics",
                  "visible":true,
-                 "width":41,
+                 "width":11,
                  "x":266,
-                 "y":140
+                 "y":141
+                }, 
+                {
+                 "height":18,
+                 "id":1516,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "isSensor":true,
+                     "myName":"school",
+                     "point":"exit"
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "isSensor":"bool",
+                     "myName":"string",
+                     "point":"string"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":10,
+                 "x":298,
+                 "y":141
+                }, 
+                {
+                 "height":18,
+                 "id":1517,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "isSensor":true,
+                     "myName":"house",
+                     "point":"exit"
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "isSensor":"bool",
+                     "myName":"string",
+                     "point":"string"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":15,
+                 "x":95,
+                 "y":75
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -1583,7 +1637,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":1514,
+ "nextobjectid":1518,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",

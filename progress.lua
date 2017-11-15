@@ -18,6 +18,8 @@ local miniGamesData
 
 local menuButton
 
+local listeners = { }
+
 local function gotoHouse()
 	miniGamesData.house.onRepeat = true 
 	persistence.saveGameFile( miniGamesData )
@@ -39,6 +41,13 @@ local function gotoSchool()
 	sceneTransition.gotoSchool()
 end
 
+local function removeListeners()
+	for k, v in pairs( listeners ) do
+		local target = v.target
+		local func = v.func 
+		target:removeEventListener( "tap", func )
+	end
+end
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
 -- -----------------------------------------------------------------------------------
@@ -88,6 +97,7 @@ function scene:show( event )
 		local level1 = progress:findObject( "level1" )
 
 		level1:addEventListener( "tap", gotoHouse )
+		listeners.level1 = { target = level1, func = gotoHouse }
 
 		if ( miniGamesData.house.stars > 0 ) then
 			local level2 = progress:findObject( "level2" )
@@ -96,6 +106,7 @@ function scene:show( event )
 			level2.alpha = 1
 			locked.alpha = 0
 			level2:addEventListener( "tap", gotoSchool )
+			listeners.level2 = { target = level2, func = gotoSchool}
 		end 
 
 		if ( miniGamesData.school.stars > 0 ) then 
@@ -106,9 +117,11 @@ function scene:show( event )
 			level3.alpha = 1
 			locked.alpha = 0
 			level3:addEventListener( "tap", gotoRestaurant )
+			listeners.level3 = { target = level3, func = gotoRestaurant }
 		end
 		
 		menuButton:addEventListener( "tap", sceneTransition.gotoMenu )
+		listeners.menuButton = { target = menuButton, func = sceneTransition.gotoMenu} 
 	elseif ( phase == "did" ) then
 		-- Code here runs when the scene is entirely on screen
 
@@ -126,8 +139,10 @@ function scene:hide( event )
 		-- Code here runs when the scene is on screen (but is about to go off screen)
 
 	elseif ( phase == "did" ) then
-		-- Code here runs immediately after the scene goes entirely off screen
-
+		progress:removeSelf()
+  		progress = nil
+  		removeListeners()
+  		composer.removeScene( "progress" )
 	end
 end
 
