@@ -175,19 +175,20 @@ function M.new( executeInstructions )
 	end
 
 	function M:updateBikeMaxCount( count )
-		bikeWheel.maxCount = count
+		if ( bikeWheel.maxCount ~= math.huge ) then 
+			bikeWheel.maxCount = count
 
-		if ( bikeLimit.text ) then 
-			bikeLimit.text.text = count 
-		else
-			bikeLimit.text = display.newText( gamePanel:findLayer( "bikeLimit" ), " ", bikeLimit.x, bikeLimit.y, system.nativeFontBold, 12 )
-			bikeLimit.text.alpha = 0
-			bikeLimit.text.text = count
-		end
+			if ( bikeLimit.text ) then 
+				bikeLimit.text.text = count 
+			else
+				bikeLimit.text = display.newText( gamePanel:findLayer( "bikeLimit" ), " ", bikeLimit.x, bikeLimit.y, system.nativeFontBold, 12 )
+				bikeLimit.text.alpha = 0
+				bikeLimit.text.text = count
+			end
 
-		transition.fadeIn( bikeLimit.text, { time = 1200 } ) 
-		transition.fadeIn( bikeLimit, { time = 1200 } ) 
-
+			transition.fadeIn( bikeLimit.text, { time = 1200 } ) 
+			transition.fadeIn( bikeLimit, { time = 1200 } ) 
+		end 
 	end
 
 	-- Gira a roda da bicicleta

@@ -1359,9 +1359,9 @@
                  "gid":10,
                  "height":70,
                  "id":612,
-                 "name":"",
+                 "name":"house",
                  "rotation":0,
-                 "type":"",
+                 "type":"physics",
                  "visible":true,
                  "width":88,
                  "x":33,
@@ -1371,9 +1371,9 @@
                  "gid":15,
                  "height":74,
                  "id":615,
-                 "name":"",
+                 "name":"school",
                  "rotation":0,
-                 "type":"",
+                 "type":"physics",
                  "visible":true,
                  "width":68,
                  "x":259,
@@ -1390,6 +1390,62 @@
                  "width":56,
                  "x":229,
                  "y":311
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"buildingsSensors",
+         "objects":[
+                {
+                 "height":18,
+                 "id":1511,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "isSensor":true,
+                     "myName":"house"
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "isSensor":"bool",
+                     "myName":"string"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":19,
+                 "x":71,
+                 "y":88
+                }, 
+                {
+                 "height":18,
+                 "id":1513,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "isSensor":true,
+                     "myName":"school"
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "isSensor":"bool",
+                     "myName":"string"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":41,
+                 "x":266,
+                 "y":140
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1444,11 +1500,13 @@
                  "name":"teacher",
                  "properties":
                     {
+                     "alpha":"0",
                      "cancelLoop":false,
                      "myName":"teacher"
                     },
                  "propertytypes":
                     {
+                     "alpha":"string",
                      "cancelLoop":"bool",
                      "myName":"string"
                     },
@@ -1525,7 +1583,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":1511,
+ "nextobjectid":1514,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",

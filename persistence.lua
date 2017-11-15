@@ -152,7 +152,7 @@ function M.startingPoint( currentMiniGame )
 	end
 end
 
-function M.mapProgress( position, miniGame )
+function M.mapProgress( position, miniGame ) 
 	if ( position == "entrance" ) then 
 		if ( miniGame == "house" ) then return 80, 160
 		elseif ( miniGame == "school" ) then return 240, 160
@@ -172,8 +172,8 @@ function M.goBackPoint( currentMiniGame, previousMiniGameFile )
 	local houseMapExitX, houseMapExitY = M.mapProgress( "exit", "house" )   
 	local houseMapEntranceX, houseMapEntranceY = M.mapProgress( "entrance", "house" )
 
-	local schoolExitX, schoolExitY = 336, 208
-	local schoolEntranceX, schoolEntranceY = 80, 272
+	local schoolExitX, schoolExitY = 304, 336
+	local schoolEntranceX, schoolEntranceY = 48, 272
 	local schoolMapExitX, schoolMapExitY = M.mapProgress( "exit", "school" )   
 	local schoolMapEntranceX, schoolMapEntranceY =  M.mapProgress( "entrance", "school" )
 

@@ -203,6 +203,11 @@ local function onCollision( event )
       instructions:destroyInstructionsTable()
       gamePanel:stopAllListeners()
       timer.performWithDelay( 800, sceneTransition.gotoHouse ) 
+    elseif ( ( ( obj1.myName == "school" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "school" ) ) ) then 
+      transition.cancel()
+      instructions:destroyInstructionsTable()
+      gamePanel:stopAllListeners()
+      timer.performWithDelay( 800, sceneTransition.gotoSchool ) 
     -- Colisão entre o personagem e os sensores dos tiles do caminho
     elseif ( ( obj1.myName == "character" ) and ( obj2.isPath ) ) then 
       character.steppingX = obj2.x 
@@ -272,6 +277,7 @@ end
 function setNextLevelCharacter()
   if ( ( gameFileData.house.isComplete == true ) and ( gameFileData.school.isComplete == false ) ) then 
       gamePanel:updateBikeMaxCount( 2 )
+      teacher.alpha = 1
       physics.addBody( teacher, { isSensor = true, bodyType = "static" } )
       
       jumpingLoop( teacher, map:findObject( "teacherBubble" ), message.teacher )
@@ -314,6 +320,9 @@ function scene:show( event )
     --setCamera()
     gamePanel:addDirectionListeners()
 
+    gameFileData.house.isComplete = true 
+    setNextLevelCharacter()
+
   elseif ( phase == "did" ) then
     gamePanel:addButtonsListeners()
     gamePanel:addInstructionPanelListeners()
@@ -328,8 +337,7 @@ function scene:show( event )
     --instructionsTable.steps = {2,2,2,2,2,2,6,3,3,6,3,3,3,1,3,2,3,2,1,7,4}
     --instructionsTable.last = 21
     
-    gameFileData.house.isComplete = true 
-    setNextLevelCharacter()
+    
 
   end
 end

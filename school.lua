@@ -65,11 +65,14 @@ local function setSupplies()
   supplies = { collected = { }, list = { }, sensors = { }, remaining = { } }
 
   for i = 1, suppliesLayer.numChildren do
+    suppliesLayer[i].alpha = 1
     suppliesLayer[i].originalX = suppliesLayer[i].x 
     suppliesLayer[i].originalY = suppliesLayer[i].y 
     supplies.list[suppliesLayer[i].number] = suppliesLayer[i] 
     supplies.sensors[suppliesSensorsLayer[i].number] = suppliesSensorsLayer[i] 
   end
+
+  school:findObject( "teacherSupply" ).alpha = 1
 end
 
 local function setObstacles()
@@ -355,7 +358,7 @@ end
 function scene:create( event )
 
   local sceneGroup = self.view
-  --persistence.setCurrentFileName( "ana" )
+  persistence.setCurrentFileName( "ana" )
 
   school, character, rope, ropeJoint, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "school", onCollision )
 
@@ -369,6 +372,7 @@ function scene:create( event )
   end
 
   setObstacles()
+  path:hidePath()
 
   -- Sem usar a bicicleta
   --[[instructionsTable.steps = { 
@@ -481,6 +485,11 @@ function scene:show( event )
       teacher.alpha = 1
       character.alpha = 1
       gamePanel:addDirectionListeners()
+      local suppliesSensorsLayer = school:findLayer( "supplies sensors" )
+
+      for i = 1, suppliesSensorsLayer.numChildren do
+        physics.removeBody( suppliesSensorsLayer[i] )
+      end
     end
 
   elseif ( phase == "did" ) then
@@ -498,7 +507,6 @@ end
 
 -- hide()
 function scene:hide( event )
-
   local sceneGroup = self.view
   local phase = event.phase
 
@@ -515,8 +523,7 @@ function scene:hide( event )
     gameState:save( miniGameData )
     destroyScene()
   elseif ( phase == "did" ) then
-    -- Code here runs immediately after the scene goes entirely off screen
-
+    composer.removeScene( "school" )
   end
 end
 
@@ -525,8 +532,6 @@ end
 function scene:destroy( event )
 
   local sceneGroup = self.view
-  -- Code here runs prior to the removal of scene's view
-
 end
 
 
