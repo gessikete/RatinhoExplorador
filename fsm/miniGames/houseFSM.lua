@@ -16,7 +16,7 @@ local animation = {}
 
 local message = {}
 
-function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
+function M.new( house, listeners, puzzle, miniGameData, gameState, gamePanel, path )
 	local tutorialFSM
 	local character = house:findObject( "character" )
 	local mom = house:findObject( "mom" )  
@@ -28,6 +28,7 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	local function showSubText( event )
 		messageBubble = event.target
 
+		print( "LISTENER TEXT: "  .. tostring(listeners) )
 		if ( messageBubble.message[messageBubble.shownText] ) then 
 		    messageBubble.text:removeSelf()
 
@@ -59,8 +60,7 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 		      transition.fadeOut( messageBubble, { time = 400, onComplete = gameFlow.updateFSM } )
 		      messageBubble.text:removeSelf()
 		      messageBubble.text = nil
-		      messageBubble.listener = false
-		      messageBubble:removeEventListener( "tap", showSubText )
+		      listeners:remove( messageBubble, "tap", showSubText )
 
 		      transition.cancel( messageBubble.blinkingDart )
 		      messageBubble.blinkingDart.alpha = 0
@@ -71,8 +71,7 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 		        transition.fadeOut( messageBubble, { time = 400 } )
 		        messageBubble.text:removeSelf()
 		        messageBubble.text = nil
-		        messageBubble.listener = false
-		        messageBubble:removeEventListener( "tap", showSubText )
+		        listeners:remove( messageBubble, "tap", showSubText )
 
 		        transition.cancel( messageBubble.blinkingDart )
 		        messageBubble.blinkingDart.alpha = 0
@@ -100,10 +99,7 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	    transition.fadeIn( bubble, { time = 400 } )
 	  end
 
-	  if ( ( not bubble.listener ) or ( ( bubble.listener ) and ( bubble.listener == false ) ) ) then
-	    bubble.listener = true
-	    bubble:addEventListener( "tap", showSubText )
-	  end 
+	  listeners:add( bubble, "tap", showSubText )
 
 	  local newText = display.newText( options ) 
 	  newText.x = newText.x + newText.width/2
@@ -135,8 +131,7 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	  end
 
 	  if ( ( messageBubble ) and ( messageBubble ~= bubble ) ) then
-	    messageBubble.listener = false 
-	    messageBubble:removeEventListener( "tap", showSubText )
+	    listeners:remove( messageBubble, "tap", showSubText )
 
 	    messageBubble = bubble
 	  elseif ( not messageBubble ) then 
@@ -307,6 +302,10 @@ function M.new( house, puzzle, miniGameData, gameState, gamePanel, path )
 	  	              else 
 	  	                	stars = 1
 	  	              end
+	  	            end
+
+	  	            local function closure()
+	  	            	messageBubble.alpha = 0
 	  	            end
 
 	  	            timer.performWithDelay( 1000, closure )

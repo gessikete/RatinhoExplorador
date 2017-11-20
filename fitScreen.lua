@@ -52,17 +52,17 @@ function M.fitBackground( background )
   	--background.y = background.y - 32
 end
 
-function M.fitMenu( background, newGameButton, playButton, title )
+function M.fitMenu( background, newGameButton, playButton )
 	if (  display.actualContentWidth > 512 ) then 
-  		background.x = background.x - 45
+  		--background.x = background.x - 45
   	elseif (  display.actualContentWidth == 512 ) then
-  		background.x = background.x - 32
-  		title.x = title.x - 20 
-  		playButton.x = playButton.x - 35
+  		--background.x = background.x - 32
+  		--title.x = title.x - 20 
+  		--playButton.x = playButton.x - 35
   	else 
-  		title.x = title.x - 50
-  		newGameButton.x = newGameButton.x - 40
-  		playButton.x = playButton.x - 50
+  		--title.x = title.x - 50
+  		--newGameButton.x = newGameButton.x - 40
+  		--playButton.x = playButton.x - 50
   	end
 end
 

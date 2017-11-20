@@ -2,7 +2,7 @@ local fsm = require "com.fsm.src.fsm"
 
 local M = { }
 
-function M.new( miniGameFSM, miniGame ) 
+function M.new( miniGameFSM, listeners , miniGame ) 
   function M.updateFSM( event, alternativeEvent )
     if ( miniGameFSM ) then 
       local nextEvent
@@ -50,6 +50,13 @@ function M.new( miniGameFSM, miniGame )
 
       elseif ( nextEvent == "finishLevel" ) then
         miniGameFSM.finishLevel()
+
+      elseif ( nextEvent == "checkProgress" ) then
+        miniGameFSM.checkProgress()
+        
+      elseif ( nextEvent == "nextRecipe" ) then
+        miniGameFSM.nextRecipe()
+         
       end
 
     end
@@ -79,7 +86,7 @@ function M.new( miniGameFSM, miniGame )
         messageBubble.text:removeSelf()
         messageBubble.text = nil
         messageBubble.listener = false
-        messageBubble:removeEventListener( "tap", showSubText )
+        listeners:remove( messageBubble, "tap", showSubText )
 
         transition.cancel( messageBubble.blinkingDart )
         messageBubble.blinkingDart.alpha = 0
@@ -91,7 +98,7 @@ function M.new( miniGameFSM, miniGame )
           messageBubble.text:removeSelf()
           messageBubble.text = nil
           messageBubble.listener = false
-          messageBubble:removeEventListener( "tap", showSubText )
+          listeners:remove( messageBubble, "tap", showSubText )
 
           transition.cancel( messageBubble.blinkingDart )
           messageBubble.blinkingDart.alpha = 0
@@ -121,7 +128,7 @@ function M.new( miniGameFSM, miniGame )
 
     if ( ( not bubble.listener ) or ( ( bubble.listener ) and ( bubble.listener == false ) ) ) then
       bubble.listener = true
-      bubble:addEventListener( "tap", showSubText )
+      listeners:add( bubble, "tap", showSubText )
     end 
 
     local newText = display.newText( options ) 
@@ -133,7 +140,7 @@ function M.new( miniGameFSM, miniGame )
     bubble.shownText = 1
     bubble.options = options
 
-    local time 
+    local time  
     if ( not bubble.blinkingDart ) then 
       if ( miniGameFSM.event == "showObligatoryMessage" ) then 
         time = 500
@@ -154,13 +161,11 @@ function M.new( miniGameFSM, miniGame )
     end
 
     if ( ( messageBubble ) and ( messageBubble ~= bubble ) ) then
-      print( messageBubble.myName )
-      print( bubble.myName )
       messageBubble.listener = false 
       messageBubble.showSubText = showSubText
 
       if ( messageBubble.listener == true ) then
-        messageBubble:removeEventListener( "tap", showSubText )
+        listeners:remove( messageBubble, "tap", showSubText )
       end
 
       messageBubble = bubble

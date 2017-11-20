@@ -8,6 +8,8 @@ local json = require "json"
 
 local sceneTransition = require "sceneTransition"
 
+local listenersModule = require "listeners"
+
 -- -----------------------------------------------------------------------------------
 -- Declaração das variáveis
 -- -----------------------------------------------------------------------------------
@@ -19,6 +21,7 @@ local playButton
 
 local fitScreen = require "fitScreen"
 
+local listeners = listenersModule:new()
 
 -- -----------------------------------------------------------------------------------
 -- Cenas
@@ -43,8 +46,8 @@ function scene:create( event )
 
 	fitScreen.fitMenu( menu, newGameButton, playButton, title )
 
-	playButton:addEventListener( "tap", sceneTransition.gotoChooseGameFile )
-	newGameButton:addEventListener( "tap", sceneTransition.gotoNewGame )
+	listeners:add( playButton, "tap",  sceneTransition.gotoChooseGameFile )
+	listeners:add( newGameButton, "tap", sceneTransition.gotoNewGame )
 end
 
 
@@ -70,10 +73,10 @@ function scene:hide( event )
 	local phase = event.phase
 
 	if ( phase == "will" ) then
-		-- Code here runs when the scene is on screen (but is about to go off screen)
-
+		listeners:destroy()
 	elseif ( phase == "did" ) then
-		-- Code here runs immediately after the scene goes entirely off screen
+		menu:removeSelf()
+		composer.removeScene( "menu" )
 	end
 end
 

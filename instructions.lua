@@ -37,6 +37,17 @@ function M.new( tilesSize, character, markedPath, miniGame )
     self.steps = { }
   end
 
+  function instructionsTable:remove( pos )
+    for i = pos, self.last - 1 do
+      self.steps[i] = self.steps[ i + 1 ]
+      self.direction[i] = self.direction[ i + 1 ]
+    end
+
+    instructionsTable.steps[ self.last ] = nil  
+    instructionsTable.direction[ self.last ] = nil 
+    self.last = self.last - 1
+  end
+
   function instructionsTable:isEmpty( )
     if ( ( self.executing == 1 ) and ( self.last == 0 ) ) then return true
     else return false  

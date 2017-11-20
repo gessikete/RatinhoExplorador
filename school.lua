@@ -24,8 +24,11 @@ local gameScene = require "gameScene"
 
 local schoolFSM = require "fsm.miniGames.schoolFSM"
 
+local listenersModule = require "listeners"
+
 physics.start()
 physics.setGravity( 0, 0 )
+local listeners = listenersModule:new()
 
 -- -----------------------------------------------------------------------------------
 -- Declaração das variáveis
@@ -141,7 +144,7 @@ end
 -- -----------------------------------------------------------------------------------
 -- Listeners
 -- -----------------------------------------------------------------------------------
--- Trata dos tipos de colisão da casa
+-- Trata dos tipos de colisão da escola
 local function onCollision( event )
   phase = event.phase
   local obj1 = event.object1
@@ -333,7 +336,6 @@ end
 -- Remoções para limpar a tela
 -- -----------------------------------------------------------------------------------
 local function destroyScene()
-  Runtime:removeEventListener( "collision", onCollision )
   print( "oncol: " .. tostring( onCollision ) )
   gamePanel:destroy()
 
@@ -356,13 +358,17 @@ end
 function scene:create( event )
 
   local sceneGroup = self.view
-  --persistence.setCurrentFileName( "ana" )
+  
+  persistence.setCurrentFileName( "ana" )
 
   school, character, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "school" )
 
 
   sceneGroup:insert( school )
   sceneGroup:insert( gamePanel.tiled )
+
+  --miniGameData.isComplete = true 
+  --miniGameData.onRepeat = false 
 
   if ( miniGameData.onRepeat == true ) then
     miniGameData.isComplete = false 
@@ -489,14 +495,14 @@ function scene:show( event )
         physics.removeBody( suppliesSensorsLayer[i] )
       end
     end
-    Runtime:addEventListener( "collision", onCollision )
+    listeners:add( Runtime, "collision", onCollision )
 
   elseif ( phase == "did" ) then
     gamePanel:addButtonsListeners()
     gamePanel:addInstructionPanelListeners()
     if ( miniGameData.isComplete == false ) then
       collision = { table = false, chair = false, organizer = false, organizedAll = false, organizedNone = true }
-      schoolFSM.new( school, supplies , collision, instructionsTable, miniGameData, gameState, gamePanel, path )
+      schoolFSM.new( school, supplies , listeners, collision, instructionsTable, miniGameData, gameState, gamePanel, path )
       schoolFSM.execute()
       instructions.updateFSM = schoolFSM.updateFSM
     end
@@ -520,6 +526,7 @@ function scene:hide( event )
   
     gameState:save( miniGameData )
     destroyScene()
+    listeners:destroy()
   elseif ( phase == "did" ) then
     composer.removeScene( "school" )
   end

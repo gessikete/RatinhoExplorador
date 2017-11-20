@@ -11,11 +11,11 @@ local tiled = require "com.ponywolf.ponytiled"
 
 local sceneTransition = require "sceneTransition"
 
+local listenersModule = require "listeners"
+
 local feedback
 
 local message
-
-local removeListeners
 
 local executeFSM
 
@@ -28,25 +28,24 @@ end
 -- -----------------------------------------------------------------------------------
 
 local function gotoMenu( event )
-  removeListeners()
   sceneTransition.gotoMenu()
+  listeners:destroy()
 end
 
 local function goForward( event )
-  removeListeners()
   if ( executeFSM ) then 
     hideFeedback()
     timer.performWithDelay( 1500, executeFSM ) 
   end
+  listeners:destroy()
 end
 
 local function repeatLevel( event )
-  removeListeners()
-
   if ( executeFSM ) then 
     executeFSM( _, "repeatLevel" )
     timer.performWithDelay( 400, hideFeedback )
   end
+  listeners:destroy()
 end
 
 local function addListeners( starNumber )
@@ -54,19 +53,12 @@ local function addListeners( starNumber )
   local forwardButton = feedback:findObject( "forward" )
   local repeatButton = feedback:findObject( "repeat" )
 
-  menuButton:addEventListener( "tap", gotoMenu )
-  repeatButton:addEventListener( "tap", repeatLevel )
+ listeners = listenersModule:new()
+  listeners:add( menuButton, "tap", gotoMenu )
+  listeners:add( repeatButton, "tap", repeatLevel )
   if ( starNumber > 0 ) then
-    forwardButton:addEventListener( "tap", goForward )
+    listeners:add( forwardButton, "tap", goForward )
   end 
-
-  removeListeners = function ()
-    menuButton:removeEventListener( "tap", gotoMenu )
-    repeatButton:removeEventListener( "tap", repeatLevel )
-    if ( starNumber > 0 ) then
-      forwardButton:removeEventListener( "tap", goForward )
-    end 
-  end
 end
 
 -- -----------------------------------------------------------------------------------

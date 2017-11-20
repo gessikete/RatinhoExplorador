@@ -24,9 +24,11 @@ local path = require "path"
 
 local gameScene = require "gameScene"
 
+local listenersModule = require "listeners"
+
 physics.start()
 physics.setGravity( 0, 0 )
-
+local listeners = listenersModule:new()
 -- -----------------------------------------------------------------------------------
 -- Declaração das variáveis
 -- -----------------------------------------------------------------------------------
@@ -120,8 +122,7 @@ local function showSubText( event )
       transition.fadeOut( messageBubble, { time = 400, onComplete = gotoNextLevel } )
       messageBubble.text:removeSelf()
       messageBubble.text = nil
-      messageBubble.listener = false
-      messageBubble:removeEventListener( "tap", showSubText )
+      listeners:remove( messageBubble, "tap", showSubText )
 
       transition.cancel( messageBubble.blinkingDart )
       messageBubble.blinkingDart.alpha = 0
@@ -147,10 +148,7 @@ local function showSubText( event )
       transition.fadeIn( bubble, { time = 400 } )
     end
 
-    if ( ( not bubble.listener ) or ( ( bubble.listener ) and ( bubble.listener == false ) ) ) then
-      bubble.listener = true
-      bubble:addEventListener( "tap", showSubText )
-    end 
+    listeners:add( bubble, "tap", showSubText )
 
     local newText = display.newText( options ) 
     newText.x = newText.x + newText.width/2
@@ -174,9 +172,7 @@ local function showSubText( event )
     end
 
     if ( ( messageBubble ) and ( messageBubble ~= bubble ) ) then
-      messageBubble.listener = false 
-      messageBubble:removeEventListener( "tap", showSubText )
-
+      listeners:remove( messageBubble, "tap", showSubText )
       messageBubble = bubble
     elseif ( not messageBubble ) then 
       messageBubble = bubble
@@ -253,7 +249,7 @@ local function destroyMap()
 end
 
 local function destroyScene()
-  Runtime:removeEventListener( "collision", onCollision )
+  listeners:remove( Runtime, "collision", onCollision )
   gamePanel:destroy()
 
   instructions:destroyInstructionsTable()
@@ -317,7 +313,7 @@ function scene:show( event )
 
   if ( phase == "will" ) then
     --setCamera()
-    Runtime:addEventListener( "collision", onCollision )
+    listeners:add( Runtime, "collision", onCollision )
     gamePanel:addDirectionListeners()
 
     setNextLevelCharacter()
@@ -349,6 +345,7 @@ function scene:hide( event )
     gameFileData.character = character
     gameState:save( gameFileData )
     destroyScene()
+    listeners:destroy()
   elseif ( phase == "did" ) then
     composer.removeScene( "map" )
   end

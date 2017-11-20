@@ -1,11 +1,16 @@
 local M = { }
+local M_mt = { __index = M }
 
-listeners = { }
 
+function M:new()
+	local listeners = { }
+	return setmetatable( { listeners = listeners }, M_mt )
+end
 
-function M.add( target, event, func )
+--print( "list: " .. tostring(listeners) )
+function M:add( target, event, func )
 	local alreadyAdded = false 
-	for k, v in pairs( listeners ) do
+	for k, v in pairs( self.listeners ) do
 		if  ( ( target == v.target ) and ( event == v.event ) and ( func  == v.func ) ) then
 			alreadyAdded = true 
 			break
@@ -13,50 +18,40 @@ function M.add( target, event, func )
 	end
 
 	if ( alreadyAdded == false ) then 
-		print( "ADDED: " .. tostring(target.hmm) )
+		--print( event .. ": " .. tostring(target)  )
+		--print( print( "list: " .. tostring(self.listeners) ) )
 		target:addEventListener( event, func )
-		table.insert( listeners, { target =  target, event = event, func = func } )
+		table.insert( self.listeners, { target =  target, event = event, func = func } )
 	end
 end
 
 
-function M.remove( target, event, func )
-	print( "REMOVEEEEEE: " .. target.hmm )
-	for k, v in pairs( listeners ) do
+function M:remove( target, event, func )
+	for k, v in pairs( self.listeners ) do
 		if  ( ( target == v.target ) and ( event == v.event ) and ( func  == v.func ) ) then
+			--print( "REMOVE: " .. "event: " .. event .. "; targ: " .. tostring(target) )
 			target:removeEventListener( event, func )
-			table.remove( listeners, k )
+			table.remove( self.listeners, k )
 			break
 		end
 	end
 end
 
-function M.destroy()
-	print( "======" )
-	for k, v in pairs( listeners ) do
+function M:destroy()
+	--print( "----" )
+	for k, v in pairs( self.listeners ) do
 		local target = v.target
 		local event = v.event 
 		local func = v.func 
 
-		print( "---" )
-		print( "k: " .. k )
-		print( "targ: " .. tostring(target.hmm) )
-		print( "ev: " .. tostring(event) )
-		print( "func: " .. tostring(func) )
-
+		--print( k )
 		if ( target.removeEventListener ) then 
+			--print( tostring(target) )
 			target:removeEventListener( event, func )
-			listeners[k] = nil
-			print( "REMOVED" )
+			self.listeners[k] = nil
 		end
-		print( "---" )
 	end
-
-	for k, v in pairs( listeners ) do
-		print( "hmm" )
-	end
-	print( "======" )
+	--print( "----" )
 end
-
 
 return M

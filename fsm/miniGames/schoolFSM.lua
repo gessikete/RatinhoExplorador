@@ -16,7 +16,7 @@ local animation = {}
 
 local message = {}
 
-function M.new( school, supplies, collision, instructionsTable, miniGameData, gameState, gamePanel, path )
+function M.new( school, supplies, listeners, collision, instructionsTable, miniGameData, gameState, gamePanel, path )
 	local schoolFSM
 	local character = school:findObject( "character" )
 	local teacher = school:findObject( "teacher" )  
@@ -82,18 +82,18 @@ function M.new( school, supplies, collision, instructionsTable, miniGameData, ga
 	  	  	on_before_event = 
 	  	      function( self, event, from, to ) 
 	  	        if ( ( messageBubble ) and ( messageBubble.text ) ) then
-	  	        	messageBubble:removeSelf()
+	  	        	--messageBubble:removeSelf()
 			        messageBubble.text:removeSelf()
 			        messageBubble.text = nil
 			        transition.cancel( messageBubble.blinkingDart )
 			        messageBubble.blinkingDart.alpha = 0
 			        messageBubble.blinkingDart = nil
-			        if ( messageBubble.listener == true ) then
+			        --[[if ( messageBubble.listener == true ) then
 			        	messageBubble:removeEventListener( "tap", messageBubble.showSubText )
 			       		messageBubble.listener = false 
 			        end
 
-			        messageBubble = nil
+			        messageBubble = nil]]
 			    end
 	  	      end,
 
@@ -334,7 +334,7 @@ function M.new( school, supplies, collision, instructionsTable, miniGameData, ga
 	  	  }
 	  	})
 
-		gameFlow.new( schoolFSM, school )
+		gameFlow.new( schoolFSM, listeners, school )
 		M.updateFSM = gameFlow.updateFSM
 		M.fsm = schoolFSM
 		animation = schoolAnimations.new( school, gamePanel, path, schoolFSM, gameFlow )

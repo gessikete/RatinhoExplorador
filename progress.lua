@@ -13,12 +13,14 @@ local fitScreen = require "fitScreen"
 
 local sceneTransition = require "sceneTransition"
 
+local listenersModule = require "listeners"
+
 
 local miniGamesData
 
 local menuButton
 
-local listeners = { }
+local listeners = listenersModule:new()
 
 local function gotoHouse()
 	miniGamesData.house.onRepeat = true 
@@ -41,13 +43,6 @@ local function gotoSchool()
 	sceneTransition.gotoSchool()
 end
 
-local function removeListeners()
-	for k, v in pairs( listeners ) do
-		local target = v.target
-		local func = v.func 
-		target:removeEventListener( "tap", func )
-	end
-end
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
 -- -----------------------------------------------------------------------------------
@@ -96,8 +91,7 @@ function scene:show( event )
 	if ( phase == "will" ) then
 		local level1 = progress:findObject( "level1" )
 
-		level1:addEventListener( "tap", gotoHouse )
-		listeners.level1 = { target = level1, func = gotoHouse }
+		listeners:add( level1, "tap", gotoHouse )
 
 		if ( miniGamesData.house.stars > 0 ) then
 			local level2 = progress:findObject( "level2" )
@@ -105,8 +99,8 @@ function scene:show( event )
 			
 			level2.alpha = 1
 			locked.alpha = 0
-			level2:addEventListener( "tap", gotoSchool )
-			listeners.level2 = { target = level2, func = gotoSchool}
+
+			listeners:add( level2, "tap", gotoSchool )
 		end 
 
 		if ( miniGamesData.school.stars > 0 ) then 
@@ -116,12 +110,11 @@ function scene:show( event )
 			level3 = progress:findObject( "level3" )
 			level3.alpha = 1
 			locked.alpha = 0
-			level3:addEventListener( "tap", gotoRestaurant )
-			listeners.level3 = { target = level3, func = gotoRestaurant }
+
+			listeners:add( level3, "tap", gotoRestaurant )
 		end
 		
-		menuButton:addEventListener( "tap", sceneTransition.gotoMenu )
-		listeners.menuButton = { target = menuButton, func = sceneTransition.gotoMenu} 
+		listeners:add( menuButton, "tap", sceneTransition.gotoMenu )
 	elseif ( phase == "did" ) then
 		-- Code here runs when the scene is entirely on screen
 
@@ -141,7 +134,7 @@ function scene:hide( event )
 	elseif ( phase == "did" ) then
 		progress:removeSelf()
   		progress = nil
-  		removeListeners()
+  		listeners:destroy()
   		composer.removeScene( "progress" )
 	end
 end

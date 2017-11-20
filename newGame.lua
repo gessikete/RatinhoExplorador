@@ -13,6 +13,8 @@ local sceneTransition = require "sceneTransition"
 
 local fitScreen = require "fitScreen"
 
+local listenersModule = require "listeners"
+
 
 -- -----------------------------------------------------------------------------------
 -- Declaração das variáveis
@@ -20,6 +22,7 @@ local fitScreen = require "fitScreen"
 local textField
 local playButton
 local gotoMenuButton
+local listeners = listenersModule:new()
 
 -- -----------------------------------------------------------------------------------
 -- Funções
@@ -72,9 +75,9 @@ function scene:create( event )
 	textField.string = " "
 	sceneGroup:insert( textField )
 
-	textField:addEventListener( "userInput", textListener )
-	playButton:addEventListener( "tap", createFile )
-	gotoMenuButton:addEventListener( "tap", sceneTransition.gotoMenu )
+	listeners:add( textField, "userInput", textListener )
+	listeners:add( playButton, "tap", createFile )
+	listeners:add( gotoMenuButton, "tap", sceneTransition.gotoMenu )
 
 	native.setKeyboardFocus( textField )
 
@@ -104,8 +107,10 @@ function scene:hide( event )
 	if ( phase == "will" ) then 
 		native.setKeyboardFocus( nil )
 		display.remove(textField)
-		textField = nil		
+		textField = nil	
+		newGame:removeSelf()
 	elseif ( phase == "did" ) then
+		listeners:destroy()
 		composer.removeScene( "newGame" )
 	end
 end

@@ -8,10 +8,13 @@ local sceneTransition = require "sceneTransition"
 
 local fitScreen = require "fitScreen"
 
+local listenersModule = require "listeners"
+
 local physics = require "physics"
 
 physics.start()
 
+local listeners = listenersModule:new()
 -- -----------------------------------------------------------------------------------
 -- Declaração das variáveis
 -- -----------------------------------------------------------------------------------
@@ -27,7 +30,7 @@ local M = { }
 -- -----------------------------------------------------------------------------------
 function M.new( executeInstructions )
   	local gamePanelData
-  	local instructions = { selectedBox = {}, boxes = { }, upArrows = { }, downArrows = { }, leftArrows = { }, rightArrows = { }, shownArrow = { }, shownInstruction = { }, texts = { }, shownBox = -1 }
+  	local instructions = { selectedBox = {}, boxes = { }, upArrows = { }, downArrows = { }, leftArrows = { }, rightArrows = { }, shownArrow = { }, shownInstruction = { }, texts = { }, shownBox = 0 }
   	local directionButtons = { up, down, left, right }
   	local bikeWheel 
 
@@ -44,16 +47,16 @@ function M.new( executeInstructions )
   	local rightArrowsLayer = gamePanel:findLayer("rightArrows")
 
   	for i = 1, instructionsLayer.numChildren do
-    	instructions.boxes[i - 1] = instructionsLayer[i]
-    	instructions.selectedBox[i - 1] = selectedInstructionLayer[i]
+    	instructions.boxes[i] = instructionsLayer[i]
+    	instructions.selectedBox[i] = selectedInstructionLayer[i]
 
-    	instructions.upArrows[i - 1] = upArrowsLayer[i]
-    	instructions.downArrows[i - 1] = downArrowsLayer[i]
-    	instructions.leftArrows[i - 1] = leftArrowsLayer[i]
-    	instructions.rightArrows[i - 1] = rightArrowsLayer[i]
+    	instructions.upArrows[i] = upArrowsLayer[i]
+    	instructions.downArrows[i] = downArrowsLayer[i]
+    	instructions.leftArrows[i] = leftArrowsLayer[i]
+    	instructions.rightArrows[i] = rightArrowsLayer[i]
   	end
 
-  	instructions.boxes[0].alpha = 1
+  	instructions.boxes[1].alpha = 1
 
   	-- Roda da bicicleta que aumenta o número de passos
   	bikeWheel  = gamePanel:findObject("bikeWheel")
@@ -110,8 +113,8 @@ function M.new( executeInstructions )
 	M.executeHand.originalX = M.executeHand.x 
 	M.executeHand.originalY = M.executeHand.y
 
-  	M.firstBox = instructions.boxes[0]
-  	M.secondBox = instructions.boxes[1]
+  	M.firstBox = instructions.boxes[1]
+  	M.secondBox = instructions.boxes[2]
 
   	fitScreen.fitGamePanel( gamePanel, gotoMenuButton )
 
@@ -260,7 +263,7 @@ function M.new( executeInstructions )
 					bikeWheel.executeTutorial = nil 
 				end
 				timer.performWithDelay( 900, closure )
-				bikeWheel:removeEventListener( "touch", spinBikeWheel )
+				listeners:remove( bikeWheel, "touch", spinBikeWheel )
 				bikeWheel.maxSteps = nil
 			end
 		end
@@ -313,11 +316,11 @@ function M.new( executeInstructions )
 				while ( instructions.shownInstruction[instructions.shownBox] ~= instructionsTable.last ) do
 					scrollInstruction("up")
 				end 
-				moveInstruction( 0,  instructions.shownBox, 1, true )
+				moveInstruction( 1,  instructions.shownBox, 1, true )
 			elseif ( ( instructions.shownBox >= #instructions.boxes ) and ( instructions.texts[instructions.shownBox].text ~= " " ) ) then
 				-- Se a última instrução feita estiver na última caixa de instrução, faz um
 				-- scroll para cima para que a última caixa de instrução seja esvaziada
-				moveInstruction( 0,  instructions.shownBox, 1, true )
+				moveInstruction( 1,  instructions.shownBox, 1, true )
 			end
 	
 		elseif ( ( "moved" == phase ) and ( directionButton.touchOffsetX ) ) then
@@ -352,7 +355,7 @@ function M.new( executeInstructions )
 
 			  	-- Listener da roda de bicicleta é adicionado
 			  	if ( instructionsTable.last == 1 ) then 
-			  		bikeWheel:addEventListener( "touch", spinBikeWheel )
+			  		listeners:add( bikeWheel, "touch", spinBikeWheel )
 				end
 
 				-- A caixa selecionada é escondida
@@ -417,11 +420,11 @@ function M.new( executeInstructions )
 				while ( instructions.shownInstruction[instructions.shownBox] ~= instructionsTable.last ) do
 					scrollInstruction("up")
 				end 
-				moveInstruction( 0,  instructions.shownBox, 1, true )
+				moveInstruction( 1,  instructions.shownBox, 1, true )
 			elseif ( ( instructions.shownBox >= #instructions.boxes ) and ( instructions.texts[instructions.shownBox].text ~= " " ) ) then
 				-- Se a última instrução feita estiver na última caixa de instrução, faz um
 				-- scroll para cima para que a última caixa de instrução seja esvaziada
-				moveInstruction( 0,  instructions.shownBox, 1, true )
+				moveInstruction( 1,  instructions.shownBox, 1, true )
 			end
 	
 		elseif ( ( "moved" == phase ) and ( directionButton.touchOffsetX ) ) then
@@ -457,8 +460,9 @@ function M.new( executeInstructions )
 				-- A caixa selecionada é escondida
 			  	selectedBox.alpha = 0
 
-			  	directionButtons.right:removeEventListener( "touch", createControlsTutorialInstruction )
-			  	directionButtons.up:removeEventListener( "touch", createControlsTutorialInstruction )
+
+			  	listeners:remove( directionButtons.right, "touch", createControlsTutorialInstruction )
+			  	listeners:remove( directionButtons.up, "touch", createControlsTutorialInstruction )
 
 
 			  	---------====
@@ -507,33 +511,35 @@ function M.new( executeInstructions )
 	end
 
 	function M:removegotoMenuButton()
-		gotoMenuButton:removeEventListener( "tap", sceneTransition.gotoMenu )
+		listeners:remove( gotoMenuButton, "tap", sceneTransition.gotoMenu )
   		gotoMenuButton = nil
 	end
 
 	function M:addgotoMenuButtonListener( )
-		gotoMenuButton:addEventListener( "tap", sceneTransition.gotoMenu )
+		listeners:add( gotoMenuButton, "tap", sceneTransition.gotoMenu )
 	end
 
   	function M:addDirectionListeners()
-  		directionButtons.right:addEventListener( "touch", createInstruction )
-	    directionButtons.left:addEventListener( "touch", createInstruction )
-	    directionButtons.down:addEventListener( "touch", createInstruction )
-	    directionButtons.up:addEventListener( "touch", createInstruction )
+  		listeners:add( directionButtons.right, "touch", createInstruction )
+  		listeners:add( directionButtons.left, "touch", createInstruction )
+  		listeners:add( directionButtons.down, "touch", createInstruction )
+  		listeners:add( directionButtons.up, "touch", createInstruction )
   	end
 
   	function M:addRightDirectionListener( executeTutorial )
+  		listeners:add( instructionsPanel, "touch", scrollInstructionsPanel )
   		directionButtons.right.executeTutorial = executeTutorial
-  		directionButtons.right:addEventListener( "touch", createControlsTutorialInstruction )
+
+  		listeners:add( directionButtons.right, "touch", createControlsTutorialInstruction )
   	end
 
   	function M:addUpDirectionListener( executeTutorial )
   		directionButtons.up.executeTutorial = executeTutorial
-  		directionButtons.up:addEventListener( "touch", createControlsTutorialInstruction )
+  		listeners:add( directionButtons.up, "touch", createControlsTutorialInstruction )
   	end
 
   	function M:addBikeTutorialListener( maxSteps, executeTutorial )
-  		bikeWheel:addEventListener( "touch", spinBikeWheel )
+  		listeners:add( bikeWheel, "touch", spinBikeWheel )
   		bikeWheel.maxSteps = maxSteps
   		bikeWheel.executeTutorial = executeTutorial
   	end
@@ -577,42 +583,43 @@ function M.new( executeInstructions )
 
   	function M:addExecuteButtonListener( executeTutorial )
   		executeButton.executeTutorial = executeTutorial
-  		executeButton:addEventListener( "tap", executeTutorialInstructions )
+  		listeners:add( executeButton, "tap", executeTutorialInstructions )
   	end
 
   	function M:addButtonsListeners()
-  		executeButton:addEventListener( "tap", M.executeInstructions )
-    	gotoMenuButton:addEventListener( "tap", sceneTransition.gotoMenu )
+    	listeners:add( executeButton, "tap", M.executeInstructions )
+  		listeners:add( gotoMenuButton, "tap", sceneTransition.gotoMenu )
   	end
 
   	function M:addInstructionPanelListeners()
-    	instructionsPanel:addEventListener( "touch", scrollInstructionsPanel )
+    	listeners:add( instructionsPanel, "touch", scrollInstructionsPanel )
   	end
 
   	function M.stopExecutionListeners()
-  		directionButtons.right:removeEventListener( "touch", createInstruction )
-		directionButtons.left:removeEventListener( "touch", createInstruction )
-		directionButtons.down:removeEventListener( "touch", createInstruction )
-		directionButtons.up:removeEventListener( "touch", createInstruction )
+  		listeners:remove( directionButtons.right, "touch", createInstruction )
+  		listeners:remove( directionButtons.left, "touch", createInstruction )
+  		listeners:remove( directionButtons.down, "touch", createInstruction )
+  		listeners:remove( directionButtons.up, "touch", createInstruction )
 
-		executeButton:removeEventListener( "tap", M.executeInstructions )
-		executeButton:removeEventListener( "tap", executeTutorialInstructions )
+		listeners:remove( executeButton, "tap", M.executeInstructions )
+		listeners:remove( executeButton, "tap", executeTutorialInstructions )
 
-		bikeWheel:removeEventListener( "touch", spinBikeWheel )
+		listeners:remove( bikeWheel, "touch", spinBikeWheel )
 
-		gotoMenuButton:removeEventListener( "tap", sceneTransition.gotoMenu )
+  		listeners:remove( gotoMenuButton, "tap", sceneTransition.gotoMenu )
   	end
 
   	function M:stopAllListeners( )
-  		instructionsPanel:removeEventListener( "touch", scrollInstructionsPanel )
-  		directionButtons.right:removeEventListener( "touch", createInstruction )
-		directionButtons.left:removeEventListener( "touch", createInstruction )
-		directionButtons.down:removeEventListener( "touch", createInstruction )
-		directionButtons.up:removeEventListener( "touch", createInstruction )
+  		--listeners:remove( instructionsPanel, "touch", scrollInstructionsPanel )
 
-		executeButton:removeEventListener( "tap", M.executeInstructions )
+  		listeners:remove( directionButtons.right, "touch", createInstruction )
+  		listeners:remove( directionButtons.left, "touch", createInstruction )
+  		listeners:remove( directionButtons.down, "touch", createInstruction )
+  		listeners:remove( directionButtons.up, "touch", createInstruction )
 
-		bikeWheel:removeEventListener( "touch", spinBikeWheel )
+		listeners:remove( executeButton, "tap", M.executeInstructions )
+
+		listeners:remove( bikeWheel, "touch", spinBikeWheel )
   	end
 
   	function M.restartExecutionListeners()
@@ -623,15 +630,15 @@ function M.new( executeInstructions )
   	function M:destroy() 
   		gamePanel:removeSelf()
 
-		directionButtons.right:removeEventListener( "touch", createInstruction )
-		directionButtons.left:removeEventListener( "touch", createInstruction )
-		directionButtons.down:removeEventListener( "touch", createInstruction )
-		directionButtons.up:removeEventListener( "touch", createInstruction )
+		listeners:remove( directionButtons.right, "touch", createInstruction )
+  		listeners:remove( directionButtons.left, "touch", createInstruction )
+  		listeners:remove( directionButtons.down, "touch", createInstruction )
+  		listeners:remove( directionButtons.up, "touch", createInstruction )
 
-		bikeWheel:removeEventListener( "touch", spinBikeWheel )
+		listeners:remove( bikeWheel, "touch", spinBikeWheel )
 
-		executeButton:removeEventListener( "tap", M.executeInstructions )
-		instructionsPanel:removeEventListener( "touch", scrollInstructionsPanel )
+		listeners:remove( executeButton, "tap", M.executeInstructions )
+		listeners:remove( instructionsPanel, "touch", scrollInstructionsPanel )
 
 		-- remove instruções
 		for k0, v0 in pairs( instructions ) do
@@ -717,12 +724,12 @@ function M.new( executeInstructions )
 	-- Verifica se as instruções podem ser movidas para baixo/cima e chama
 	-- moveInstruction
 	function scrollInstruction ( direction )
-	  if ( instructions.shownBox ~= -1 ) then
-	    local firstBox = 0
+	  if ( instructions.shownBox ~= 0 ) then
+	    local firstBox = 1
 
 	    local lastBox = instructions.shownBox
 	    
-	    if ( ( direction == "down" ) and ( instructions.shownInstruction[0] > 1 ) ) then 
+	    if ( ( direction == "down" ) and ( instructions.shownInstruction[1] > 1 ) ) then 
 	        moveInstruction( firstBox, lastBox, -1, false )
 	    elseif ( ( direction == "up" ) and ( instructions.shownInstruction[instructions.shownBox] < instructionsTable.last ) ) then 
 	        moveInstruction( firstBox, lastBox, 1, false )
@@ -734,12 +741,12 @@ function M.new( executeInstructions )
 	function M:hideInstructions()
 	  local boxNum = instructions.shownBox
 
-	  	if ( instructions.shownBox ~= -1 ) then
-		    for i = 0, boxNum do
+	  	if ( instructions.shownBox ~= 0 ) then
+		    for i = 1, boxNum do
 		      display.remove(instructions.texts[i])
 		      instructions.shownArrow[i].alpha = 0
 		      instructions.boxes[i].alpha = 0
-		      instructions.shownBox = -1
+		      instructions.shownBox = 0
 		    end
 	  	 
 
@@ -747,7 +754,7 @@ function M.new( executeInstructions )
 		  		instructions.boxes[i].alpha = 0
 		  	end 
 
-		  	instructions.boxes[0].alpha = 1
+		  	instructions.boxes[1].alpha = 1
 	  	end
 	end
 
@@ -766,7 +773,7 @@ function M.new( executeInstructions )
 		
 	    arrow[ boxNum ].alpha = 1
 	    instructions.shownArrow[boxNum] = arrow[boxNum]
-	    instructions.texts[boxNum] = display.newText( gamePanel:findLayer("instructions"), boxNum + 1 .. ".  " .. stepsCount, box.x - 10, box.y, system.nativeFontBold, 12)
+	    instructions.texts[boxNum] = display.newText( gamePanel:findLayer("instructions"), boxNum .. ".  " .. stepsCount, box.x - 10, box.y, system.nativeFontBold, 12)
 	    instructions.shownInstruction[boxNum] = instructionsTable.last 
 	  else 
 	    local boxNum = instructions.shownBox

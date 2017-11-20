@@ -150,6 +150,8 @@ function M.startingPoint( currentMiniGame )
 		return 80, 304
 	elseif ( currentMiniGame == "school" ) then 
 		return 80, 272
+	elseif ( currentMiniGame == "restaurant" ) then 
+		return 304, 336 - 64
 	end
 end
 
@@ -180,6 +182,8 @@ function M.goBackPoint( currentMiniGame, previousMiniGameFile, onRepeat )
 
 	local restaurantMapExitX, restaurantMapExitY = M.mapProgress( "exit", "restaurant" )   
 	local restaurantMapEntranceX, restaurantMapEntranceY =  M.mapProgress( "entrance", "restaurant" )
+	local restaurantExitX, restaurantExitY = 48, 272
+	local restaurantEntranceX, restaurantEntranceY = 304, 336
 
 	local startingPointX, startingPointY = M.startingPoint( currentMiniGame )
 
@@ -222,6 +226,13 @@ function M.goBackPoint( currentMiniGame, previousMiniGameFile, onRepeat )
 			return schoolExitX, schoolExitY, exit, flipped
 		else
 			return schoolEntranceX, schoolEntranceY, entrance, flipped
+		end 
+	elseif ( currentMiniGame == "restaurant" ) then
+		if ( previousMiniGameFile.character.stepping.point == exit ) then
+			flipped = true 
+			return restaurantExitX, restaurantExitY, exit, flipped
+		else
+			return restaurantEntranceX, restaurantEntranceY, entrance, flipped
 		end 
 	end 
 end

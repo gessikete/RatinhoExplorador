@@ -24,6 +24,9 @@ local gameScene = require "gameScene"
 
 local houseFSM = require "fsm.miniGames.houseFSM"
 
+local listenersModule = require "listeners"
+
+local listeners = listenersModule:new()
 physics.start()
 physics.setGravity( 0, 0 )
 
@@ -168,7 +171,6 @@ end
 -- Remoções para limpar a tela
 -- -----------------------------------------------------------------------------------
 local function destroyScene()
-  Runtime:removeEventListener( "collision", onCollision )
   gamePanel:destroy()
 
   instructions:destroyInstructionsTable()
@@ -193,11 +195,13 @@ function scene:create( event )
   --print( display.actualContentWidth )
   --print( display.actualContentHeight )
 
+  --persistence.setCurrentFileName("ana")
+
 	house, character, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "house" )
    
-  --miniGameData.controlsTutorial = "incomplete"
-  --miniGameData.bikeTutorial = "incomplete"
-  --miniGameData.isComplete = false
+  --miniGameData.controlsTutorial = "complete"
+  --miniGameData.bikeTutorial = "complete"
+  --miniGameData.isComplete = true
 
   sceneGroup:insert( house )
   sceneGroup:insert( gamePanel.tiled )
@@ -224,7 +228,7 @@ function scene:show( event )
     if ( miniGameData.controlsTutorial == "complete" ) then
 		  gamePanel:addDirectionListeners()
     end
-    Runtime:addEventListener( "collision", onCollision )
+    listeners:add( Runtime, "collision", onCollision )
 
 	elseif ( phase == "did" ) then
     if ( miniGameData.controlsTutorial == "complete" ) then
@@ -233,13 +237,13 @@ function scene:show( event )
 
       if ( miniGameData.bikeTutorial == "incomplete" ) then
         gamePanel:showBikewheel ( false )
-        houseFSM.new( house, puzzle, miniGameData, gameState, gamePanel, path, puzzle )
+        houseFSM.new( house, listeners, puzzle, miniGameData, gameState, gamePanel, path )
         houseFSM.bikeTutorial()
       end
 
     else
       if ( miniGameData.controlsTutorial == "incomplete" )  then
-        houseFSM.new( house, puzzle, miniGameData, gameState, gamePanel, path )
+        houseFSM.new( house, listeners, puzzle, miniGameData, gameState, gamePanel, path )
         houseFSM.controlsTutorial()
       end
     end
@@ -264,6 +268,7 @@ function scene:hide( event )
   
 		gameState:save( miniGameData )
 		destroyScene()
+    listeners:destroy()
 	elseif ( phase == "did" ) then
     composer.removeScene( "house" )
 	end

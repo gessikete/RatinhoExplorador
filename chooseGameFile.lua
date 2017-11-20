@@ -12,6 +12,7 @@ local sceneTransition = require "sceneTransition"
 
 local fitScreen = require "fitScreen"
 
+local listenersModule = require "listeners"
 -- -----------------------------------------------------------------------------------
 -- Declaração das variáveis
 -- -----------------------------------------------------------------------------------
@@ -20,6 +21,8 @@ local gotoMenuButton
 local chooseGameFile
 
 local gameFiles = { box = { }, text = { }, trashcan = { } }
+
+local listeners = listenersModule:new()
 
 -- -----------------------------------------------------------------------------------
 -- Funções
@@ -54,7 +57,6 @@ local function destroyScene()
 	chooseGameFile = nil
 
 	for k, v in pairs( gameFiles.box ) do
-		gameFiles.box[k]:removeEventListener( "tap", loadGameFile )
 		gameFiles.box[k] = nil 
 	end
 
@@ -85,8 +87,9 @@ local function deleteGameFile( event )
 				gameFiles.text[i]:removeSelf()
 				gameFiles.text[i] = nil
 				trashcanImagesLayer[i].alpha = 0 
-				gameFiles.box[i]:removeEventListener( "tap", loadGameFile )
-				gameFiles.trashcan[i]:removeEventListener( "tap", deleteGameFile )
+
+				listeners:remove( gameFiles.box[i], "tap", loadGameFile )
+				listeners:remove( gameFiles.trashcan[i], "tap", deleteGameFile )
 			end
 		end 
 	end 
@@ -116,13 +119,15 @@ local function setFiles()
 			table.insert( gameFiles.trashcan, trashcanLayer[i] )
 			trashcanLayer[i].myName = filesNames[i]
 			gameFiles.box[i].myName = filesNames[i]
-			gameFiles.box[i]:addEventListener( "tap", loadGameFile )
-			trashcanLayer[i]:addEventListener( "tap", deleteGameFile )
+
+			listeners:add( gameFiles.box[i], "tap", loadGameFile )
+			listeners:add( trashcanLayer[i], "tap", deleteGameFile )
 		else 
 			trashcanImagesLayer[i].alpha = 0
 		end 
 	end
 end
+
 
 -- -----------------------------------------------------------------------------------
 -- Cenas
@@ -153,9 +158,9 @@ function scene:show( event )
 	local phase = event.phase
 
 	if ( phase == "will" ) then
-		gotoMenuButton:addEventListener( "tap", sceneTransition.gotoMenu )
+		listeners:add( gotoMenuButton, "tap", sceneTransition.gotoMenu )
 	elseif ( phase == "did" ) then
-
+	
 	end
 end
 
@@ -167,6 +172,7 @@ function scene:hide( event )
 
 	if ( phase == "will" ) then
 	elseif ( phase == "did" ) then
+		listeners:destroy()
 		destroyScene()
 		composer.removeScene( "chooseGameFile" )
 	end
@@ -176,8 +182,7 @@ end
 -- destroy()
 function scene:destroy( event )
 	local sceneGroup = self.view
-	gotoMenuButton:removeEventListener( "tap", sceneTransition.gotoMenu )
-	gotoMenuButton = nil
+
 end
 
 
