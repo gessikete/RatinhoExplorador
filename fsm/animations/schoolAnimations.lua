@@ -3,11 +3,17 @@ local persistence = require "persistence"
 local M = { }
 
 
-function M.new( school, gamePanel, path, schoolFSM, gameFlow ) 
+function M.new( school, character, gamePanel, path, schoolFSM, gameFlow ) 
 	local animation = { }
 	local teacher = school:findObject( "teacher" )
-	local character = school:findObject( "character" )
 	local tilesSize = 32
+	local brother
+
+	if ( character == school:findObject( "ada") ) then 
+		brother = school:findObject( "turing")
+	else
+		brother = school:findObject( "ada") 
+	end
 
 	local function flip( delay, character )
 		local function closure()
@@ -54,8 +60,6 @@ function M.new( school, gamePanel, path, schoolFSM, gameFlow )
 	end
 
 	local function brotherJumpingAnimation()
-		local brother = school:findObject( "brother" )
-
 		local time = 1500
 
 		gameFlow.updateFSM()
@@ -68,14 +72,13 @@ function M.new( school, gamePanel, path, schoolFSM, gameFlow )
 	end
 
 	local function brotherAnimation( stars, message )
-		local brother = school:findObject( "brother" )
 		local time = 450
 
 		if ( stars == 3 ) then 
 			brother.alpha = 1
 			brother.x = character.x - tilesSize * 2
         	brother.y = character.y - 3
-        	flip( 0, brother )
+        	--flip( 0, brother )
 
 			transition.to( brother, { time = time, x = brother.x + tilesSize, 
 				onComplete = 
@@ -111,7 +114,6 @@ function M.new( school, gamePanel, path, schoolFSM, gameFlow )
 	end
 
 	local function brotherLeaveAnimation()
-		local brother = school:findObject( "brother" )
 		local time = 500
 
 		flip( 300, brother )

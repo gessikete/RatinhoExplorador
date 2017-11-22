@@ -8,7 +8,7 @@ function M.new( miniGameFSM, listeners , miniGame )
       local nextEvent
 
       if ( alternativeEvent ) then nextEvent = alternativeEvent else nextEvent = miniGameFSM.nextEvent end
-
+      print( nextEvent )
       if ( nextEvent == "showAnimation" ) then 
         miniGameFSM.showAnimation()
 

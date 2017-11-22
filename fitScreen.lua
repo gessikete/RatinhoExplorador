@@ -34,13 +34,13 @@ function M.fitSchool( screen )
 end
 
 function M.fitGamePanel( gamePanel, gotoMenuButton )
-  if ( display.actualContentWidth >= 480 ) then
+  --[[if ( display.actualContentWidth >= 480 ) then
     gotoMenuButton.x = gotoMenuButton.x
     gamePanel.x = gamePanel.x + ( display.actualContentWidth - gamePanel.designedWidth ) + 30
 	elseif ( display.actualContentWidth > 420 ) then
 	  gamePanel.x = gamePanel.x + ( display.actualContentWidth - gamePanel.designedWidth ) + 60
   end
-  	gamePanel.y = gamePanel.y + 20
+  	gamePanel.y = gamePanel.y + 20]]
 end
 
 function M.fitBackground( background )
@@ -67,8 +67,8 @@ function M.fitMenu( background, newGameButton, playButton )
 end
 
 function M.fitMap( map )
-	--map.x = -28
-	--map.y =  map.y + 16
+	map.x = map.x - 100
+	map.y =  map.y - 32
 end
 
 return M

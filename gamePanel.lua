@@ -95,7 +95,7 @@ function M.new( executeInstructions )
 
   	gotoMenuButton = gamePanel:findObject("gotoMenuButton")
 
-  	fitScreen.fitGamePanel( gamePanel, gotoMenuButton )
+  	--fitScreen.fitGamePanel( gamePanel, gotoMenuButton )
 
   	-- -----------------------------------------------------------------------------------
 	-- Listeners do game panel
@@ -425,7 +425,7 @@ function M.new( executeInstructions )
   	function M.executeInstructions()
   		local bikeCount = 0
 
-  		if ( instructionsTable.last ~= 0 ) then 
+  		if ( ( instructionsTable.last ~= 0 ) and ( instructionsTable.executing == 1 ) ) then 
 	  		executeButton.executionsCount = executeButton.executionsCount + 1
 	  		table.insert( executeButton.instructionsCount, instructionsTable.last )
 	  		

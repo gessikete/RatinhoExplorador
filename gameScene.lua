@@ -78,7 +78,18 @@ function M:set( miniGame )
 
     -- lembrar: o myName (para os listeners) foi definido
     -- no próprio tiled
-    character = tileMap:findObject("character")
+    local charName = persistence.loadGameFile().character.name 
+    local charLayer = tileMap:findLayer("character")
+
+    for i = 1, charLayer.numChildren do
+      if ( charLayer[i].myName == persistence.loadGameFile().character.name ) then
+        character = charLayer[i]
+      end
+    end
+
+    --print( persistence.loadGameFile().character.name  )
+
+    --character = tileMap:findObject("character")
 
   	gameState.new( miniGame, character, onCollision )
 

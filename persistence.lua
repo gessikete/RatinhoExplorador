@@ -20,8 +20,8 @@ function M.filesNames()
 end
 
 -- Retorna um arquivo de jogo com os valores "default" de um jogo novo
-function defaultFile()
-	local character = { stepping = { x, y, point }, flipped } 
+function defaultFile( characterName )
+	local character = { stepping = { x, y, point }, flipped, name } 
 	local house = { isComplete, controlsTutorial, collectedPieces, bikeTutorial, stars }
 	local school = { isComplete, stars }
 	local restaurant = { isComplete }
@@ -30,6 +30,7 @@ function defaultFile()
 	default.character.flipped = false
 	default.character.stepping.x, default.character.stepping.y = M.startingPoint( "house" )
 	default.character.stepping.point = "exit"
+	default.character.name = characterName
 	default.currentMiniGame = "house" 
 
 	default.house.isComplete = false
@@ -50,7 +51,7 @@ function defaultFile()
 end
 
 -- Cria um jogo novo
-function M.newGameFile( newFileName )
+function M.newGameFile( newFileName, characterName )
 	local files = { }
 
 	-- Verifica se a lista de jogos salvos existe. Caso não exista, ela é criada 
@@ -66,7 +67,7 @@ function M.newGameFile( newFileName )
 
 	-- Cria um cabinet para o novo jogo e já adiciona um estado de jogo default
 	GBCDataCabinet.createCabinet( newFileName )
-	GBCDataCabinet.set( newFileName, "gameState", defaultFile() )
+	GBCDataCabinet.set( newFileName, "gameState", defaultFile( characterName ) )
 
 	-- Salva a lista com os nomes dos arquivos e o novo cabinet do jogo
 	GBCDataCabinet.save( "files" )
@@ -151,7 +152,7 @@ function M.startingPoint( currentMiniGame )
 	elseif ( currentMiniGame == "school" ) then 
 		return 80, 272
 	elseif ( currentMiniGame == "restaurant" ) then 
-		return 304, 336 - 64
+		return 336-32, 304+32
 	end
 end
 
@@ -194,9 +195,8 @@ function M.goBackPoint( currentMiniGame, previousMiniGameFile, onRepeat )
 	if ( onRepeat == true ) then
 		return startingPointX, startingPointY, entrance, flipped
 	elseif ( currentMiniGame == previousMiniGameFile.currentMiniGame ) then
-		--return schoolEntranceX, schoolEntranceY, flipped --TIRAR
-		--return houseMapExitX, houseMapExitY, flipped --TIRAR
-		return previousMiniGameFile.character.stepping.x, previousMiniGameFile.character.stepping.y, previousMiniGameFile.character.stepping.point, previousMiniGameFile.character.flipped
+		return startingPointX, startingPointY, entrance, flipped
+		--return previousMiniGameFile.character.stepping.x, previousMiniGameFile.character.stepping.y, previousMiniGameFile.character.stepping.point, previousMiniGameFile.character.flipped
 	elseif ( currentMiniGame == "map" ) then 
 		if ( previousMiniGameFile.currentMiniGame == "house" ) then
 			if ( previousMiniGameFile.character.stepping.point == exit  ) then 

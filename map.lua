@@ -188,37 +188,37 @@ local function onCollision( event )
   local obj2 = event.object2
  
   if ( event.phase == "began" ) then
-    if ( ( ( obj1.myName == "house" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "house" ) ) ) then 
+    if ( ( ( obj1.myName == "house" ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.myName == "house" ) ) ) then 
       transition.cancel()
       if ( obj1.point ) then character.stepping.point = obj1.point else character.stepping.point = obj2.point end 
       instructions:destroyInstructionsTable()
       gamePanel:stopAllListeners()
       timer.performWithDelay( 800, sceneTransition.gotoHouse )
 
-    elseif ( ( ( obj1.myName == "school" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "school" ) ) ) then 
+    elseif ( ( ( obj1.myName == "school" ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.myName == "school" ) ) ) then 
       transition.cancel()
       if ( obj1.point ) then character.stepping.point = obj1.point else character.stepping.point = obj2.point end 
       instructions:destroyInstructionsTable()
       gamePanel:stopAllListeners()
       timer.performWithDelay( 800, sceneTransition.gotoSchool ) 
     -- Colisão entre o personagem e os sensores dos tiles do caminho
-    elseif ( ( obj1.myName == "character" ) and ( obj2.isPath ) ) then 
+    elseif ( ( obj1.isCharacter ) and ( obj2.isPath ) ) then 
       character.stepping.x = obj2.x 
       character.stepping.y = obj2.y 
       character.stepping.point = "point"
       path:showTile( obj2.myName )
-    elseif ( ( obj2.myName == "character" ) and ( obj1.isPath ) ) then 
+    elseif ( ( obj2.isCharacter ) and ( obj1.isPath ) ) then 
       character.stepping.x = obj1.x 
       character.stepping.y = obj1.y 
       character.stepping.point = "point"
       path:showTile( obj1.myName )
     
-    elseif ( ( obj1.myName == "teacher" ) and ( obj2.myName == "character" ) ) then 
+    elseif ( ( obj1.myName == "teacher" ) and ( obj2.isCharacter ) ) then 
       teacher.cancelLoop = true
       instructionsTable.stop = true
       transition.cancel( character ) 
 
-    elseif ( ( obj2.myName == "teacher" ) and ( obj1.myName == "character" ) ) then 
+    elseif ( ( obj2.myName == "teacher" ) and ( obj1.isCharacter ) ) then 
       teacher.cancelLoop = true 
       instructionsTable.stop = true
       transition.cancel( character ) 
@@ -286,13 +286,12 @@ end
 function scene:create( event )
   sceneGroup = self.view
 
-  --persistence.setCurrentFileName("ana")
+  persistence.setCurrentFileName("ana")
 
   map, character, gamePanel, gameState, path, instructions, instructionsTable, gameFileData = gameScene:set( "map" )
-  map.x = map.x - 20
-  map.y = map.y - 15
 
   teacher = map:findObject( "teacher" )
+  character.alpha = 1
 
   --[[instructionsTable.direction = { "right", "down", "right" }
   instructionsTable.steps = { 2, 2, 2 }
@@ -304,6 +303,8 @@ function scene:create( event )
 
   sceneGroup:insert( map )
   sceneGroup:insert( gamePanel.tiled )
+  gamePanel.tiled.y = gamePanel.tiled.y - 10
+  gamePanel.tiled.x = gamePanel.tiled.x + 5
 end
 
 -- show()
@@ -342,6 +343,7 @@ function scene:hide( event )
   local sceneGroup = self.view
   local phase = event.phase
   if ( phase == "will" ) then
+    character.name = gameFileData.character.name
     gameFileData.character = character
     gameState:save( gameFileData )
     destroyScene()

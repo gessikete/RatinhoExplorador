@@ -86,8 +86,8 @@ local function onCollision( event )
   local obj2 = event.object2
 
   if ( event.phase == "began" ) then
-    if ( ( ( obj1.myName == "character" ) and ( obj2.myName == "rope" ) ) or ( ( obj2.myName == "character" ) and ( obj1.myName == "rope" ) ) ) then 
-    elseif ( ( obj1.myName == "puzzle" ) and ( obj2.myName == "character" ) ) then
+    if ( ( ( obj1.isCharacter ) and ( obj2.myName == "rope" ) ) or ( ( obj2.isCharacter ) and ( obj1.myName == "rope" ) ) ) then 
+    elseif ( ( obj1.myName == "puzzle" ) and ( obj2.isCharacter ) ) then
       if ( puzzle.collectedPieces[obj1.puzzleNumber] == nil ) then 
         puzzle.bigPieces[obj1.puzzleNumber].alpha = 1
         puzzle.littlePieces[ obj1.puzzleNumber ].alpha = 0
@@ -103,7 +103,7 @@ local function onCollision( event )
         puzzle.collectedPieces.count = puzzle.collectedPieces.count + 1
 
       end 
-    elseif ( ( obj1.myName == "character" ) and ( obj2.myName == "puzzle" ) ) then 
+    elseif ( ( obj1.isCharacter ) and ( obj2.myName == "puzzle" ) ) then 
       if ( puzzle.collectedPieces[obj2.puzzleNumber] == nil ) then
         puzzle.bigPieces[obj2.puzzleNumber].alpha = 1
         puzzle.littlePieces[ obj2.puzzleNumber ]. alpha = 0
@@ -120,7 +120,7 @@ local function onCollision( event )
       end
 
     -- Volta para o mapa quando o personagem chega na saída/entrada da casa
-    elseif ( ( ( obj1.myName == "exit" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "exit" ) ) ) then 
+    elseif ( ( ( obj1.myName == "exit" ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.myName == "exit" ) ) ) then 
       if ( miniGameData.isComplete == true ) then
         transition.cancel()
         character.stepping.point = "exit"
@@ -137,7 +137,7 @@ local function onCollision( event )
         end
       end
 
-    elseif ( ( ( obj1.myName == "entrance" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "entrance" ) ) ) then 
+    elseif ( ( ( obj1.myName == "entrance" ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.myName == "entrance" ) ) ) then 
       if ( miniGameData.isComplete == true ) then
         transition.cancel()
         character.stepping.point = "entrance"
@@ -146,13 +146,13 @@ local function onCollision( event )
         timer.performWithDelay( 1000, sceneTransition.gotoMap )
       end
     -- Colisão entre o personagem e os sensores dos tiles do caminho
-    elseif ( ( obj1.myName == "character" ) and ( obj2.isPath ) ) then 
+    elseif ( ( obj1.isCharacter ) and ( obj2.isPath ) ) then 
       character.stepping.x = obj2.x 
       character.stepping.y = obj2.y 
       character.stepping.point = "point"
       path:showTile( obj2.myName )
 
-    elseif ( ( obj2.myName == "character" ) and ( obj1.isPath ) ) then 
+    elseif ( ( obj2.isCharacter ) and ( obj1.isPath ) ) then 
       character.stepping.x = obj1.x 
       character.stepping.y = obj1.y 
       character.stepping.point = "point"
@@ -195,10 +195,10 @@ function scene:create( event )
   --print( display.actualContentWidth )
   --print( display.actualContentHeight )
 
-  --persistence.setCurrentFileName("ana")
+  persistence.setCurrentFileName("ana")
 
 	house, character, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "house" )
-   
+  character.alpha = 1
   --miniGameData.controlsTutorial = "complete"
   --miniGameData.bikeTutorial = "complete"
   --miniGameData.isComplete = true
@@ -237,13 +237,13 @@ function scene:show( event )
 
       if ( miniGameData.bikeTutorial == "incomplete" ) then
         gamePanel:showBikewheel ( false )
-        houseFSM.new( house, listeners, puzzle, miniGameData, gameState, gamePanel, path )
+        houseFSM.new( house, character, listeners, puzzle, miniGameData, gameState, gamePanel, path )
         houseFSM.bikeTutorial()
       end
 
     else
       if ( miniGameData.controlsTutorial == "incomplete" )  then
-        houseFSM.new( house, listeners, puzzle, miniGameData, gameState, gamePanel, path )
+        houseFSM.new( house, character, listeners, puzzle, miniGameData, gameState, gamePanel, path )
         houseFSM.controlsTutorial()
       end
     end

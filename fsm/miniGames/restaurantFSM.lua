@@ -18,15 +18,26 @@ local animation = {}
 
 local message = {}
 
-function M.new( restaurant, ingredients, listeners, collision, instructionsTable, miniGameData, gameState, gamePanel, path )
+
+function M.new( restaurant, character, ingredients, listeners, collision, instructionsTable, miniGameData, gameState, gamePanel, path )
 	local restaurantFSM
-	local character = restaurant:findObject( "character" )
+	--local character = restaurant:findObject( "character" )
 	local cook = restaurant:findObject( "cook" )  
 	local tilesSize = 32
 	local messageBubble
 	local message = restaurantMessages
 	local animation
 	local collisionsList = { }
+
+	local function resetCollision()
+		collision.bench = false
+		collision.otherObjects = false
+		collision.organizer = false
+		collision.collectedAll = false 
+		collision.collectedNone = true 
+		collision.inOrder = true
+		collision.wrongIngredient = false
+	end
 
 	function M.execute()
 		local organizerHand = restaurant:findObject( "organizerHand" )
@@ -48,18 +59,25 @@ function M.new( restaurant, ingredients, listeners, collision, instructionsTable
 
 	  	  	{ name = "showGamePanel", from = "start", to = "gamePanel", nextEvent = "enableListeners" },
 	  	  	--{ name = "enableListeners",  from = "gamePanel",  to = "restartListeners", nextEvent = "checkFeedbackWait" },
-	  	  	{ name = "enableListeners",  from = "start",  to = "restartListeners", nextEvent = "checkProgress" },
-	  	  	{ name = "checkProgress",  from = "restartListeners",  to = "progress2", nextEvent = "nextRecipe" },
-	  	  	{ name = "nextRecipe",  from = "progress2",  to = "recipe2", nextEvent = "checkProgress" },
-	  	  	{ name = "checkProgress",  from = "recipe2",  to = "progress3", nextEvent = "nextRecipe" },
-	  	  	{ name = "nextRecipe",  from = "progress3",  to = "recipe3"},-- nextEvent = "nextRecipe" },
-	  	  	
+	  	  	{ name = "enableListeners",  from = "start",  to = "restartListeners", nextEvent = "nextRecipe" },
+	  	  	{ name = "nextRecipe",  from = "restartListeners",  to = "recipe1", nextEvent = "checkProgress" },
+	  	  	{ name = "nextRecipe",  from = "repeat",  to = "recipe1", nextEvent = "checkProgress" },
+	  	  	{ name = "checkProgress",  from = "recipe1",  to = "progress1", nextEvent = "nextRecipe" },
+	  	  	{ name = "nextRecipe",  from = "progress1",  to = "recipe2", nextEvent = "checkProgress" },
+	  	  	{ name = "checkProgress",  from = "recipe2",  to = "progress2", nextEvent = "nextRecipe" },
+	  	  	{ name = "nextRecipe",  from = "progress2",  to = "recipe3", nextEvent = "checkProgress" },
+	  	  	{ name = "checkProgress",  from = "recipe3",  to = "progress3" },-- nextEvent = "nextRecipe" },
 
+	  	  	{ name = "showFeedback", from = "progress1", to = "feedbackAnimation", nextEvent = "nextRecipe" },
+	  	  	{ name = "showFeedback", from = "progress2", to = "feedbackAnimation", nextEvent = "nextRecipe" },
+	  	  	{ name = "showFeedback", from = "progress3", to = "feedbackAnimation", nextEvent = "nextRecipe" },
+	  	  	{ name = "repeatLevel", from = "feedbackAnimation", to = "repeat", nextEvent = "nextRecipe" },
+	  	  	--{ name = "checkProgress",  from = "repeat",  to = "progress_repeat", nextEvent = "nextRecipe" },
 
 	  	  	--{ name = "checkFeedbackWait",  from = "restartListeners",  to = "checkWait", nextEvent = "showFeedback" },
 	  	  	{ name = "showFeedback",  from = "checkWait",  to = "feedbackAnimation", nextEvent = "showObligatoryMessage" },
 	  	  	{ name = "checkFeedbackWait",  from = "repeat",  to = "checkWait", nextEvent = "showFeedback" },
-	  	  	{ name = "repeatLevel", from = "feedbackAnimation", to = "repeat", nextEvent = "checkFeedbackWait" },
+	  	  	--{ name = "repeatLevel", from = "feedbackAnimation", to = "repeat", nextEvent = "checkFeedbackWait" },
 	  	  	{ name = "showObligatoryMessage",  from = "feedbackAnimation",  to = "teacherBubble_msg9", nextEvent = "showAnimation" },
 	  	  	{ name = "showAnimation", from = "teacherBubble_msg9", to = "cookJumpingAnimation", nextEvent = "showObligatoryMessage" },
 	  	  	{ name = "showObligatoryMessage",  from = "cookJumpingAnimation",  to = "teacherBubble_msg10", nextEvent = "showAnimation" },
@@ -109,9 +127,20 @@ function M.new( restaurant, ingredients, listeners, collision, instructionsTable
 	  	      function( self, event, from, to ) 
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+	  	        
+	  	        if ( messageBubble == "brotherBubble" ) then 
+	  	        	if ( character == restaurant:findObject( "Ada" ) ) then 
+	  	        		messageBubble = restaurant:findObject( "turingBubble" )
+	  	        	else
+	  	        		messageBubble = restaurant:findObject( "adaBubble" )
+	  	        	end
+	  	        else 
+	  	        	messageBubble = restaurant:findObject( "cookBubble" )
+	  	        end
+
 	  	        local function closure() 
 	  	          	gamePanel.stopExecutionListeners()
-	  	          	gameFlow.showText( restaurant:findObject( messageBubble ), message[ msg ] ) 
+	  	          	gameFlow.showText( messageBubble, message[ msg ] ) 
 	  	        end
 
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
@@ -126,8 +155,19 @@ function M.new( restaurant, ingredients, listeners, collision, instructionsTable
 	  	      function( self, event, from, to ) 
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+	  	        
+	  	        if ( messageBubble == "brotherBubble" ) then 
+	  	        	if ( character == restaurant:findObject( "Ada" ) ) then 
+	  	        		messageBubble = restaurant:findObject( "turingBubble" )
+	  	        	else
+	  	        		messageBubble = restaurant:findObject( "adaBubble" )
+	  	        	end
+	  	        else 
+	  	        	messageBubble = restaurant:findObject( "cookBubble" )
+	  	        end
+
 	  	        local function closure() 
-	  	          	gameFlow.showText( restaurant:findObject( messageBubble ), message[ msg ] ) 
+	  	          	gameFlow.showText( messageBubble, message[ msg ] ) 
 	  	          	gamePanel.stopExecutionListeners()
 	  	        end
 
@@ -143,7 +183,17 @@ function M.new( restaurant, ingredients, listeners, collision, instructionsTable
 	  	        local messageBubble, msg, animationName = self.current:match( "([^,]+)_([^,]+)_([^,]+)" ) 
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
 
-	  	        gameFlow.showText( restaurant:findObject( messageBubble ), message[ msg ] )
+	  	        if ( messageBubble == "brotherBubble" ) then 
+	  	        	if ( character == restaurant:findObject( "Ada" ) ) then 
+	  	        		messageBubble = restaurant:findObject( "turingBubble" )
+	  	        	else
+	  	        		messageBubble = restaurant:findObject( "adaBubble" )
+	  	        	end
+	  	        else 
+	  	        	messageBubble = restaurant:findObject( "cookBubble" )
+	  	        end
+
+	  	        gameFlow.showText( messageBubble, message[ msg ] )
 	  	        gamePanel.stopExecutionListeners()
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
 	  	          	timer.performWithDelay( wait, animation[animationName] )
@@ -180,8 +230,19 @@ function M.new( restaurant, ingredients, listeners, collision, instructionsTable
 	  	          	local stars = 0
 	  	          	local msg = 1 
 
-	  	          	if ( collision.organizedAll == false ) then 
+	  	          	print( "feedback" )
+	  	          	if ( ( collision.wrongIngredient == true ) and ( collision.collectedAll == true ) ) then 
 	  	          		stars = 0
+	  	          		msg = 4 
+	  	          	elseif ( collision.wrongIngredient == true ) then 
+	  	          		stars = 0
+	  	          		msg = 2
+	  	          	elseif ( ( collision.collectedAll == false ) or ( collision.organizer == false ) ) then 
+	  	          		stars = 0
+	  	          		msg = 1
+	  	          	elseif ( collision.inOrder == false ) then
+	  	          		stars = 0
+	  	          		msg = 3 
 	  	          	elseif ( ( instructionsTable.last == 6 ) and ( collision.table == false ) and ( collision.table == false ) ) then
 	  	          	    stars = 3
 	  	          	elseif ( ( instructionsTable.last == 6 ) ) then 
@@ -204,9 +265,7 @@ function M.new( restaurant, ingredients, listeners, collision, instructionsTable
 	  	          	    end
 	  	          	end
 	  	          	gamePanel.tiled:insert( feedback.showAnimation( "restaurant", stars, msg, gameFlow.updateFSM ) )
-	  	       		miniGameData.stars = stars
-	  	       		local hand = restaurant:findObject( "organizerHand" )
-	  	       		hand.stop = true 
+	  	       		miniGameData.stars = stars 
 	  	        end,
 
 	  	    on_saveGame = 
@@ -227,49 +286,24 @@ function M.new( restaurant, ingredients, listeners, collision, instructionsTable
 	  	    on_repeatLevel = 
 	  	      function( self, event, from, to ) 
 	  	        local startingPoint = restaurant:findObject("start")
-	  	        local chairs = restaurant:findLayer( "chairs" )
-	  	        local tables = restaurant:findLayer( "tables" )
 
+	  	        print( "ONREPEAT" )
 	  	        --physics.pause()
 	  	        character.ropeJoint:removeSelf()
 	  	        physics.removeBody( character )
 	  	        physics.removeBody( character.rope )
 	  	        character.x = startingPoint.x
-	  	        character.y = startingPoint.y - 6
+	  	        character.y = startingPoint.y - 3
 	  	        character.rope.x, character.rope.y = character.x, character.y + 4
 	  	        physics.start()
 	  	        physics.addBody( character )
 	  	        physics.addBody( character.rope )
 	  	        character.ropeJoint = physics.newJoint( "rope", character.rope, character, 0, 0 )
 	  	        character.isFixedRotation = true 
-	  	        character.xScale = 1
+	  	        character.xScale = - 1
 
-	  	        collision.table = false
-	  	        collision.chair = false
-	  	        collision.organizer = false 
-	  	        collision.obj = nil 
-	  	        collision.organizedAll = false 
-	  	        collision.organizedNone = true
-
-	  	        for i = 1, chairs.numChildren do 
-	  	        	if ( chairs[i].isPhysics ) then 
-	  	        		physics.removeBody( chairs[i] )
-	  	        		chairs[i].isPhysics = nil
-	  	        	end
-	  	        	chairs[i].x = chairs[i].originalX
-	  	        	chairs[i].y = chairs[i].originalY
-	  	        	chairs[i].rotation = 0
-	  	        end
-
-	  	        for i = 1, tables.numChildren do 
-	  	        	if ( tables[i].isPhysics ) then 
-	  	        		physics.removeBody( tables[i] )
-	  	        		tables[i].isPhysics = nil 
-	  	        	end
-	  	        	tables[i].x = tables[i].originalX
-	  	        	tables[i].y = tables[i].originalY
-	  	        	tables[i].rotation = 0 
-	  	        end
+	  	        resetCollision()
+	  	        collisionsList = { }
 
 	  	        if ( messageBubble ) then 
 	  	          	messageBubble.alpha = 0
@@ -278,17 +312,48 @@ function M.new( restaurant, ingredients, listeners, collision, instructionsTable
 	  	          	end
 	  	        end
 
-	  	        for k, v in pairs( supplies.collected ) do
-	  	        	supplies.collected[k].x = supplies.collected[k].originalX
-	  	        	supplies.collected[k].y = supplies.collected[k].originalY
-	  	        	supplies.collected[k].alpha = 1
-	  	        	supplies.collected[k] = nil 
+	  	        for k, v in pairs( ingredients.first ) do
+	  	        	v.x = v.originalX
+	  	        	v.y = v.originalY
+	  	        	v.alpha = 1
 	  	        end
 
-	  	        for k, v in pairs( supplies.remaining ) do
-	  	        	supplies.remaining[k] = nil 
+	  	        for k, v in pairs( ingredients.second ) do
+	  	        	v.x = v.originalX
+	  	        	v.y = v.originalY
+	  	        	v.alpha = 1
 	  	        end
+
+	  	        for k, v in pairs( ingredients.third ) do
+	  	        	v.alpha = 0
+	  	        end
+
+	  	        for k, v in pairs( ingredients.remaining ) do
+	  	        	ingredients.remaining[k] = nil 
+	  	        end
+	  	        ingredients.collected = { }
 	  	        gamePanel:updateBikeMaxCount( bikeWheelMaxCount )
+
+	  	        transition.fadeOut( restaurant:findObject( "recipe2" ), { time = 800 } )
+	  	        transition.fadeOut( restaurant:findObject( "recipe3" ), { time = 800 } )
+
+	  	        for k, v in pairs( ingredients.check ) do
+	  	        	for r, s in pairs( v ) do
+	  	        		s.alpha = 0
+	  	        	end
+	  	        end
+
+	  	        for k, v in pairs( ingredients.uncheck ) do
+	  	        	for r, s in pairs( v ) do
+	  	        		s.alpha = 0
+	  	        	end
+	  	        end
+	  	        gameFlow.updateFSM()  --tirar?
+
+	  	        --[[instructionsTable:reset()
+	  	        instructionsTable.steps = { 5, 1, 9, 2, 1, 1, 4, 3, 1 } 
+			  	instructionsTable.direction = { "up", "right", "left", "right", "up", "left", "down", "right", "up" }
+			  	instructionsTable.last = 9]]
 	  	    end,
 
 	  	    on_enableListeners = 
@@ -317,26 +382,71 @@ function M.new( restaurant, ingredients, listeners, collision, instructionsTable
 	  	    on_checkProgress = 
 	  	    	function( self, event, from, to ) 
 	  	        	--transition.fadeOut( gamePanel.tiled, { time = 400 } )
-
-	  	    		if ( collision.collectedAll == true ) then 
-	  	    			if ( M.waitFeedback == false ) then 
+	  	        	local function wait()
+	  	        		if ( M.waitFeedback == false ) then 
 		  	        		gameFlow.updateFSM()
 		  	    		else
 		  	    			M.waitFeedback = false
 		  	    		end
-	  	    		else 
-	  	    			collisionsList = { }
-	  	    			--repeat phase
-	  	    		end 
+	  	        	end
+
+	  	        	print( "coll all: " .. tostring( collision.collectedAll ) .. "; coll none: " .. tostring( collision.collectedNone) .. " ; wrong: " .. tostring(collision.wrongIngredient) .. " ; organizer: " .. tostring(collision.organizer) )
+
+	  	    		if ( ( collision.collectedAll == true ) and ( collision.wrongIngredient == false ) and ( collision.organizer == true ) and ( collision.inOrder == true ) )  then 
+	  	    			timer.performWithDelay( 400, wait )
+	  	    		else
+	  	    			local ingredientsList, uncheck
+	  	    			if ( ( self.current == "progress1" ) or ( self.current == "progress_repeat" ) ) then 
+				        	ingredientsList = ingredients.first 
+				        	uncheck = ingredients.uncheck.first
+				       	elseif ( self.current == "progress2" ) then 
+				       		ingredientsList = ingredients.second
+				       		uncheck = ingredients.uncheck.second
+				       	elseif ( self.current == "progress3" ) then 
+				       		ingredientsList = ingredients.third
+				       		uncheck = ingredients.uncheck.third
+				       	end
+
+				       	self.nextEvent = "showFeedback"
+				       	if ( collision.collectedNone == true ) then 
+				       		gameFlow.updateFSM()
+				       	elseif ( ( collision.wrongIngredient == true ) or ( collision.organizer == false ) ) then 
+				       		wait()
+				       	else 
+					       	local found
+		  	    			for k, v in pairs( ingredientsList ) do
+		  	    				found = false
+		 
+		  	    				for r, s in pairs( ingredients.collected ) do
+		  	    					if v == s then found = true end 
+		  	    				end 
+
+		  	    				if ( found == false ) then 
+									transition.fadeIn( uncheck[ v.number ], { time = 400, delay = 400 * ( k - 1 ), 
+										onComplete = 
+											function()
+												if ( k == #ingredientsList ) then timer.performWithDelay( 600, wait ) end
+											end
+										} )
+	        					end
+	        				end
+	        			end
+	  	    		end
  	  	    	end,
 
  	  	    on_nextRecipe = 
 	  	    	function( self, event, from, to ) 
 	  	        	table.insert( collisionsList, collision )
-	  	        	print( self.current )
-	  	        	if ( self.current == "recipe2" ) then 
+
+	  	        	gamePanel.restartExecutionListeners()
+
+	  	        	if ( self.current == "recipe1" ) then
+	  	        		transition.fadeIn( restaurant:findObject( "recipe1" ), { time = 800 } )
+
+	  	        	elseif ( self.current == "recipe2" ) then 
 	  	        		ingredients.collected = {}
 	  	        		
+	  	        		gamePanel:updateBikeMaxCount( 9 )
 	  	        		transition.fadeOut( restaurant:findObject( "recipe1" ), { time = 800 } )
 		  				transition.fadeIn( restaurant:findObject( "recipe2" ), { time = 800 } )
 		  				transition.fadeIn( ingredients.third[2], { time = 800 } )
@@ -346,9 +456,11 @@ function M.new( restaurant, ingredients, listeners, collision, instructionsTable
 		  				for k, v in pairs( ingredients.check.first ) do
 			  				v.alpha = 0
 		  				end
+
 		  			elseif ( self.current == "recipe3" ) then 
 	  	        		ingredients.collected = {}
 	  	        		
+	  	        		gamePanel:updateBikeMaxCount( 6 )
 	  	        		transition.fadeOut( restaurant:findObject( "recipe2" ), { time = 800 } )
 		  				transition.fadeIn( restaurant:findObject( "recipe3" ), { time = 800 } )
 		  				transition.fadeIn( ingredients.third[1], { time = 800 } )
@@ -358,7 +470,11 @@ function M.new( restaurant, ingredients, listeners, collision, instructionsTable
 		  				for k, v in pairs( ingredients.check.second ) do
 			  				v.alpha = 0
 		  				end
+
+		  				physics.addBody( restaurant:findObject( "stove" ), { bodyType = "static", isSensor = true } )
 	  	        	end
+
+	  	        	resetCollision()
 	  	    	end,
 	  	  }
 	  	})
@@ -366,11 +482,12 @@ function M.new( restaurant, ingredients, listeners, collision, instructionsTable
 		gameFlow.new( restaurantFSM, listeners, restaurant )
 		M.updateFSM = gameFlow.updateFSM
 		M.fsm = restaurantFSM
-		animation = restaurantAnimations.new( restaurant, gamePanel, path, restaurantFSM, gameFlow )
+		animation = restaurantAnimations.new( restaurant, character, gamePanel, path, restaurantFSM, gameFlow )
 	  	--restaurantFSM.showObligatoryMessage()
 	  	--restaurantFSM.showAnimation()
 	  	--restaurantFSM.showGamePanel()
 	  	restaurantFSM.enableListeners()
+	  	restaurantFSM.nextRecipe()
 	end
 end
 

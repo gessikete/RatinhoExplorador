@@ -2,10 +2,10 @@ local persistence = require "persistence"
 
 local M = { }
 
-function M.new( restaurant, gamePanel, path, restaurantFSM, gameFlow ) 
+function M.new( restaurant, character, gamePanel, path, restaurantFSM, gameFlow ) 
 	local animation = { }
 	local cook = restaurant:findObject( "cook" )
-	local character = restaurant:findObject( "character" )
+	--local character = restaurant:findObject( "character" )
 	local tilesSize = 32
 
 	local function momAnimation( )

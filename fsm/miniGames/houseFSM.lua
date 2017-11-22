@@ -16,9 +16,9 @@ local animation = {}
 
 local message = {}
 
-function M.new( house, listeners, puzzle, miniGameData, gameState, gamePanel, path )
+function M.new( house, character, listeners, puzzle, miniGameData, gameState, gamePanel, path )
 	local tutorialFSM
-	local character = house:findObject( "character" )
+	--local character = house:findObject( "character" )
 	local mom = house:findObject( "mom" )  
 	local tilesSize = 32
 	local messageBubble
@@ -28,7 +28,6 @@ function M.new( house, listeners, puzzle, miniGameData, gameState, gamePanel, pa
 	local function showSubText( event )
 		messageBubble = event.target
 
-		print( "LISTENER TEXT: "  .. tostring(listeners) )
 		if ( messageBubble.message[messageBubble.shownText] ) then 
 		    messageBubble.text:removeSelf()
 
@@ -218,9 +217,20 @@ function M.new( house, listeners, puzzle, miniGameData, gameState, gamePanel, pa
 	  	      function( self, event, from, to ) 
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+
+	  	        if ( messageBubble == "brotherBubble" ) then 
+	  	        	if ( character == house:findObject( "Ada" ) ) then 
+	  	        		messageBubble = house:findObject( "turingBubble" )
+	  	        	else
+	  	        		messageBubble = house:findObject( "adaBubble" )
+	  	        	end
+	  	        else 
+	  	        	messageBubble = house:findObject( "momBubble" )
+	  	        end
+
 	  	        local function closure() 
 	  	            gamePanel.stopExecutionListeners()
-	  	            showText( house:findObject( messageBubble ), message[ msg ] ) 
+	  	            showText( messageBubble, message[ msg ] ) 
 	  	        end
 
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
@@ -235,8 +245,20 @@ function M.new( house, listeners, puzzle, miniGameData, gameState, gamePanel, pa
 	  	      function( self, event, from, to ) 
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+	  	        
+	  	        if ( messageBubble == "brotherBubble" ) then 
+	  	        	if ( character == house:findObject( "Ada" ) ) then 
+	  	        		messageBubble = house:findObject( "turingBubble" )
+	  	        	else
+	  	        		messageBubble = house:findObject( "adaBubble" )
+	  	        	end
+	  	        else 
+	  	        	messageBubble = house:findObject( "momBubble" )
+	  	        end
+
+
 	  	        local function closure() 
-	  	            showText( house:findObject( messageBubble ), message[ msg ] ) 
+	  	            showText( messageBubble, message[ msg ] ) 
 	  	            gamePanel.stopExecutionListeners()
 	  	        end
 
@@ -252,7 +274,17 @@ function M.new( house, listeners, puzzle, miniGameData, gameState, gamePanel, pa
 	  	        local messageBubble, msg, animationName = self.current:match( "([^,]+)_([^,]+)_([^,]+)" ) 
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
 
-	  	        showText( house:findObject( messageBubble ), message[ msg ] )
+	  	        if ( messageBubble == "brotherBubble" ) then 
+	  	        	if ( character == house:findObject( "Ada" ) ) then 
+	  	        		messageBubble = house:findObject( "turingBubble" )
+	  	        	else
+	  	        		messageBubble = house:findObject( "adaBubble" )
+	  	        	end
+	  	        else 
+	  	        	messageBubble = house:findObject( "momBubble" )
+	  	        end
+
+	  	        showText( messageBubble, message[ msg ] )
 	  	        gamePanel.stopExecutionListeners()
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
 	  	            timer.performWithDelay( wait, animation[animationName] )
@@ -367,7 +399,7 @@ function M.new( house, listeners, puzzle, miniGameData, gameState, gamePanel, pa
 		gameFlow.new( tutorialFSM )
 		M.update = gameFlow.updateFSM
 		M.tutorialFSM = tutorialFSM
-		animation = houseAnimations.new( house, puzzle, gamePanel, path, tutorialFSM, gameFlow )
+		animation = houseAnimations.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow )
 	  	tutorialFSM.showObligatoryMessage()
 	end
 
@@ -424,9 +456,20 @@ function M.new( house, listeners, puzzle, miniGameData, gameState, gamePanel, pa
 	  	      function( self, event, from, to ) 
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+	  	        
+	  	        if ( messageBubble == "brotherBubble" ) then 
+	  	        	if ( character == house:findObject( "Ada" ) ) then 
+	  	        		messageBubble = house:findObject( "turingBubble" )
+	  	        	else
+	  	        		messageBubble = house:findObject( "adaBubble" )
+	  	        	end
+	  	        else 
+	  	        	messageBubble = house:findObject( "momBubble" )
+	  	        end
+
 	  	        local function closure() 
 	  	            gamePanel.stopExecutionListeners()
-	  	            showText( house:findObject( messageBubble ), message[ msg ] ) 
+	  	            showText( messageBubble, message[ msg ] ) 
 	  	        end
 
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
@@ -435,14 +478,25 @@ function M.new( house, listeners, puzzle, miniGameData, gameState, gamePanel, pa
 	  	            closure()
 	  	        end
 
-	  	      end,
+	  	    end,
 
 	  	    on_showObligatoryMessage = 
 	  	      function( self, event, from, to ) 
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+	  	        
+	  	        if ( messageBubble == "brotherBubble" ) then 
+	  	        	if ( character == house:findObject( "Ada" ) ) then 
+	  	        		messageBubble = house:findObject( "turingBubble" )
+	  	        	else
+	  	        		messageBubble = house:findObject( "adaBubble" )
+	  	        	end
+	  	        else 
+	  	        	messageBubble = house:findObject( "momBubble" )
+	  	        end
+
 	  	        local function closure() 
-	  	            showText( house:findObject( messageBubble ), message[ msg ] ) 
+	  	            showText( messageBubble, message[ msg ] ) 
 	  	            gamePanel.stopExecutionListeners()
 	  	        end
 
@@ -458,7 +512,17 @@ function M.new( house, listeners, puzzle, miniGameData, gameState, gamePanel, pa
 	  	        local messageBubble, msg, animationName = self.current:match( "([^,]+)_([^,]+)_([^,]+)" ) 
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
 
-	  	        showText( house:findObject( messageBubble ), message[ msg ] )
+	  	        if ( messageBubble == "brotherBubble" ) then 
+	  	        	if ( character == house:findObject( "Ada" ) ) then 
+	  	        		messageBubble = house:findObject( "turingBubble" )
+	  	        	else
+	  	        		messageBubble = house:findObject( "adaBubble" )
+	  	        	end
+	  	        else 
+	  	        	messageBubble = house:findObject( "momBubble" )
+	  	        end
+
+	  	        showText( messageBubble, message[ msg ] )
 
 	  	        gamePanel.stopExecutionListeners()
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
@@ -517,7 +581,7 @@ function M.new( house, listeners, puzzle, miniGameData, gameState, gamePanel, pa
 	  	gameFlow.new( tutorialFSM )
 	  	M.tutorialFSM = tutorialFSM
 	  	M.update = gameFlow.updateFSM
-	  	animation = houseAnimations.new( house, puzzle, gamePanel, path, tutorialFSM, gameFlow )
+	  	animation = houseAnimations.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow )
 	  	tutorialFSM.showAnimation()
 	end
 end

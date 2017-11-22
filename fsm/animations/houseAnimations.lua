@@ -2,11 +2,17 @@ local persistence = require "persistence"
 
 local M = { }
 
-function M.new( house, puzzle, gamePanel, path, tutorialFSM, gameFlow ) 
+function M.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow ) 
 	local animation = { }
 	local mom = house:findObject( "mom" )
-	local character = house:findObject( "character" )
+	local brother 
 	local tilesSize = 32
+
+	if ( character == house:findObject( "ada") ) then 
+		brother = house:findObject( "turing")
+	else
+		brother = house:findObject( "ada") 
+	end
 
 	local function momAnimation( )
 		local time = 5000
@@ -158,7 +164,7 @@ function M.new( house, puzzle, gamePanel, path, tutorialFSM, gameFlow )
 		local exit = house:findObject( "exit" )
 
 		hand.x = exit.contentBounds.xMin - 5
-		hand.y = exit.contentBounds.yMax - 20
+		hand.y = exit.contentBounds.yMax - 5
 		hand.rotation = - 80
 		hand.alpha = 1
 		 
@@ -179,16 +185,19 @@ function M.new( house, puzzle, gamePanel, path, tutorialFSM, gameFlow )
 		end
 
 		local function brotherChallengeAnimation()
-		local brother = house:findObject( "brother" )
 		local steps = 4.5
 		local time = 400 * steps
 		local hidingWallLayer = house:findLayer( "hidingWall" ) 
+		local brotherPosition = house:findObject( "brother" )
 
 		path:hidePath()
 		for i = 1, hidingWallLayer.numChildren do
 		  hidingWallLayer[i].alpha = 1
 		end 
 		brother.alpha = 1
+		brother.x = brotherPosition.x 
+		brother.y = brotherPosition.y
+		brother.xScale = - 1
 
 		local function flipCharacter()
 		  character.xScale = 1
@@ -200,8 +209,6 @@ function M.new( house, puzzle, gamePanel, path, tutorialFSM, gameFlow )
 	end
 
 	local function brotherJumpingAnimation()
-		local brother = house:findObject( "brother" )
-
 		local time = 1500
 
 		transition.to( brother, { rotation = 7, time = time, y = brother.y - 5, transition = easing.inBounce,
@@ -215,7 +222,6 @@ function M.new( house, puzzle, gamePanel, path, tutorialFSM, gameFlow )
 	end
 
 	local function brotherLeavingAnimation()
-		local brother = house:findObject( "brother" )
 		local steps = 4.5
 		local time = 400 * steps
 		local hidingWallLayer = house:findLayer( "hidingWall" ) 

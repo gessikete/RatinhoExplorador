@@ -3,18 +3,28 @@
         {
          "draworder":"topdown",
          "name":"title",
+         "objects":[],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"background",
          "objects":[
                 {
-                 "gid":5,
-                 "height":338,
-                 "id":18,
+                 "gid":6,
+                 "height":474,
+                 "id":19,
                  "name":"",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":620,
-                 "x":-7,
-                 "y":325
+                 "width":711,
+                 "x":-82,
+                 "y":388
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -47,7 +57,7 @@
                  "type":"",
                  "visible":true,
                  "width":45,
-                 "x":42,
+                 "x":7,
                  "y":287
                 }],
          "opacity":1,
@@ -55,8 +65,82 @@
          "visible":true,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"avatar",
+         "objects":[
+                {
+                 "gid":7,
+                 "height":609,
+                 "id":24,
+                 "name":"avatar",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":761.25,
+                 "x":-152,
+                 "y":472
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"listeners",
+         "objects":[
+                {
+                 "height":193,
+                 "id":25,
+                 "name":"turing",
+                 "properties":
+                    {
+                     "isHitTestable":true,
+                     "myName":"turing"
+                    },
+                 "propertytypes":
+                    {
+                     "isHitTestable":"bool",
+                     "myName":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":false,
+                 "width":109,
+                 "x":273,
+                 "y":117
+                }, 
+                {
+                 "height":193,
+                 "id":26,
+                 "name":"ada",
+                 "properties":
+                    {
+                     "isHitTestable":true,
+                     "myName":"ada"
+                    },
+                 "propertytypes":
+                    {
+                     "isHitTestable":"bool",
+                     "myName":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":false,
+                 "width":94,
+                 "x":89,
+                 "y":116
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextobjectid":19,
+ "nextobjectid":27,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",
@@ -75,7 +159,7 @@
          "name":"objects",
          "spacing":0,
          "tilecount":3,
-         "tileheight":450,
+         "tileheight":800,
          "tiles":
             {
              "2":
@@ -90,14 +174,39 @@
                  "imageheight":47,
                  "imagewidth":45
                 },
-             "4":
+             "5":
                 {
-                 "image":"images\/background.png",
-                 "imageheight":450,
-                 "imagewidth":800
+                 "image":"images\/new game\/background.png",
+                 "imageheight":800,
+                 "imagewidth":1200
                 }
             },
-         "tilewidth":800
+         "tilewidth":1200
+        }, 
+        {
+         "columns":0,
+         "firstgid":7,
+         "grid":
+            {
+             "height":1,
+             "orientation":"orthogonal",
+             "width":1
+            },
+         "margin":0,
+         "name":"avatar",
+         "spacing":0,
+         "tilecount":1,
+         "tileheight":1200,
+         "tiles":
+            {
+             "0":
+                {
+                 "image":"images\/new game\/chooseAvatar.png",
+                 "imageheight":1200,
+                 "imagewidth":1500
+                }
+            },
+         "tilewidth":1500
         }],
  "tilewidth":16,
  "type":"map",

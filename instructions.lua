@@ -112,6 +112,7 @@ function M.new( tilesSize, character, markedPath, miniGame )
         if ( restartExecutionListeners ) then 
           restartExecutionListeners()
           if ( M.updateFSM ) then
+            print( instructionsTable.last )
             timer.performWithDelay( slowStep, M.updateFSM )
           end
         else print( "Listener nulo (instructions.lua)" )

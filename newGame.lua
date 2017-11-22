@@ -23,6 +23,7 @@ local textField
 local playButton
 local gotoMenuButton
 local listeners = listenersModule:new()
+local character
 
 -- -----------------------------------------------------------------------------------
 -- Funções
@@ -30,7 +31,7 @@ local listeners = listenersModule:new()
 -- Cria um novo arquivo de jogo 
 local function createFile()	
 	if ( ( textField.text ~= nil ) and ( not tostring( textField.text ):find( "^%s*$" ) ) ) then 
-		persistence.newGameFile(textField.text)
+		persistence.newGameFile( textField.text, character )
 		sceneTransition.gotoHouse()
 	end
 end
@@ -49,7 +50,28 @@ local function textListener( event )
     end
 end
 
+local function chooseCharacter( event )
+	if ( event.target.myName == "ada" ) then 
+		character = "Ada"
+	else
+		character = "Turing"
+	end
 
+	local function showTextField()
+		textField = native.newTextField( 3*display.contentCenterX/4, display.contentCenterY/2, display.contentWidth/2, 30 )
+
+		textField.inputType = "default"
+		textField.string = " "
+		newGame:insert( textField )
+
+		listeners:add( textField, "userInput", textListener )
+
+		native.setKeyboardFocus( textField )
+	end
+
+	transition.fadeOut( newGame:findObject( "avatar" ), { time = 800, onComplete = showTextField } )
+
+end
 -- -----------------------------------------------------------------------------------
 -- Cenas
 -- -----------------------------------------------------------------------------------
@@ -69,17 +91,10 @@ function scene:create( event )
 
 	sceneGroup:insert( newGame )
 
-	textField = native.newTextField( 3*display.contentCenterX/4, display.contentCenterY/2, display.contentWidth/2, 30 )
-
-	textField.inputType = "default"
-	textField.string = " "
-	sceneGroup:insert( textField )
-
-	listeners:add( textField, "userInput", textListener )
 	listeners:add( playButton, "tap", createFile )
 	listeners:add( gotoMenuButton, "tap", sceneTransition.gotoMenu )
-
-	native.setKeyboardFocus( textField )
+	listeners:add( newGame:findObject( "ada" ), "tap", chooseCharacter )
+	listeners:add( newGame:findObject( "turing" ), "tap", chooseCharacter )
 
 	--fitScreen:fitBackground( newGame )
 end

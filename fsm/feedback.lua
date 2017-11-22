@@ -85,6 +85,15 @@ local function showFeedback( starNumber, nextStar )
   else
     addListeners( starNumber )
     if ( message ) then
+      --[[local backgroundLayer = feedback:findLayer( "blackBackground" )
+      local restaurantLayer = feedback:findLayer( "restaurant" )
+      local background = feedback:findObject( "background" )
+      backgroundLayer:insert( message )
+      --background:toFront()
+      message:insert( backgroundLayer )]]
+      --local startLayer = feedback:findLayer( "stars" )
+      --message:insert( startLayer )
+      --message:toFront( )
       transition.fadeIn( message, { time = time * 3 } )
     end
   end
@@ -93,7 +102,7 @@ end
 -- Retorna a lista das instruções
 function M.showAnimation( miniGame, stars, msg, executeFSM_ )
   local time = 1000
-  
+
   -- Carrega o arquivo tiled
   local feedbackData = json.decodeFile(system.pathForFile("tiled/feedback.json", system.ResourceDirectory))  -- load from json export
   feedback = tiled.new(feedbackData, "tiled")

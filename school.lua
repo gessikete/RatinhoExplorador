@@ -151,9 +151,9 @@ local function onCollision( event )
   local obj2 = event.object2
 
   if ( event.phase == "began" ) then
-    if ( ( ( obj1.myName == "character" ) and ( obj2.myName == "rope" ) ) or ( ( obj2.myName == "character" ) and ( obj1.myName == "rope" ) ) ) then 
+    if ( ( ( obj1.isCharacter ) and ( obj2.myName == "rope" ) ) or ( ( obj2.isCharacter ) and ( obj1.myName == "rope" ) ) ) then 
     -- Volta para o mapa quando o personagem chega na saída/entrada da escola
-    elseif ( ( ( obj1.myName == "exit" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "exit" ) ) ) then 
+    elseif ( ( ( obj1.myName == "exit" ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.myName == "exit" ) ) ) then 
       if ( miniGameData.isComplete == true ) then
         transition.cancel( character )
         character.stepping.point = "exit"
@@ -161,7 +161,7 @@ local function onCollision( event )
         gamePanel:stopAllListeners()
         timer.performWithDelay( 1000, sceneTransition.gotoMap )
       end
-    elseif ( ( ( obj1.myName == "entrance" ) and ( obj2.myName == "character" ) ) or ( ( obj1.myName == "character" ) and ( obj2.myName == "entrance" ) ) ) then 
+    elseif ( ( ( obj1.myName == "entrance" ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.myName == "entrance" ) ) ) then 
       if ( miniGameData.isComplete == true ) then
         transition.cancel( character )
         character.stepping.point = "entrance"
@@ -170,11 +170,11 @@ local function onCollision( event )
         timer.performWithDelay( 1000, sceneTransition.gotoMap )
       end
 
-    elseif ( ( obj1.myName == "supply" ) and ( obj2.myName == "character" ) ) then
+    elseif ( ( obj1.myName == "supply" ) and ( obj2.isCharacter ) ) then
       supplies.collected[ obj1.number ] = supplies.list[ obj1.number ]
       transition.fadeOut( supplies.list[ obj1.number ], { time = 400 } )
 
-    elseif ( ( obj2.myName == "supply" ) and ( obj1.myName == "character" ) ) then
+    elseif ( ( obj2.myName == "supply" ) and ( obj1.isCharacter ) ) then
       supplies.collected[ obj2.number ] = supplies.list[ obj2.number ]
       transition.fadeOut( supplies.list[ obj2.number ], { time = 400 } )
 
@@ -311,13 +311,13 @@ local function onCollision( event )
         collision.organizedNone = organizedNone
       end
     -- Colisão entre o personagem e os sensores dos tiles do caminho
-    elseif ( ( obj1.myName == "character" ) and ( obj2.isPath ) ) then
+    elseif ( ( obj1.isCharacter ) and ( obj2.isPath ) ) then
       character.stepping.x = obj2.x 
       character.stepping.y = obj2.y 
       character.stepping.point = "point"
       path:showTile( obj2.myName )
 
-    elseif ( ( obj2.myName == "character" ) and ( obj1.isPath ) ) then 
+    elseif ( ( obj2.isCharacter ) and ( obj1.isPath ) ) then 
       character.stepping.x = obj1.x 
       character.stepping.y = obj1.y 
       character.stepping.point = "point"
@@ -362,7 +362,6 @@ function scene:create( event )
   persistence.setCurrentFileName( "ana" )
 
   school, character, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "school" )
-
 
   sceneGroup:insert( school )
   sceneGroup:insert( gamePanel.tiled )
@@ -478,12 +477,23 @@ function scene:show( event )
 
   if ( phase == "will" ) then
     if ( miniGameData.isComplete == false ) then
-      setSupplies()
-      gamePanel.tiled.alpha = 0
-      local brother = school:findObject( "brother" )
+      local brother, brotherPosition
+
+      if ( character == school:findObject( "ada") ) then 
+        brother = school:findObject( "turing")
+      else
+        brother = school:findObject( "ada") 
+      end
+
+      brotherPosition = school:findObject( "brother" )
       if ( ( miniGameData.previousStars == 1 ) or ( miniGameData.previousStars == 2 ) )  then 
+        brother.x, brother.y = brotherPosition.x, brotherPosition.y
+        brother.xScale = -1
         brother.alpha = 1
       end
+
+      setSupplies()
+      gamePanel.tiled.alpha = 0
     else
       teacher = school:findObject( "teacher" )
       teacher.alpha = 1
@@ -502,7 +512,7 @@ function scene:show( event )
     gamePanel:addInstructionPanelListeners()
     if ( miniGameData.isComplete == false ) then
       collision = { table = false, chair = false, organizer = false, organizedAll = false, organizedNone = true }
-      schoolFSM.new( school, supplies , listeners, collision, instructionsTable, miniGameData, gameState, gamePanel, path )
+      schoolFSM.new( school, character, supplies , listeners, collision, instructionsTable, miniGameData, gameState, gamePanel, path )
       schoolFSM.execute()
       instructions.updateFSM = schoolFSM.updateFSM
     end

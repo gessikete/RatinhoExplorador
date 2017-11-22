@@ -16,9 +16,9 @@ local animation = {}
 
 local message = {}
 
-function M.new( school, supplies, listeners, collision, instructionsTable, miniGameData, gameState, gamePanel, path )
+function M.new( school, character, supplies, listeners, collision, instructionsTable, miniGameData, gameState, gamePanel, path )
 	local schoolFSM
-	local character = school:findObject( "character" )
+	--local character = school:findObject( "character" )
 	local teacher = school:findObject( "teacher" )  
 	local tilesSize = 32
 	local messageBubble
@@ -127,9 +127,20 @@ function M.new( school, supplies, listeners, collision, instructionsTable, miniG
 	  	      function( self, event, from, to ) 
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+	  	        
+	  	       if ( messageBubble == "brotherBubble" ) then 
+	  	        	if ( character == school:findObject( "Ada" ) ) then 
+	  	        		messageBubble = school:findObject( "turingBubble" )
+	  	        	else
+	  	        		messageBubble = school:findObject( "adaBubble" )
+	  	        	end
+	  	        else 
+	  	        	messageBubble = school:findObject( "teacherBubble" )
+	  	        end
+
 	  	        local function closure() 
 	  	          	gamePanel.stopExecutionListeners()
-	  	          	gameFlow.showText( school:findObject( messageBubble ), message[ msg ] ) 
+	  	          	gameFlow.showText( messageBubble, message[ msg ] ) 
 	  	        end
 
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
@@ -144,8 +155,19 @@ function M.new( school, supplies, listeners, collision, instructionsTable, miniG
 	  	      function( self, event, from, to ) 
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+	  	        
+	  	        if ( messageBubble == "brotherBubble" ) then 
+	  	        	if ( character == school:findObject( "Ada" ) ) then 
+	  	        		messageBubble = school:findObject( "turingBubble" )
+	  	        	else
+	  	        		messageBubble = school:findObject( "adaBubble" )
+	  	        	end
+	  	        else 
+	  	        	messageBubble = school:findObject( "teacherBubble" )
+	  	        end
+
 	  	        local function closure() 
-	  	          	gameFlow.showText( school:findObject( messageBubble ), message[ msg ] ) 
+	  	          	gameFlow.showText( messageBubble, message[ msg ] ) 
 	  	          	gamePanel.stopExecutionListeners()
 	  	        end
 
@@ -161,7 +183,17 @@ function M.new( school, supplies, listeners, collision, instructionsTable, miniG
 	  	        local messageBubble, msg, animationName = self.current:match( "([^,]+)_([^,]+)_([^,]+)" ) 
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
 
-	  	        gameFlow.showText( school:findObject( messageBubble ), message[ msg ] )
+	  	        if ( messageBubble == "brotherBubble" ) then 
+	  	        	if ( character == school:findObject( "Ada" ) ) then 
+	  	        		messageBubble = school:findObject( "turingBubble" )
+	  	        	else
+	  	        		messageBubble = school:findObject( "adaBubble" )
+	  	        	end
+	  	        else 
+	  	        	messageBubble = school:findObject( "teacherBubble" )
+	  	        end
+
+	  	        gameFlow.showText( messageBubble, message[ msg ] )
 	  	        gamePanel.stopExecutionListeners()
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
 	  	          	timer.performWithDelay( wait, animation[animationName] )
@@ -337,7 +369,7 @@ function M.new( school, supplies, listeners, collision, instructionsTable, miniG
 		gameFlow.new( schoolFSM, listeners, school )
 		M.updateFSM = gameFlow.updateFSM
 		M.fsm = schoolFSM
-		animation = schoolAnimations.new( school, gamePanel, path, schoolFSM, gameFlow )
+		animation = schoolAnimations.new( school, character, gamePanel, path, schoolFSM, gameFlow )
 	  	--schoolFSM.showObligatoryMessage()
 	  	schoolFSM.showAnimation()
 	  	--schoolFSM.showGamePanel()
