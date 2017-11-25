@@ -46,7 +46,7 @@ local tilesSize = 32
 
 local supplies
 
-local ingredients = { first = { }, second = { }, third ={ }, collected = { }, remaining = { }, check = { first = { }, second = { }, third ={ } }, uncheck = { first = { }, second = { }, third ={ } } }
+local ingredients = { first = { }, second = { }, collected = { }, remaining = { }, check = { first = { }, second = { } }, uncheck = { first = { }, second = { } } }
 
 local organizers = { }
 
@@ -74,8 +74,6 @@ local function setIngredients()
 			ingredients.first[ ingredientsLayer[i].number ] = ingredientsLayer[i]
 		elseif ( ingredientsLayer[i].recipe == 2 ) then 
 			ingredients.second[ ingredientsLayer[i].number ] = ingredientsLayer[i]
-		elseif ( ingredientsLayer[i].recipe == 3 ) then 
-			ingredients.third[ ingredientsLayer[i].number ] = ingredientsLayer[i]
 		end
 	end
 
@@ -84,8 +82,6 @@ local function setIngredients()
 			ingredients.check.first[ checkedLayer[i].number ] = checkedLayer[i]
 		elseif ( checkedLayer[i].recipe == 2 ) then 
 			ingredients.check.second[ checkedLayer[i].number ] = checkedLayer[i]
-		elseif ( checkedLayer[i].recipe == 3 ) then 
-			ingredients.check.third[ checkedLayer[i].number ] = checkedLayer[i]
 		end
 	end
 
@@ -94,8 +90,6 @@ local function setIngredients()
 			ingredients.uncheck.first[ uncheckedLayer[i].number ] = uncheckedLayer[i]
 		elseif ( uncheckedLayer[i].recipe == 2 ) then 
 			ingredients.uncheck.second[ uncheckedLayer[i].number ] = uncheckedLayer[i]
-		elseif ( uncheckedLayer[i].recipe == 3 ) then 
-			ingredients.uncheck.third[ uncheckedLayer[i].number ] = uncheckedLayer[i]
 		end
 	end
 
@@ -114,9 +108,7 @@ local function onCollision( event )
   local obj2 = event.object2
 
   if ( event.phase == "began" ) then
-    if ( ( ( obj1.isCharacter ) and ( obj2.myName == "rope" ) ) or ( ( obj2.isCharacter ) and ( obj1.myName == "rope" ) ) ) then 
-    -- Volta para o mapa quando o personagem chega na saída/entrada da escola
-    elseif ( ( ( obj1.myName == "exit" ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.myName == "exit" ) ) ) then 
+    if ( ( ( obj1.myName == "exit" ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.myName == "exit" ) ) ) then 
       if ( miniGameData.isComplete == true ) then
         transition.cancel( character )
         character.stepping.point = "exit"
@@ -149,11 +141,6 @@ local function onCollision( event )
       		list = ingredients.second
       		check = ingredients.check.second[ obj.number ]
       		uncheck = ingredients.uncheck.second[ obj.number ]
-      	elseif ( obj.recipe == 3 ) then 
-      		ingredient = ingredients.third[ obj.number ]
-      		list = ingredients.third
-      		check = ingredients.check.third[ obj.number ]
-      		uncheck = ingredients.uncheck.third[ obj.number ]
       	end
 
         if ( recipe == "recipe" .. ingredient.recipe ) then 
@@ -163,7 +150,7 @@ local function onCollision( event )
           else
             uncheck.alpha = 1
           end 
-        elseif ( ( recipe == "recipe1" ) or ( ( recipe == "recipe2" ) and ( ingredient.recipe > 3 ) ) ) then 
+        elseif ( recipe == "recipe1" ) then 
           collision.wrongIngredient = true 
         end
 
@@ -252,8 +239,6 @@ local function onCollision( event )
           		number = 2
          	  elseif ( recipe == "recipe2" ) then 
          		  number = 1
-         	  else
-         		  number = 3 
          	  end 
 
           	list[i].x = organizers[ number ].x 
@@ -282,8 +267,6 @@ local function onCollision( event )
         	ingredientsList = ingredients.first 
        	elseif ( recipe == "recipe2" ) then 
        		ingredientsList = ingredients.second
-       	else 
-       		ingredientsList = ingredients.third
        	end
 
         for k, v in pairs( ingredientsList ) do 
@@ -318,15 +301,37 @@ local function onCollision( event )
       character.stepping.point = "point"
       path:showTile( obj1.myName )
 
-    -- Colisão com os demais objetos e o personagem (rope nesse caso)
-    elseif ( ( ( obj1.myName == "collision" ) and ( obj2.myName == "rope" ) ) or ( ( obj1.myName == "rope" ) and ( obj2.myName == "collision" ) ) ) then 
+    elseif ( ( ( obj1.isCollision ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.isCollision ) ) ) then 
+      local obj
+      if ( obj1.isCollision ) then obj = obj1 else obj = obj2 end 
       transition.cancel( character )
-      --collision = true
+      if ( ( obj.direction == "right" ) ) then 
+        transition.to( character, { time = 0, x = character.x + .20 * tilesSize } )
+      elseif ( ( obj.direction == "left" ) ) then 
+        transition.to( character, { time = 0, x = character.x - .20 * tilesSize } )
+      elseif ( ( obj.direction == "up" ) ) then 
+        transition.to( character, { time = 0, y = character.y - .23 * tilesSize } )
+      elseif ( ( obj.direction == "down" ) ) then 
+        transition.to( character, { time = 0, y = character.y + .22 * tilesSize } )
+      end
     end
   end 
   return true 
 end
 
+local function destroyScene()
+  gamePanel:destroy()
+
+  instructions:destroyInstructionsTable()
+
+  restaurant:removeSelf()
+  restaurant = nil 
+
+  if ( ( restaurantFSM.fsm.messageBubble ) and ( restaurantFSM.fsm.messageBubble.text ) ) then 
+    local text = restaurantFSM.fsm.messageBubble.text
+    text:removeSelf()
+  end
+end
 -- -----------------------------------------------------------------------------------
 -- Cenas
 -- -----------------------------------------------------------------------------------
@@ -335,15 +340,13 @@ end
 function scene:create( event )
 	local sceneGroup = self.view
 	
-	persistence.setCurrentFileName( "ana" )
+	--persistence.setCurrentFileName( "ana" )
 
   restaurant, character, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "restaurant" )
 
 
   sceneGroup:insert( restaurant )
   sceneGroup:insert( gamePanel.tiled )
-
-  print( restaurant:findObject( "start").x .. ", " .. restaurant:findObject( "start").y )
 
   	--miniGameData.isComplete = true 
   	--miniGameData.onRepeat = false 
@@ -358,9 +361,9 @@ function scene:create( event )
 
   	recipe = 1
 
-    instructionsTable.steps = { 3, 1, 2, 1, 2, 1, 2, 1, 2, 1, 3, 1, 1, 2, 4   }
+    --[[instructionsTable.steps = { 3, 1, 2, 1, 2, 1, 2, 1, 2, 1, 3, 1, 1, 2, 4   }
     instructionsTable.direction = { "up", "right", "up", "right", "left", "up", "left", "up", "left", "up", "left", "down", "left", "down", "right"  }
-    instructionsTable.last = 15
+    instructionsTable.last = 15]]
 
     --[[instructionsTable.steps = { 1, 1 }
     instructionsTable.direction = { "up", "left" }

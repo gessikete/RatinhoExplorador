@@ -114,7 +114,7 @@ local function setFiles()
 		table.insert( gameFiles.box, gameFilesLayer[i] )
 
 		if ( ( filesNames ) and ( filesNames[i] ) ) then
-			text = display.newText( chooseGameFile, filesNames[i], gameFilesImagesLayer[i].x, gameFilesImagesLayer[i].y, system.nativeFont, 30 )
+			text = display.newText( chooseGameFile:findLayer( "gameFiles" ), filesNames[i], gameFilesImagesLayer[i].x, gameFilesImagesLayer[i].y, system.nativeFont, 30 )
 			table.insert( gameFiles.text, text ) 
 			table.insert( gameFiles.trashcan, trashcanLayer[i] )
 			trashcanLayer[i].myName = filesNames[i]

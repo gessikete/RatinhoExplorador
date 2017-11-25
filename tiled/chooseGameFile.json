@@ -5,16 +5,16 @@
          "name":"background",
          "objects":[
                 {
-                 "gid":9,
-                 "height":800,
-                 "id":56,
+                 "gid":10,
+                 "height":640,
+                 "id":57,
                  "name":"",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":1200,
-                 "x":-376,
-                 "y":524
+                 "width":960,
+                 "x":-218,
+                 "y":502
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -340,7 +340,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":57,
+ "nextobjectid":58,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",
@@ -380,9 +380,9 @@
                  "imageheight":25,
                  "imagewidth":25
                 },
-             "8":
+             "9":
                 {
-                 "image":"images\/background.png",
+                 "image":"images\/choose file\/background.png",
                  "imageheight":800,
                  "imagewidth":1200
                 }

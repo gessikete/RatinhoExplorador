@@ -35,20 +35,10 @@ function M.new(  currentMiniGame, character, onCollision )
  
 	  		if ( miniGameData ) then
 	  			if ( currentMiniGame == "house" ) then
-	  				--[[gameState.house.isComplete = miniGameData.isComplete
-	  				gameState.house.controlsTutorial = miniGameData.controlsTutorial
-	  				gameState.house.bikeTutorial = miniGameData.bikeTutorial
-	  				gameState.house.stars = miniGameData.stars]]
 	  				gameState.house = miniGameData
 	  			elseif ( currentMiniGame == "school" ) then
-	  				--[[gameState.school.isComplete = miniGameData.isComplete
-	  				gameState.school.stars = miniGameData.stars
-	  				gameState.school.previousStars = gameState.house.stars]]
 	  				gameState.school = miniGameData
 	  			elseif ( currentMiniGame == "restaurant" ) then
-	  				--[[gameState.restaurant.isComplete = miniGameData.isComplete
-	  				gameState.restaurant.stars = miniGameData.stars
-	  				gameState.restaurant.previousStars = gameState.school.stars]]
 	  				gameState.restaurant = miniGameData
 	  			elseif ( currentMiniGame == "map" ) then 
 	  				gameState = miniGameData
@@ -105,6 +95,7 @@ function M.new(  currentMiniGame, character, onCollision )
 		  		character.stepping.x = goBackPointX
 		  		character.stepping.y = goBackPointY
 				character.stepping.point = point 
+				physics.addBody( character, "dynamic" )
 
 		  		if ( character.flipped == true ) then
     				character.xScale = -1

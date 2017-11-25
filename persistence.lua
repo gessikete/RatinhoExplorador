@@ -22,9 +22,9 @@ end
 -- Retorna um arquivo de jogo com os valores "default" de um jogo novo
 function defaultFile( characterName )
 	local character = { stepping = { x, y, point }, flipped, name } 
-	local house = { isComplete, controlsTutorial, collectedPieces, bikeTutorial, stars }
-	local school = { isComplete, stars }
-	local restaurant = { isComplete }
+	local house = { isComplete, controlsTutorial, collectedPieces, bikeTutorial, stars, onRepeat, mapRepeat }
+	local school = { isComplete, stars, onRepeat, mapRepeat }
+	local restaurant = { isComplete, stars, onRepeat, mapRepeat }
 	local default = { character = character, house = house, restaurant = restaurant, school = school }
 
 	default.character.flipped = false
@@ -38,16 +38,34 @@ function defaultFile( characterName )
 	default.house.bikeTutorial = "incomplete"
 	default.house.stars = 0
 	default.house.previousStars = 0 
+	default.house.onRepeat = false 
+	default.house.mapRepeat = false
 
 	default.school.isComplete = false
 	default.school.stars = 0
 	default.school.previousStars = 0
+	default.school.onRepeat = false
+	default.school.mapRepeat = false 
 
 	default.restaurant.isComplete = false
 	default.restaurant.stars = 0
 	default.restaurant.previousStars = 0 
+	default.restaurant.onRepeat = false 
+	default.restaurant.mapRepeat = false
 
 	return default
+end
+
+function M.fileExists( fileName )
+	local filesNames = M.filesNames()
+
+	if ( filesNames ) then
+		for k, v in pairs( filesNames ) do
+			if ( v == fileName ) then return true end 
+		end
+	end
+
+	return false 
 end
 
 -- Cria um jogo novo

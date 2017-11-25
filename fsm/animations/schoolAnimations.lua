@@ -27,9 +27,8 @@ function M.new( school, character, gamePanel, path, schoolFSM, gameFlow )
 	local function enterHouseAnimation()
 		local startingPoint = school:findObject("start")
 		local time = 800
-		character.ropeJoint:removeSelf()
+
 	  	physics.removeBody( character )
-	  	physics.removeBody( character.rope )
 	  	character.x = startingPoint.x - tilesSize * 2 - 6
 	  	character.y = startingPoint.y - 6
 	  	teacher.x = character.x 
@@ -46,10 +45,7 @@ function M.new( school, character, gamePanel, path, schoolFSM, gameFlow )
 	  				transition.to( character, { time = time * 2, x = character.x + tilesSize * 2 + 6,
 	  				onComplete =
 	  					function()
-	  						character.rope.x, character.rope.y = character.x, character.y + 4
 	  						physics.addBody( character )
-						  	physics.addBody( character.rope )
-						  	character.ropeJoint = physics.newJoint( "rope", character.rope, character, 0, 0 )
 						  	character.isFixedRotation = true 
 						  	timer.performWithDelay( 800, gameFlow.updateFSM )
 	  					end
@@ -116,6 +112,7 @@ function M.new( school, character, gamePanel, path, schoolFSM, gameFlow )
 	local function brotherLeaveAnimation()
 		local time = 500
 
+		brother.animation = true 
 		flip( 300, brother )
 		local function closure()
 			transition.to( brother, { time = time * 15, x = brother.x + tilesSize * 15, 
@@ -166,6 +163,7 @@ function M.new( school, character, gamePanel, path, schoolFSM, gameFlow )
 		local time = 500
 		local teacherSupply = school:findObject( "teacherSupply" )
 
+		teacher.animation = true 
 		local function releaseSupply()
 			local firstOrganizer = school:findObject( "firstOrganizer" )
 
@@ -182,6 +180,7 @@ function M.new( school, character, gamePanel, path, schoolFSM, gameFlow )
 										function()
 											local teacherBubble = school:findObject( "teacherBubble" )
 											teacherBubble.y = teacherBubble.y - tilesSize * 1.7
+											teacher.animation = nil 
 											gameFlow.updateFSM()
 										end 
 										} )
@@ -206,20 +205,6 @@ function M.new( school, character, gamePanel, path, schoolFSM, gameFlow )
 		end
 
 		transition.to( teacher, { time = time, x = teacher.x + tilesSize, onComplete = closureCatchSupply } )
-		--[[local hand = school:findObject( "organizerHand" )
-		local organizer = school:findObject( "firstOrganizer" )
-		local time = 3000
-		local count = 3
-		local wait = 800
-
-		hand.x = hand.originalX 
-		hand.y = hand.originalY
-		hand.alpha = 1
-		 
-
-		handAnimation( time, count, wait, hand, hand.originalX, hand.originalY, hand.x, organizer.y + tilesSize * 3, schoolFSM.current )
-		
-		gamePanel:addRightDirectionListener( gameFlow.updateFSM )]]
 
 		return math.huge 
 	end
@@ -228,8 +213,10 @@ function M.new( school, character, gamePanel, path, schoolFSM, gameFlow )
 		local time = 500 
 		local chair = school:findObject( "teacherChair" )
 
+		teacher.animation = true 
 		local function goForward()
 			flip( 0, teacher )
+			teacher.animation = nil 
 			transition.to( teacher, { time = time, x = teacher.x - tilesSize * .25, onComplete = gameFlow.updateFSM } )
 		end
 
@@ -259,6 +246,7 @@ function M.new( school, character, gamePanel, path, schoolFSM, gameFlow )
 	local function teacherGotoInitialPosition()
 		time = 500 
 
+		teacher.animation = true 
 		transition.to( teacher, { time = time * 2, y = teacher.y + tilesSize * 2, 
 			onComplete = 
 				function()
@@ -269,6 +257,7 @@ function M.new( school, character, gamePanel, path, schoolFSM, gameFlow )
 								local teacherBubble = school:findObject( "teacherBubble" )
 								flip( 0, teacher )
 								teacherBubble.y = teacherBubble.y + tilesSize * 1.7
+								teacher.animation = nil 
 								gameFlow.updateFSM()
 							end
 						})

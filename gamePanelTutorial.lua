@@ -83,6 +83,8 @@ function M.new( executeInstructions )
   	directionButtons.up.originalX = directionButtons.up.x 
   	directionButtons.up.originalY = directionButtons.up.y 
 
+  	M.directionButtons = directionButtons
+
  	instructionsPanel = gamePanel:findObject("instructionsPanel")
 
  	-----==
@@ -93,9 +95,11 @@ function M.new( executeInstructions )
   	M.executeButton = executeButton
 
   	bikeLimit = gamePanel:findObject( "bikeLimit" )
+  	M.bikeLimit = bikeLimit
   	-----==
 
   	gotoMenuButton = gamePanel:findObject("gotoMenuButton")
+  	M.gotoMenuButton = gotoMenuButton
 
   	M.directionHand = gamePanel:findObject("directionHand")
   	M.directionHand.originalX = M.directionHand.x 
@@ -355,6 +359,12 @@ function M.new( executeInstructions )
 
 			  	-- Listener da roda de bicicleta é adicionado
 			  	if ( instructionsTable.last == 1 ) then 
+			  		if ( M.showBike ) then
+				  		bikeWheel.alpha = 1
+						if ( bikeWheel.maxCount ~= math.huge ) then 
+							bikeLimit.alpha = 1
+						end
+					end
 			  		listeners:add( bikeWheel, "touch", spinBikeWheel )
 				end
 
@@ -520,6 +530,11 @@ function M.new( executeInstructions )
 	end
 
   	function M:addDirectionListeners()
+  		directionButtons.right.alpha = 1
+  		directionButtons.left.alpha = 1
+  		directionButtons.down.alpha = 1
+  		directionButtons.up.alpha = 1
+
   		listeners:add( directionButtons.right, "touch", createInstruction )
   		listeners:add( directionButtons.left, "touch", createInstruction )
   		listeners:add( directionButtons.down, "touch", createInstruction )
@@ -527,6 +542,7 @@ function M.new( executeInstructions )
   	end
 
   	function M:addRightDirectionListener( executeTutorial )
+  		directionButtons.right.alpha = 1
   		listeners:add( instructionsPanel, "touch", scrollInstructionsPanel )
   		directionButtons.right.executeTutorial = executeTutorial
 
@@ -534,11 +550,14 @@ function M.new( executeInstructions )
   	end
 
   	function M:addUpDirectionListener( executeTutorial )
+  		directionButtons.up.alpha = 1
   		directionButtons.up.executeTutorial = executeTutorial
   		listeners:add( directionButtons.up, "touch", createControlsTutorialInstruction )
   	end
 
   	function M:addBikeTutorialListener( maxSteps, executeTutorial )
+  		bikeWheel.alpha = 1
+  		bikeLimit.alpha = 1
   		listeners:add( bikeWheel, "touch", spinBikeWheel )
   		bikeWheel.maxSteps = maxSteps
   		bikeWheel.executeTutorial = executeTutorial
@@ -582,11 +601,15 @@ function M.new( executeInstructions )
   	end
 
   	function M:addExecuteButtonListener( executeTutorial )
+  		executeButton.alpha = 1
   		executeButton.executeTutorial = executeTutorial
   		listeners:add( executeButton, "tap", executeTutorialInstructions )
   	end
 
   	function M:addButtonsListeners()
+  		executeButton.alpha = 1
+  		gotoMenuButton.alpha = 1
+
     	listeners:add( executeButton, "tap", M.executeInstructions )
   		listeners:add( gotoMenuButton, "tap", sceneTransition.gotoMenu )
   	end
@@ -596,6 +619,25 @@ function M.new( executeInstructions )
   	end
 
   	function M.stopExecutionListeners()
+  		if ( M.showButtons ) then 
+  			local nonDraggableLayer = gamePanel:findLayer( "non-draggable" )
+	  		for i = 1, nonDraggableLayer.numChildren do
+	  			nonDraggableLayer[i].alpha = 0.5
+	  		end
+
+	  		directionButtons.right.alpha = 0.5
+	  		directionButtons.left.alpha = 0.5
+	  		directionButtons.down.alpha = 0.5
+	  		directionButtons.up.alpha = 0.5
+	  		executeButton.alpha = 0.5
+	  		gotoMenuButton.alpha = 0.5
+  		end
+
+  		if ( M.showBike ) then 
+  			bikeWheel.alpha = 0.5
+	  		bikeLimit.alpha = 0.5 
+  		end 
+
   		listeners:remove( directionButtons.right, "touch", createInstruction )
   		listeners:remove( directionButtons.left, "touch", createInstruction )
   		listeners:remove( directionButtons.down, "touch", createInstruction )
@@ -610,6 +652,18 @@ function M.new( executeInstructions )
   	end
 
   	function M:stopAllListeners( )
+  		if ( M.showButtons ) then
+	  		directionButtons.right.alpha = 0.5
+	  		directionButtons.left.alpha = 0.5
+	  		directionButtons.down.alpha = 0.5
+	  		directionButtons.up.alpha = 0.5
+	  		executeButton.alpha = 0.5
+  		end
+
+  		if ( M.showBike ) then 
+  			bikeWheel.alpha = 0.5
+	  		bikeLimit.alpha = 0.5 
+  		end 
   		--listeners:remove( instructionsPanel, "touch", scrollInstructionsPanel )
 
   		listeners:remove( directionButtons.right, "touch", createInstruction )

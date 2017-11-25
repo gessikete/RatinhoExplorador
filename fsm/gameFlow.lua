@@ -8,7 +8,6 @@ function M.new( miniGameFSM, listeners , miniGame )
       local nextEvent
 
       if ( alternativeEvent ) then nextEvent = alternativeEvent else nextEvent = miniGameFSM.nextEvent end
-      print( nextEvent )
       if ( nextEvent == "showAnimation" ) then 
         miniGameFSM.showAnimation()
 
@@ -64,6 +63,7 @@ function M.new( miniGameFSM, listeners , miniGame )
 
   local function showSubText( event )
     messageBubble = event.target
+    miniGameFSM.messageBubble = messageBubble
 
     if ( messageBubble.message[messageBubble.shownText] ) then 
       messageBubble.text:removeSelf()
@@ -76,8 +76,13 @@ function M.new( miniGameFSM, listeners , miniGame )
       messageBubble.text = newText
       messageBubble.shownText = messageBubble.shownText + 1
 
-      messageBubble.blinkingDart.x = messageBubble.x + 33
-      messageBubble.blinkingDart.y = messageBubble.y + 12 
+      if ( not messageBubble.message[ messageBubble.shownText ] ) then
+          if ( messageBubble.blinkingDart ) then 
+            transition.cancel( messageBubble.blinkingDart )
+            messageBubble.blinkingDart.alpha = 0
+            messageBubble.blinkingDart = nil
+          end
+      end
 
     else
       if ( miniGameFSM.event == "showObligatoryMessage" ) then
@@ -87,10 +92,6 @@ function M.new( miniGameFSM, listeners , miniGame )
         messageBubble.text = nil
         messageBubble.listener = false
         listeners:remove( messageBubble, "tap", showSubText )
-
-        transition.cancel( messageBubble.blinkingDart )
-        messageBubble.blinkingDart.alpha = 0
-        messageBubble.blinkingDart = nil
       else
         if ( messageBubble.text ) then
           transition.fadeOut( messageBubble.text, { time = 400 } )
@@ -99,10 +100,6 @@ function M.new( miniGameFSM, listeners , miniGame )
           messageBubble.text = nil
           messageBubble.listener = false
           listeners:remove( messageBubble, "tap", showSubText )
-
-          transition.cancel( messageBubble.blinkingDart )
-          messageBubble.blinkingDart.alpha = 0
-          messageBubble.blinkingDart = nil
         end
       end
     end
@@ -110,7 +107,15 @@ function M.new( miniGameFSM, listeners , miniGame )
     return true
   end
 
-  function M.showText( bubble, message ) 
+  local function showMessageAgain( event )
+    local target = event.target
+
+    if ( ( messageBubble ) and ( messageBubble.myName == target.bubble ) and ( not target.animation ) ) then 
+      M.showText( messageBubble, messageBubble.message, target )
+    end
+  end
+
+  function M.showText( bubble, message, bubbleChar ) 
     local options = {
         text = " ",
         x = bubble.contentBounds.xMin + 15, 
@@ -122,6 +127,11 @@ function M.new( miniGameFSM, listeners , miniGame )
     }
     options.text = message[1]
 
+    if ( bubble.text ) then  
+      bubble.text:removeSelf()
+      bubble.text = nil
+    end 
+
     if ( bubble.alpha == 0 ) then
       transition.fadeIn( bubble, { time = 400 } )
     end
@@ -129,6 +139,7 @@ function M.new( miniGameFSM, listeners , miniGame )
     if ( ( not bubble.listener ) or ( ( bubble.listener ) and ( bubble.listener == false ) ) ) then
       bubble.listener = true
       listeners:add( bubble, "tap", showSubText )
+      listeners:add( bubbleChar, "tap", showMessageAgain )
     end 
 
     local newText = display.newText( options ) 
@@ -169,8 +180,10 @@ function M.new( miniGameFSM, listeners , miniGame )
       end
 
       messageBubble = bubble
+      miniGameFSM.messageBubble = messageBubble
     elseif ( not messageBubble ) then 
       messageBubble = bubble
+      miniGameFSM.messageBubble = messageBubble
     end
   end
 end

@@ -525,10 +525,436 @@
                  "width":32,
                  "x":128,
                  "y":128
+                }, 
+                {
+                 "gid":607,
+                 "height":32,
+                 "id":265,
+                 "name":"",
+                 "properties":
+                    {
+                     "alpha":"0"
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":32,
+                 "y":320
+                }, 
+                {
+                 "gid":609,
+                 "height":32,
+                 "id":267,
+                 "name":"",
+                 "properties":
+                    {
+                     "alpha":"0"
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":352,
+                 "y":224
                 }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"collision",
+         "objects":[
+                {
+                 "height":271,
+                 "id":245,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"right",
+                     "isCollision":true,
+                     "isSensor":true,
+                     "isWall":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool",
+                     "isSensor":"bool",
+                     "isWall":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":4,
+                 "x":21,
+                 "y":39
+                }, 
+                {
+                 "height":320,
+                 "id":246,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"left",
+                     "isCollision":true,
+                     "isSensor":true,
+                     "isWall":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool",
+                     "isSensor":"bool",
+                     "isWall":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":4,
+                 "x":393,
+                 "y":32
+                }, 
+                {
+                 "height":4,
+                 "id":247,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"down",
+                     "isCollision":true,
+                     "isSensor":true,
+                     "isWall":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool",
+                     "isSensor":"bool",
+                     "isWall":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":348,
+                 "x":50,
+                 "y":22
+                }, 
+                {
+                 "height":4,
+                 "id":248,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "isCollision":true,
+                     "isSensor":true,
+                     "isWall":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "isCollision":"bool",
+                     "isSensor":"bool",
+                     "isWall":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":326,
+                 "x":49,
+                 "y":360
+                }, 
+                {
+                 "height":4,
+                 "id":249,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"down",
+                     "isCollision":true,
+                     "isFloor":true,
+                     "isSensor":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool",
+                     "isFloor":"bool",
+                     "isSensor":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":103,
+                 "x":49,
+                 "y":75
+                }, 
+                {
+                 "height":63,
+                 "id":250,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"left",
+                     "isCollision":true,
+                     "isFloor":true,
+                     "isSensor":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool",
+                     "isFloor":"bool",
+                     "isSensor":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":4,
+                 "x":169,
+                 "y":102
+                }, 
+                {
+                 "height":4,
+                 "id":251,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"down",
+                     "isCollision":true,
+                     "isFloor":true,
+                     "isSensor":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool",
+                     "isFloor":"bool",
+                     "isSensor":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":183,
+                 "x":189,
+                 "y":171
+                }, 
+                {
+                 "height":14,
+                 "id":253,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"left",
+                     "isCollision":true,
+                     "isFloor":true,
+                     "isSensor":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool",
+                     "isFloor":"bool",
+                     "isSensor":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":4,
+                 "x":169,
+                 "y":248
+                }, 
+                {
+                 "height":4,
+                 "id":254,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"down",
+                     "isCollision":true,
+                     "isFloor":true,
+                     "isSensor":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool",
+                     "isFloor":"bool",
+                     "isSensor":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":189,
+                 "x":187,
+                 "y":267
+                }, 
+                {
+                 "height":4,
+                 "id":255,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"up",
+                     "isCollision":true,
+                     "isFloor":true,
+                     "isSensor":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool",
+                     "isFloor":"bool",
+                     "isSensor":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":189,
+                 "x":187,
+                 "y":230
+                }, 
+                {
+                 "height":4,
+                 "id":256,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"up",
+                     "isCollision":true,
+                     "isFloor":true,
+                     "isSensor":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool",
+                     "isFloor":"bool",
+                     "isSensor":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":324,
+                 "x":52,
+                 "y":326
+                }, 
+                {
+                 "height":4,
+                 "id":257,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"down",
+                     "isCollision":true,
+                     "isFloor":true,
+                     "isSensor":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool",
+                     "isFloor":"bool",
+                     "isSensor":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":40,
+                 "x":60,
+                 "y":267
+                }, 
+                {
+                 "height":4,
+                 "id":258,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"up",
+                     "isCollision":true,
+                     "isFloor":true,
+                     "isSensor":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool",
+                     "isFloor":"bool",
+                     "isSensor":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":61,
+                 "x":50,
+                 "y":134
+                }, 
+                {
+                 "height":117,
+                 "id":259,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"right",
+                     "isCollision":true,
+                     "isFloor":true,
+                     "isSensor":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool",
+                     "isFloor":"bool",
+                     "isSensor":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":4,
+                 "x":116,
+                 "y":142
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -545,15 +971,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":-1,
+                     "flipX2":-1,
+                     "flipY":-1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":-1,
+                     "stepsX2":-2,
+                     "stepsY":3
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -571,15 +1009,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":-1,
+                     "flipX2":1,
+                     "flipY":-1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":-4,
+                     "stepsX2":0,
+                     "stepsY":0
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -597,15 +1047,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":-1,
+                     "flipX2":1,
+                     "flipY":-1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":-6,
+                     "stepsX2":0,
+                     "stepsY":0
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -623,15 +1085,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":-1,
+                     "flipX2":1,
+                     "flipY":-1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":-2,
+                     "stepsX2":0,
+                     "stepsY":0
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -649,15 +1123,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":1,
+                     "flipX2":1,
+                     "flipY":1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":0,
+                     "stepsX2":0,
+                     "stepsY":0
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -675,15 +1161,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":-1,
+                     "flipX2":1,
+                     "flipY":-1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":-8,
+                     "stepsX2":0,
+                     "stepsY":0
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -701,15 +1199,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":1,
+                     "flipX2":-1,
+                     "flipY":1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":2,
+                     "stepsX2":-2,
+                     "stepsY":6
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -727,15 +1237,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":1,
+                     "flipX2":-1,
+                     "flipY":1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":3,
+                     "stepsX2":-2,
+                     "stepsY":6
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -753,15 +1275,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":1,
+                     "flipX2":-1,
+                     "flipY":1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":1,
+                     "stepsX2":-2,
+                     "stepsY":6
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -779,15 +1313,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":-1,
+                     "flipX2":1,
+                     "flipY":-1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":-3,
+                     "stepsX2":0,
+                     "stepsY":0
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -805,15 +1351,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":-1,
+                     "flipX2":1,
+                     "flipY":-1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":-1,
+                     "stepsX2":0,
+                     "stepsY":0
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -831,15 +1389,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":-1,
+                     "flipX2":1,
+                     "flipY":-1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":-7,
+                     "stepsX2":0,
+                     "stepsY":0
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -857,15 +1427,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":-1,
+                     "flipX2":1,
+                     "flipY":-1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":-5,
+                     "stepsX2":0,
+                     "stepsY":0
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -883,15 +1465,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":-1,
+                     "flipX2":1,
+                     "flipY":-1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":-9,
+                     "stepsX2":0,
+                     "stepsY":0
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -909,15 +1503,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":-1,
+                     "flipX2":-1,
+                     "flipY":-1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":-5,
+                     "stepsX2":-2,
+                     "stepsY":3
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -935,15 +1541,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":-1,
+                     "flipX2":-1,
+                     "flipY":-1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":-6,
+                     "stepsX2":-2,
+                     "stepsY":3
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -961,15 +1579,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":-1,
+                     "flipX2":-1,
+                     "flipY":-1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":-3,
+                     "stepsX2":-2,
+                     "stepsY":3
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -987,15 +1617,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":-1,
+                     "flipX2":-1,
+                     "flipY":-1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":-4,
+                     "stepsX2":-2,
+                     "stepsY":3
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -1013,15 +1655,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":-1,
+                     "flipX2":-1,
+                     "flipY":-1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":-2,
+                     "stepsX2":-2,
+                     "stepsY":3
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -1039,15 +1693,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":1,
+                     "flipX2":-1,
+                     "flipY":1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":0,
+                     "stepsX2":-2,
+                     "stepsY":1
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -1065,15 +1731,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":1,
+                     "flipX2":-1,
+                     "flipY":1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":0,
+                     "stepsX2":-2,
+                     "stepsY":3
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -1091,15 +1769,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":1,
+                     "flipX2":-1,
+                     "flipY":1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":0,
+                     "stepsX2":-2,
+                     "stepsY":5
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -1117,15 +1807,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":1,
+                     "flipX2":-1,
+                     "flipY":1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":0,
+                     "stepsX2":-2,
+                     "stepsY":2
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -1143,15 +1845,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":1,
+                     "flipX2":-1,
+                     "flipY":1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":0,
+                     "stepsX2":-2,
+                     "stepsY":4
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -1169,15 +1883,27 @@
                     {
                      "alpha":"0",
                      "bodyType":"static",
+                     "flipX":1,
+                     "flipX2":-1,
+                     "flipY":1,
                      "isPath":true,
-                     "isSensor":"true"
+                     "isSensor":"true",
+                     "stepsX":0,
+                     "stepsX2":-2,
+                     "stepsY":6
                     },
                  "propertytypes":
                     {
                      "alpha":"string",
                      "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
                      "isPath":"bool",
-                     "isSensor":"string"
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
                     },
                  "rotation":0,
                  "type":"physics",
@@ -1185,10 +1911,86 @@
                  "width":2,
                  "x":143,
                  "y":113
+                }, 
+                {
+                 "gid":609,
+                 "height":2,
+                 "id":261,
+                 "name":"",
+                 "properties":
+                    {
+                     "alpha":"0",
+                     "bodyType":"static",
+                     "flipX":-1,
+                     "flipX2":-1,
+                     "flipY":-1,
+                     "isPath":true,
+                     "isSensor":"true",
+                     "stepsX":-7,
+                     "stepsX2":-2,
+                     "stepsY":3
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"string",
+                     "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
+                     "isPath":"bool",
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":2,
+                 "x":367,
+                 "y":209
+                }, 
+                {
+                 "gid":607,
+                 "height":2,
+                 "id":268,
+                 "name":"",
+                 "properties":
+                    {
+                     "alpha":"0",
+                     "bodyType":"static",
+                     "flipX":1,
+                     "flipX2":1,
+                     "flipY":1,
+                     "isPath":true,
+                     "isSensor":"true",
+                     "stepsX":1,
+                     "stepsX2":0,
+                     "stepsY":0
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"string",
+                     "bodyType":"string",
+                     "flipX":"int",
+                     "flipX2":"int",
+                     "flipY":"int",
+                     "isPath":"bool",
+                     "isSensor":"string",
+                     "stepsX":"int",
+                     "stepsX2":"int",
+                     "stepsY":"int"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":2,
+                 "x":47,
+                 "y":305
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -1562,6 +2364,14 @@
                  "height":51,
                  "id":146,
                  "name":"mom",
+                 "properties":
+                    {
+                     "bubble":"momBubble"
+                    },
+                 "propertytypes":
+                    {
+                     "bubble":"string"
+                    },
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -1587,12 +2397,14 @@
                  "properties":
                     {
                      "alpha":0,
+                     "bubble":"adaBubble",
                      "isCharacter":true,
                      "myName":"Ada"
                     },
                  "propertytypes":
                     {
                      "alpha":"int",
+                     "bubble":"string",
                      "isCharacter":"bool",
                      "myName":"string"
                     },
@@ -1611,12 +2423,14 @@
                  "properties":
                     {
                      "alpha":0,
+                     "bubble":"turingBubble",
                      "isCharacter":true,
                      "myName":"Turing"
                     },
                  "propertytypes":
                     {
                      "alpha":"int",
+                     "bubble":"string",
                      "isCharacter":"bool",
                      "myName":"string"
                     },
@@ -1700,11 +2514,13 @@
                  "name":"momBubble",
                  "properties":
                     {
-                     "alpha":0
+                     "alpha":0,
+                     "myName":"momBubble"
                     },
                  "propertytypes":
                     {
-                     "alpha":"int"
+                     "alpha":"int",
+                     "myName":"string"
                     },
                  "rotation":0,
                  "type":"",
@@ -1720,11 +2536,13 @@
                  "name":"turingBubble",
                  "properties":
                     {
-                     "alpha":0
+                     "alpha":0,
+                     "myName":"turingBubble"
                     },
                  "propertytypes":
                     {
-                     "alpha":"int"
+                     "alpha":"int",
+                     "myName":"string"
                     },
                  "rotation":0,
                  "type":"",
@@ -1740,11 +2558,13 @@
                  "name":"adaBubble",
                  "properties":
                     {
-                     "alpha":0
+                     "alpha":0,
+                     "myName":"adaBubble"
                     },
                  "propertytypes":
                     {
-                     "alpha":"int"
+                     "alpha":"int",
+                     "myName":"string"
                     },
                  "rotation":0,
                  "type":"",
@@ -1888,7 +2708,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":245,
+ "nextobjectid":270,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",

@@ -16,9 +16,9 @@ local animation = {}
 
 local message = {}
 
+
 function M.new( house, character, listeners, puzzle, miniGameData, gameState, gamePanel, path )
 	local tutorialFSM
-	--local character = house:findObject( "character" )
 	local mom = house:findObject( "mom" )  
 	local tilesSize = 32
 	local messageBubble
@@ -27,6 +27,7 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 
 	local function showSubText( event )
 		messageBubble = event.target
+		M.messageBubble = messageBubble
 
 		if ( messageBubble.message[messageBubble.shownText] ) then 
 		    messageBubble.text:removeSelf()
@@ -50,8 +51,13 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 		    messageBubble.text = newText
 		    messageBubble.shownText = messageBubble.shownText + 1
 
-		    messageBubble.blinkingDart.x = messageBubble.x + 33
-		    messageBubble.blinkingDart.y = messageBubble.y + 12 
+		    if ( not messageBubble.message[ messageBubble.shownText ] ) then
+	          if ( messageBubble.blinkingDart ) then 
+	            transition.cancel( messageBubble.blinkingDart )
+	            messageBubble.blinkingDart.alpha = 0
+	            messageBubble.blinkingDart = nil
+	          end
+	      	end
 
 		else
 		    if ( tutorialFSM.event == "showObligatoryMessage" ) then
@@ -61,9 +67,9 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 		      messageBubble.text = nil
 		      listeners:remove( messageBubble, "tap", showSubText )
 
-		      transition.cancel( messageBubble.blinkingDart )
-		      messageBubble.blinkingDart.alpha = 0
-		      messageBubble.blinkingDart = nil
+		      --transition.cancel( messageBubble.blinkingDart )
+		      --messageBubble.blinkingDart.alpha = 0
+		      --messageBubble.blinkingDart = nil
 		    else
 		      if ( messageBubble.text ) then
 		        transition.fadeOut( messageBubble.text, { time = 400 } )
@@ -71,10 +77,6 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 		        messageBubble.text:removeSelf()
 		        messageBubble.text = nil
 		        listeners:remove( messageBubble, "tap", showSubText )
-
-		        transition.cancel( messageBubble.blinkingDart )
-		        messageBubble.blinkingDart.alpha = 0
-		        messageBubble.blinkingDart = nil
 		      end
 		    end
 		end
@@ -82,60 +84,82 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 	  	return true 
 	end
 
-	local function showText( bubble, message ) 
-	  local options = {
-	      text = " ",
-	      x = bubble.contentBounds.xMin + 15, 
-	      y = bubble.contentBounds.yMin + 10,
-	      fontSize = 12.5,
-	      width = bubble.width - 27,
-	      height = 0,
-	      align = "left" 
-	  }
-	  options.text = message[1]
+	local function showMessageAgain( event )
+		local target = event.target
+		if ( ( messageBubble ) and ( messageBubble.myName == target.bubble ) ) then 
+			M.showText( messageBubble, messageBubble.message, target )
+		end
+	end
 
-	  if ( bubble.alpha == 0 ) then
-	    transition.fadeIn( bubble, { time = 400 } )
-	  end
+	function M.showText( bubble, message, bubbleChar ) 
+		local options = {
+		    text = " ",
+		    x = bubble.contentBounds.xMin + 15, 
+		    y = bubble.contentBounds.yMin + 10,
+		    fontSize = 12.5,
+		    width = bubble.width - 27,
+		    height = 0,
+		    align = "left" 
+		  }
 
-	  listeners:add( bubble, "tap", showSubText )
+		if ( bubble.text ) then  
+		  	bubble.text:removeSelf()
+			bubble.text = nil
+		end 
 
-	  local newText = display.newText( options ) 
-	  newText.x = newText.x + newText.width/2
-	  newText.y = newText.y + newText.height/2
+		if ( ( message[1] == "Esse seu irmão não tem jeito!" ) and ( character.myName == "Turing" ) ) then 
+		  	message[1] = "Essa sua irmã não tem jeito!"
+		  	message[3] = "alcançá-la."
+		elseif ( ( message[1] == "Filha, tenho um presente para você." ) and ( character.myName == "Turing" ) ) then
+		  	message[1] = "Filho, tenho um presente para você."
+		end
 
-	  bubble.message = message 
-	  bubble.text = newText
-	  bubble.shownText = 1
-	  bubble.options = options
+		options.text = message[1]
 
-	  local time 
-	  if ( not bubble.blinkingDart ) then 
-	    if ( tutorialFSM.event == "showObligatoryMessage" ) then 
-	      time = 500
-	      bubble.blinkingDart = house:findObject( "obligatoryBlinkingDart" ) 
-	    else
-	      time = 2000
-	      if ( bubble == house:findObject( "momBubble" ) ) then 
-	        bubble.blinkingDart = house:findObject( "momBlinkingDart" ) 
-	      else
-	        bubble.blinkingDart = house:findObject( "momBlinkingDart" ) 
-	      end
-	    end
-	    bubble.blinkingDart.x = bubble.x + 33
-	    bubble.blinkingDart.y = bubble.y + 12
+		if ( bubble.alpha == 0 ) then
+		    transition.fadeIn( bubble, { time = 400 } )
+		    listeners:add( bubble, "tap", showSubText )
+		    listeners:add( bubbleChar, "tap", showMessageAgain )
+		end
 
-	    bubble.blinkingDart.alpha = 1
-	    transition.blink( bubble.blinkingDart, { time = time } )
-	  end
+	  	local newText = display.newText( options ) 
+		newText.x = newText.x + newText.width/2
+		newText.y = newText.y + newText.height/2
 
-	  if ( ( messageBubble ) and ( messageBubble ~= bubble ) ) then
-	    listeners:remove( messageBubble, "tap", showSubText )
+		bubble.message = message 
+		bubble.text = newText
+		bubble.shownText = 1
+		bubble.options = options
 
-	    messageBubble = bubble
-	  elseif ( not messageBubble ) then 
-	    messageBubble = bubble
-	  end
+		local time 
+		if ( not bubble.blinkingDart ) then 
+		    if ( tutorialFSM.event == "showObligatoryMessage" ) then 
+		      time = 500
+		      bubble.blinkingDart = house:findObject( "obligatoryBlinkingDart" ) 
+		    else
+		      time = 2000
+		      if ( bubble == house:findObject( "momBubble" ) ) then 
+		        bubble.blinkingDart = house:findObject( "momBlinkingDart" ) 
+		      else
+		        bubble.blinkingDart = house:findObject( "momBlinkingDart" ) 
+		      end
+		    end
+		    bubble.blinkingDart.x = bubble.x + 33
+		    bubble.blinkingDart.y = bubble.y + 12
+
+		    bubble.blinkingDart.alpha = 1
+		    transition.blink( bubble.blinkingDart, { time = time } )
+		end
+
+		if ( ( messageBubble ) and ( messageBubble ~= bubble ) ) then
+		    listeners:remove( messageBubble, "tap", showSubText )
+
+		    messageBubble = bubble
+		    M.messageBubble = messageBubble
+		elseif ( not messageBubble ) then 
+		    messageBubble = bubble
+		    M.messageBubble = messageBubble
+		end
 	end
 
 	function M.bikeTutorial()
@@ -150,8 +174,11 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 	  	  path:hidePath()
 
 	  	  gamePanel:showBikewheel ( true )
-	  	  gamePanel:hideInstructions()
+	  	  gamePanel:hideInstructions() 
 	  	end
+
+	  	gamePanel.showButtons = true
+	  	gamePanel.showBike = true
 	  	
 	  	gamePanel:updateBikeMaxCount( 3 )
 	  	gamePanel:stopAllListeners()
@@ -190,11 +217,11 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 	  	  	on_before_event = 
 	  	      function( self, event, from, to ) 
 	  	        if ( ( messageBubble ) and ( messageBubble.text ) ) then
-			        messageBubble.text:removeSelf()
-			        messageBubble.text = nil
-			        transition.cancel( messageBubble.blinkingDart )
-			        messageBubble.blinkingDart.alpha = 0
-			        messageBubble.blinkingDart = nil
+			        if ( messageBubble.blinkingDart ) then 
+				        transition.cancel( messageBubble.blinkingDart )
+				        messageBubble.blinkingDart.alpha = 0
+				        messageBubble.blinkingDart = nil
+			    	end
 			    end
 	  	      end,
 
@@ -217,20 +244,24 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 	  	      function( self, event, from, to ) 
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+	  	        local bubbleChar
 
 	  	        if ( messageBubble == "brotherBubble" ) then 
-	  	        	if ( character == house:findObject( "Ada" ) ) then 
+	  	        	if ( character == house:findObject( "ada" ) ) then 
 	  	        		messageBubble = house:findObject( "turingBubble" )
+	  	        		bubbleChar = house:findObject( "turing" )
 	  	        	else
 	  	        		messageBubble = house:findObject( "adaBubble" )
+	  	        		bubbleChar = house:findObject( "ada" )
 	  	        	end
 	  	        else 
 	  	        	messageBubble = house:findObject( "momBubble" )
+	  	        	bubbleChar = house:findObject( "mom" )
 	  	        end
 
 	  	        local function closure() 
 	  	            gamePanel.stopExecutionListeners()
-	  	            showText( messageBubble, message[ msg ] ) 
+	  	            M.showText( messageBubble, message[ msg ], bubbleChar ) 
 	  	        end
 
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
@@ -245,20 +276,24 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 	  	      function( self, event, from, to ) 
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+	  	        local bubbleChar
 	  	        
 	  	        if ( messageBubble == "brotherBubble" ) then 
-	  	        	if ( character == house:findObject( "Ada" ) ) then 
+	  	        	if ( character == house:findObject( "ada" ) ) then 
 	  	        		messageBubble = house:findObject( "turingBubble" )
+	  	        		bubbleChar = house:findObject( "turing" )
 	  	        	else
 	  	        		messageBubble = house:findObject( "adaBubble" )
+	  	        		bubbleChar = house:findObject( "ada" )
 	  	        	end
 	  	        else 
 	  	        	messageBubble = house:findObject( "momBubble" )
+	  	        	bubbleChar = house:findObject( "mom" )
 	  	        end
 
 
 	  	        local function closure() 
-	  	            showText( messageBubble, message[ msg ] ) 
+	  	            M.showText( messageBubble, message[ msg ], bubbleChar ) 
 	  	            gamePanel.stopExecutionListeners()
 	  	        end
 
@@ -273,18 +308,22 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 	  	      function( self, event, from, to )
 	  	        local messageBubble, msg, animationName = self.current:match( "([^,]+)_([^,]+)_([^,]+)" ) 
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+	  	        local bubbleChar
 
 	  	        if ( messageBubble == "brotherBubble" ) then 
-	  	        	if ( character == house:findObject( "Ada" ) ) then 
+	  	        	if ( character == house:findObject( "ada" ) ) then 
 	  	        		messageBubble = house:findObject( "turingBubble" )
+	  	        		bubbleChar = house:findObject( "turing" )
 	  	        	else
 	  	        		messageBubble = house:findObject( "adaBubble" )
+	  	        		bubbleChar = house:findObject( "ada" )
 	  	        	end
 	  	        else 
 	  	        	messageBubble = house:findObject( "momBubble" )
+	  	        	bubbleChar = house:findObject( "mom" )
 	  	        end
 
-	  	        showText( messageBubble, message[ msg ] )
+	  	        M.showText( messageBubble, message[ msg ], bubbleChar )
 	  	        gamePanel.stopExecutionListeners()
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
 	  	            timer.performWithDelay( wait, animation[animationName] )
@@ -299,18 +338,15 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 	  	        
 	  	        gamePanel.stopExecutionListeners()
 	  	        if ( ( animationName ) and ( animationName == "handExecuteAnimation" ) ) then
-	  	            transition.fadeOut( messageBubble, { time = 400 } )
+	  	            if ( messageBubble ) then 
+		  	            transition.fadeOut( messageBubble, { time = 400 } )
+		  	            if ( messageBubble.text ) then 
+		  	            	messageBubble.text:removeSelf()
+		  	            	messageBubble.text = nil
+		  	            end
+	  	        	end
 	  	        end
 
-	  	        if ( ( messageBubble ) and ( messageBubble.text ) ) then
-	  	            transition.fadeOut( messageBubble.text, { time = 400 } )
-	  	            transition.fadeOut( messageBubble, { time = 400 } )
-	  	            messageBubble.text:removeSelf()
-	  	            messageBubble.text = nil
-	  	            transition.cancel( messageBubble.blinkingDart )
-	  	            messageBubble.blinkingDart.alpha = 0
-	  	            messageBubble.blinkingDart = nil
-	  	        end
 	  	        gameFlow.updateFSM()
 	  	      end,
 
@@ -321,11 +357,17 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 	  	            local stars
 
 	  	            gamePanel.stopExecutionListeners()
+	  	            if ( messageBubble ) then 
+		  	            transition.fadeOut( messageBubble, { time = 400 } )
+		  	            if ( messageBubble.text ) then 
+		  	            	messageBubble.text:removeSelf()
+		  	            	messageBubble.text = nil
+		  	            end
+	  	        	end
 	  	            if ( ( from == "transitionState" ) and ( wait ) ) then 
 	  	              	timer.performWithDelay( wait, gameFlow.updateFSM )
 	  	            end
 
-	  	            --executeButton.executionsCount MUDAR
 	  	            if ( executeButton.instructionsCount[#executeButton.instructionsCount] ) then 
 	  	              	if ( ( executeButton.executionsCount == 1 ) and ( executeButton.instructionsCount[#executeButton.instructionsCount] == 1 ) ) then
 	  	                	stars = 3
@@ -349,13 +391,16 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 	  	      function( self, event, from, to ) 
 	  	        miniGameData.bikeTutorial = "complete"
 	  	        miniGameData.isComplete = true 
-	  	        --gameState:save( miniGameData )
+	  	        gameState:save( miniGameData )
 	  	        gameFlow.updateFSM()
 	  	      end,
 
 	  	    on_endTutorial = 
 	  	      function( self, event, from, to ) 
-	  	        transition.cancel()
+	  	      	if ( miniGameData.onRepeat == false ) then 
+	  	      		miniGameData.mapRepeat = true 
+	  	      	end
+	  	        transition.cancel( character )
 	  	        gamePanel:stopAllListeners()
 	  	        character.stepping.point = "exit"
 	  	        timer.performWithDelay( 800, sceneTransition.gotoMap )
@@ -366,27 +411,10 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 	  	        local repeatPoint = house:findObject("repeatPoint")
 	  	        local startingPoint = house:findObject("start")
 
-	  	        --[[physics.pause()
 	  	        physics.removeBody( character )
-	  	        character.x = startingPoint.x 
-	  	        character.y = startingPoint.y - tilesSize - 8
-	  	        
-	  	        physics.start()
-	  	        physics.addBody( character )]]
-	  	        --path:hidePath()
-
-	  	        --gamePanel:hideInstructions()
-
-	  	        character.ropeJoint:removeSelf()
-	  	        physics.removeBody( character )
-	  	        physics.removeBody( character.rope )
 	  	        character.x = startingPoint.x + tilesSize * 2
 	  	        character.y = startingPoint.y - tilesSize * 3 - 6
-	  	        character.rope.x, character.rope.y = character.x, character.y + 4
-	  	        physics.start()
 	  	        physics.addBody( character )
-	  	        physics.addBody( character.rope )
-	  	        character.ropeJoint = physics.newJoint( "rope", character.rope, character, 0, 0 )
 	  	        character.isFixedRotation = true 
 	  	        character.xScale = 1
 
@@ -429,11 +457,11 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 	  	  	on_before_event = 
 	  	      function( self, event, from, to ) 
 	  	        if ( ( messageBubble ) and ( messageBubble.text ) ) then
-			        messageBubble.text:removeSelf()
-			        messageBubble.text = nil
-			        transition.cancel( messageBubble.blinkingDart )
-			        messageBubble.blinkingDart.alpha = 0
-			        messageBubble.blinkingDart = nil
+			        if ( messageBubble.blinkingDart ) then 
+				        transition.cancel( messageBubble.blinkingDart )
+				        messageBubble.blinkingDart.alpha = 0
+				        messageBubble.blinkingDart = nil
+			    	end
 			    end
 	  	      end,
 
@@ -456,20 +484,27 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 	  	      function( self, event, from, to ) 
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+	  	        local bubbleChar
 	  	        
+	  	        if ( self.current == "momBubble_msg6" ) then 
+	  	        	gamePanel.showButtons = true 
+	  	        end
 	  	        if ( messageBubble == "brotherBubble" ) then 
-	  	        	if ( character == house:findObject( "Ada" ) ) then 
+	  	        	if ( character == house:findObject( "ada" ) ) then 
 	  	        		messageBubble = house:findObject( "turingBubble" )
+	  	        		bubbleChar = house:findObject( "turing" )
 	  	        	else
 	  	        		messageBubble = house:findObject( "adaBubble" )
+	  	        		bubbleChar = house:findObject( "ada" )
 	  	        	end
 	  	        else 
 	  	        	messageBubble = house:findObject( "momBubble" )
+	  	        	bubbleChar = house:findObject( "mom" )
 	  	        end
 
 	  	        local function closure() 
 	  	            gamePanel.stopExecutionListeners()
-	  	            showText( messageBubble, message[ msg ] ) 
+	  	            M.showText( messageBubble, message[ msg ], bubbleChar ) 
 	  	        end
 
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
@@ -484,19 +519,23 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 	  	      function( self, event, from, to ) 
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+	  	        local bubbleChar
 	  	        
 	  	        if ( messageBubble == "brotherBubble" ) then 
-	  	        	if ( character == house:findObject( "Ada" ) ) then 
+	  	        	if ( character == house:findObject( "ada" ) ) then 
 	  	        		messageBubble = house:findObject( "turingBubble" )
+	  	        		bubbleChar = house:findObject( "turing" )
 	  	        	else
 	  	        		messageBubble = house:findObject( "adaBubble" )
+	  	        		bubbleChar = house:findObject( "ada" )
 	  	        	end
 	  	        else 
 	  	        	messageBubble = house:findObject( "momBubble" )
+	  	        	bubbleChar = house:findObject( "mom" )
 	  	        end
 
 	  	        local function closure() 
-	  	            showText( messageBubble, message[ msg ] ) 
+	  	            M.showText( messageBubble, message[ msg ], bubbleChar ) 
 	  	            gamePanel.stopExecutionListeners()
 	  	        end
 
@@ -513,16 +552,19 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
 
 	  	        if ( messageBubble == "brotherBubble" ) then 
-	  	        	if ( character == house:findObject( "Ada" ) ) then 
+	  	        	if ( character == house:findObject( "ada" ) ) then 
 	  	        		messageBubble = house:findObject( "turingBubble" )
+	  	        		bubbleChar = house:findObject( "turing" )
 	  	        	else
 	  	        		messageBubble = house:findObject( "adaBubble" )
+	  	        		bubbleChar = house:findObject( "ada" )
 	  	        	end
 	  	        else 
 	  	        	messageBubble = house:findObject( "momBubble" )
+	  	        	bubbleChar = house:findObject( "mom" )
 	  	        end
 
-	  	        showText( messageBubble, message[ msg ] )
+	  	        M.showText( messageBubble, message[ msg ], bubbleChar )
 
 	  	        gamePanel.stopExecutionListeners()
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
@@ -537,15 +579,6 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 	  	        local _, _, animationName = self.from:match( "([^,]+)_([^,]+)_([^,]+)" ) 
 	  	        
 	  	        gamePanel.stopExecutionListeners()
-	  	        if ( ( messageBubble ) and ( messageBubble.text ) ) then
-	  	            transition.fadeOut( messageBubble.text, { time = 400 } )
-	  	            transition.fadeOut( messageBubble, { time = 400 } )
-	  	            messageBubble.text:removeSelf()
-	  	            messageBubble.text = nil
-	  	            transition.cancel( messageBubble.blinkingDart )
-	  	            messageBubble.blinkingDart.alpha = 0
-	  	            messageBubble.blinkingDart = nil
-	  	        end
 	  	        gameFlow.updateFSM()
 	  	      end,
 
@@ -569,7 +602,6 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 	  	    on_saveGame = 
 	  	      function( self, event, from, to ) 
 	  	        miniGameData.controlsTutorial = "complete"
-	  	        --gameState:save( miniGameData )
 	  	        gameFlow.updateFSM()
 	  	      end,
 	  	  }

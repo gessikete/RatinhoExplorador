@@ -86,8 +86,7 @@ local function onCollision( event )
   local obj2 = event.object2
 
   if ( event.phase == "began" ) then
-    if ( ( ( obj1.isCharacter ) and ( obj2.myName == "rope" ) ) or ( ( obj2.isCharacter ) and ( obj1.myName == "rope" ) ) ) then 
-    elseif ( ( obj1.myName == "puzzle" ) and ( obj2.isCharacter ) ) then
+    if ( ( obj1.myName == "puzzle" ) and ( obj2.isCharacter ) ) then
       if ( puzzle.collectedPieces[obj1.puzzleNumber] == nil ) then 
         puzzle.bigPieces[obj1.puzzleNumber].alpha = 1
         puzzle.littlePieces[ obj1.puzzleNumber ].alpha = 0
@@ -122,7 +121,7 @@ local function onCollision( event )
     -- Volta para o mapa quando o personagem chega na saída/entrada da casa
     elseif ( ( ( obj1.myName == "exit" ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.myName == "exit" ) ) ) then 
       if ( miniGameData.isComplete == true ) then
-        transition.cancel()
+        transition.cancel( character )
         character.stepping.point = "exit"
         instructions:destroyInstructionsTable()
         gamePanel:stopAllListeners()
@@ -139,7 +138,7 @@ local function onCollision( event )
 
     elseif ( ( ( obj1.myName == "entrance" ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.myName == "entrance" ) ) ) then 
       if ( miniGameData.isComplete == true ) then
-        transition.cancel()
+        transition.cancel( character )
         character.stepping.point = "entrance"
         instructions:destroyInstructionsTable()
         gamePanel:stopAllListeners()
@@ -147,21 +146,45 @@ local function onCollision( event )
       end
     -- Colisão entre o personagem e os sensores dos tiles do caminho
     elseif ( ( obj1.isCharacter ) and ( obj2.isPath ) ) then 
+      character.stepping = obj2
       character.stepping.x = obj2.x 
       character.stepping.y = obj2.y 
       character.stepping.point = "point"
       path:showTile( obj2.myName )
 
     elseif ( ( obj2.isCharacter ) and ( obj1.isPath ) ) then 
+      character.stepping = obj1
       character.stepping.x = obj1.x 
       character.stepping.y = obj1.y 
       character.stepping.point = "point"
       path:showTile( obj1.myName )
 
     -- Colisão com os demais objetos e o personagem (rope nesse caso)
-    elseif ( ( ( obj1.myName == "collision" ) and ( obj2.myName == "rope" ) ) or ( ( obj1.myName == "rope" ) and ( obj2.myName == "collision" ) ) ) then 
-      transition.cancel()
-      collision = true
+    elseif ( ( ( obj1.isCollision ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.isCollision ) ) ) then 
+      local obj
+      if ( obj1.isCollision ) then obj = obj1 else obj = obj2 end 
+      transition.cancel( character )
+      if ( ( obj.direction == "right" ) ) then 
+        transition.to( character, { time = 0, x = character.x + .20 * tilesSize } )
+      elseif ( ( obj.direction == "left" ) ) then 
+        transition.to( character, { time = 0, x = character.x - .20 * tilesSize } )
+      elseif ( ( obj.direction == "up" ) ) then 
+        transition.to( character, { time = 0, y = character.y - .23 * tilesSize } )
+      elseif ( ( obj.direction == "down" ) ) then 
+        transition.to( character, { time = 0, y = character.y + .22 * tilesSize } )
+      end
+
+      if ( ( miniGameData.isComplete == false ) and ( houseFSM.tutorialFSM.current ~= "feedbackAnimation" ) ) then 
+        if ( obj.isWall ) then 
+          local message = { "Ei, você não pode andar por aí!", "Cuidado com as paredes." }
+          houseFSM.showText( house:findObject( "momBubble" ), message, house:findObject( "mom" ) ) 
+
+        elseif ( obj.isFloor ) then 
+          local message = { "Ei, você não pode andar por aí!", "Ande apenas nos quadrados", "azuis." }
+          houseFSM.showText( house:findObject( "momBubble" ), message, house:findObject( "mom" ) ) 
+        end
+      end
+
     end
   end 
   return true 
@@ -171,6 +194,7 @@ end
 -- Remoções para limpar a tela
 -- -----------------------------------------------------------------------------------
 local function destroyScene()
+
   gamePanel:destroy()
 
   instructions:destroyInstructionsTable()
@@ -183,8 +207,13 @@ local function destroyScene()
     messageBubble.text = nil 
   end
 
+  if ( ( houseFSM.messageBubble ) and ( houseFSM.messageBubble.text ) ) then 
+    local text = houseFSM.messageBubble.text
+    text:removeSelf()
+  end
   houseFSM.tutorialFSM = nil 
 end
+
 -- -----------------------------------------------------------------------------------
 -- Cenas
 -- -----------------------------------------------------------------------------------
@@ -195,7 +224,7 @@ function scene:create( event )
   --print( display.actualContentWidth )
   --print( display.actualContentHeight )
 
-  persistence.setCurrentFileName("ana")
+  --persistence.setCurrentFileName("ana")
 
 	house, character, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "house" )
   character.alpha = 1
@@ -217,6 +246,29 @@ function scene:create( event )
     setPuzzle()
   end
 
+  --[[instructionsTable.steps = { 2, 3, 1, 1, 1, 1, 1 }
+  instructionsTable.direction = { "right", "up", "right", "down", "up", "down", "up" }
+  instructionsTable.last = 7]]
+
+  --[[instructionsTable.steps = { 2, 3, 1 }
+  instructionsTable.direction = { "right", "up", "left" }
+  instructionsTable.last = 3]]
+
+  --[[instructionsTable.steps = { 2, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+  instructionsTable.direction = { "right", "up", "up", "left", "up", "left", "up", "left", "up", "left", "down", "right", "down", "right", "down", "right" }
+  instructionsTable.last = 16]]
+
+  --[[instructionsTable.steps = { 11, 1, 1, 1 }
+  instructionsTable.direction = { "right", "right", "right", "right" }
+  instructionsTable.last = 4]]
+
+  --[[instructionsTable.steps = { 4, 2, 3, 4 }
+  instructionsTable.direction = { "right", "left", "up", "right" }
+  instructionsTable.last = 4]]
+
+  --[[instructionsTable.steps = { 2, 3, 7 }
+  instructionsTable.direction = { "right", "up", "right" }
+  instructionsTable.last = 3]]
 end
 
 -- show()

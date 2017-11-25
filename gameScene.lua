@@ -25,24 +25,6 @@ local M = { }
 
 local tilesSize = 32
 
-local function setCharacter( tileMap, character )
-	local rope, ropeJoint
-
-    physics.addBody( character, "dynamic" )
-    character.gravityScale = 0
-
-  	-- Objeto invisível que vai colidir com os objetos de colisão
-  	-- @TODO: mudar posição e tamanho do rope quando substituirmos a imagem do personagem
-  	rope = display.newRect( tileMap:findLayer("character"), character.x, character.y + 4, 25, 20 )
-  	physics.addBody( rope ) 
-  	rope.gravityScale = 0 
-  	rope.myName = "rope"
-  	rope.isVisible = false
-    character.rope = rope 
-  	ropeJoint = physics.newJoint( "rope", rope, character, 0, 0 )
-    character.ropeJoint = ropeJoint
-end
-
 function M:set( miniGame )
   local miniGameData
 	local tileMap 
@@ -87,14 +69,9 @@ function M:set( miniGame )
       end
     end
 
-    --print( persistence.loadGameFile().character.name  )
-
-    --character = tileMap:findObject("character")
-
   	gameState.new( miniGame, character, onCollision )
 
   	miniGameData = gameState:load()
-    setCharacter( tileMap, character )
 
   	markedPath = path.new( tileMap )
   	path:setSensors()

@@ -151,9 +151,7 @@ local function onCollision( event )
   local obj2 = event.object2
 
   if ( event.phase == "began" ) then
-    if ( ( ( obj1.isCharacter ) and ( obj2.myName == "rope" ) ) or ( ( obj2.isCharacter ) and ( obj1.myName == "rope" ) ) ) then 
-    -- Volta para o mapa quando o personagem chega na saída/entrada da escola
-    elseif ( ( ( obj1.myName == "exit" ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.myName == "exit" ) ) ) then 
+    if ( ( ( obj1.myName == "exit" ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.myName == "exit" ) ) ) then 
       if ( miniGameData.isComplete == true ) then
         transition.cancel( character )
         character.stepping.point = "exit"
@@ -323,10 +321,19 @@ local function onCollision( event )
       character.stepping.point = "point"
       path:showTile( obj1.myName )
 
-    -- Colisão com os demais objetos e o personagem (rope nesse caso)
-    elseif ( ( ( obj1.myName == "collision" ) and ( obj2.myName == "rope" ) ) or ( ( obj1.myName == "rope" ) and ( obj2.myName == "collision" ) ) ) then 
+    elseif ( ( ( obj1.isCollision ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.isCollision ) ) ) then 
+      local obj
+      if ( obj1.isCollision ) then obj = obj1 else obj = obj2 end 
       transition.cancel( character )
-      --collision = true
+      if ( ( obj.direction == "right" ) ) then 
+        transition.to( character, { time = 0, x = character.x + .20 * tilesSize } )
+      elseif ( ( obj.direction == "left" ) ) then 
+        transition.to( character, { time = 0, x = character.x - .20 * tilesSize } )
+      elseif ( ( obj.direction == "up" ) ) then 
+        transition.to( character, { time = 0, y = character.y - .23 * tilesSize } )
+      elseif ( ( obj.direction == "down" ) ) then 
+        transition.to( character, { time = 0, y = character.y + .22 * tilesSize } )
+      end
     end
   end 
   return true 
@@ -344,9 +351,9 @@ local function destroyScene()
   school:removeSelf()
   school = nil 
 
-  if ( ( messageBubble ) and ( messageBubble.text ) ) then
-    messageBubble.text:removeSelf()
-    messageBubble.text = nil 
+  if ( ( schoolFSM.fsm.messageBubble ) and ( schoolFSM.fsm.messageBubble.text ) ) then 
+    local text = schoolFSM.fsm.messageBubble.text
+    text:removeSelf()
   end
 end
 
@@ -359,7 +366,7 @@ function scene:create( event )
 
   local sceneGroup = self.view
   
-  persistence.setCurrentFileName( "ana" )
+  --persistence.setCurrentFileName( "ana" )
 
   school, character, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "school" )
 

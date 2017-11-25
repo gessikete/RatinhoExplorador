@@ -1332,11 +1332,379 @@
         }, 
         {
          "draworder":"topdown",
-         "name":"collisionLayer",
-         "objects":[],
+         "name":"collision",
+         "objects":[
+                {
+                 "height":120,
+                 "id":1524,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"left",
+                     "isCollision":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":4,
+                 "x":231,
+                 "y":125
+                }, 
+                {
+                 "height":208,
+                 "id":1526,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"right",
+                     "isCollision":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":4,
+                 "x":182,
+                 "y":91
+                }, 
+                {
+                 "height":4,
+                 "id":1527,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"up",
+                     "isCollision":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":227,
+                 "x":212,
+                 "y":309
+                }, 
+                {
+                 "height":13,
+                 "id":1528,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"left",
+                     "isCollision":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":4,
+                 "x":456,
+                 "y":284
+                }, 
+                {
+                 "height":4,
+                 "id":1529,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"up",
+                     "isCollision":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":13,
+                 "x":466,
+                 "y":277
+                }, 
+                {
+                 "height":118,
+                 "id":1530,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"left",
+                     "isCollision":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":4,
+                 "x":487,
+                 "y":149
+                }, 
+                {
+                 "height":4,
+                 "id":1531,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"down",
+                     "isCollision":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":169,
+                 "x":192,
+                 "y":59
+                }, 
+                {
+                 "height":29,
+                 "id":1532,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"left",
+                     "isCollision":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":4,
+                 "x":359,
+                 "y":88
+                }, 
+                {
+                 "height":4,
+                 "id":1533,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"down",
+                     "isCollision":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":102,
+                 "x":366,
+                 "y":123
+                }, 
+                {
+                 "height":4,
+                 "id":1534,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"down",
+                     "isCollision":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":9,
+                 "x":427,
+                 "y":219
+                }, 
+                {
+                 "height":7,
+                 "id":1535,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"right",
+                     "isCollision":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":4,
+                 "x":406,
+                 "y":240
+                }, 
+                {
+                 "height":4,
+                 "id":1536,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"down",
+                     "isCollision":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":166,
+                 "x":237,
+                 "y":251
+                }, 
+                {
+                 "height":27,
+                 "id":1537,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"right",
+                     "isCollision":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":4,
+                 "x":438,
+                 "y":188
+                }, 
+                {
+                 "height":4,
+                 "id":1538,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"up",
+                     "isCollision":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":103,
+                 "x":333,
+                 "y":182
+                }, 
+                {
+                 "height":38,
+                 "id":1540,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"right",
+                     "isCollision":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":4,
+                 "x":310,
+                 "y":125
+                }, 
+                {
+                 "height":4,
+                 "id":1542,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"up",
+                     "isCollision":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":70,
+                 "x":237,
+                 "y":117
+                }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -1448,7 +1816,7 @@
                  "type":"physics",
                  "visible":true,
                  "width":11,
-                 "x":394,
+                 "x":403,
                  "y":141
                 }, 
                 {
@@ -1500,6 +1868,56 @@
                  "width":15,
                  "x":223,
                  "y":75
+                }, 
+                {
+                 "height":17,
+                 "id":1522,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "isSensor":true,
+                     "myName":"restaurant",
+                     "point":"exit"
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "isSensor":"bool",
+                     "myName":"string",
+                     "point":"string"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":6,
+                 "x":370,
+                 "y":277
+                }, 
+                {
+                 "height":17,
+                 "id":1523,
+                 "name":"",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "isSensor":true,
+                     "myName":"restaurant",
+                     "point":"entrance"
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "isSensor":"bool",
+                     "myName":"string",
+                     "point":"string"
+                    },
+                 "rotation":0,
+                 "type":"physics",
+                 "visible":true,
+                 "width":6,
+                 "x":388,
+                 "y":277
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1576,15 +1994,15 @@
                  "name":"teacher",
                  "properties":
                     {
-                     "alpha":"0",
-                     "cancelLoop":false,
-                     "myName":"teacher"
+                     "alpha":0,
+                     "bubble":"teacherBubble",
+                     "cancelLoop":false
                     },
                  "propertytypes":
                     {
-                     "alpha":"string",
-                     "cancelLoop":"bool",
-                     "myName":"string"
+                     "alpha":"int",
+                     "bubble":"string",
+                     "cancelLoop":"bool"
                     },
                  "rotation":0,
                  "type":"",
@@ -1601,6 +2019,37 @@
         }, 
         {
          "draworder":"topdown",
+         "name":"characters sensors",
+         "objects":[
+                {
+                 "height":6,
+                 "id":1520,
+                 "name":"teacher sensor",
+                 "properties":
+                    {
+                     "alpha":0,
+                     "myName":"teacher"
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"int",
+                     "myName":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":8,
+                 "x":396,
+                 "y":157
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "name":"messages",
          "objects":[
                 {
@@ -1608,6 +2057,14 @@
                  "height":84,
                  "id":1503,
                  "name":"teacherBubble",
+                 "properties":
+                    {
+                     "myName":"teacherBubble"
+                    },
+                 "propertytypes":
+                    {
+                     "myName":"string"
+                    },
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -1659,7 +2116,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":1520,
+ "nextobjectid":1543,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",

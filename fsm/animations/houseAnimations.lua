@@ -85,15 +85,16 @@ function M.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow
 		local time = 1500
 		local wait = 400
 
-		hand.x = executeButton.x 
+		hand.x = executeButton.x     
 		hand.y = executeButton.y
-		hand.alpha = 1
+		hand.alpha = 1 
 		 
-		collision = false 
+		collision = false
 		transition.fadeIn( executeButton, { time = wait } )
+		transition.fadeIn( gamePanel.gotoMenuButton, { time = wait } )
 		handDirectionAnimation( time, wait, hand, executeButton.contentBounds.xMin + 2, executeButton.y, executeButton.contentBounds.xMin + 10, executeButton.y - 5, tutorialFSM.current )
 		  
-
+		gamePanel:addgotoMenuButtonListener()
 		gamePanel:addExecuteButtonListener( gameFlow.updateFSM )
 	end
 
@@ -177,6 +178,7 @@ function M.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow
 		local steps = 3
 		local time = steps * 400
 
+		brother.animation = true 
 		path:hidePath()
 		character.xScale = -1
 		transition.to( character, { time = time, x = character.x - tilesSize * steps } )
@@ -203,7 +205,12 @@ function M.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow
 		  character.xScale = 1
 		end
 
-		transition.to( brother, { time = time, x = brother.x - tilesSize * steps, onComplete =  timer.performWithDelay( 2400, flipCharacter ) } )
+		local function closure()
+			brother.animation = nil 
+			timer.performWithDelay( 2400, flipCharacter )
+		end
+
+		transition.to( brother, { time = time, x = brother.x - tilesSize * steps, onComplete =  closure } )
 
 		return time
 	end
@@ -226,6 +233,7 @@ function M.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow
 		local time = 400 * steps
 		local hidingWallLayer = house:findLayer( "hidingWall" ) 
 
+		brother.animation = true 
 		brother.xScale = 1
 		transition.to( brother, { time = time, x = brother.x + tilesSize * steps, onComplete = 
 		  function()
@@ -283,75 +291,50 @@ function M.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow
 	end
 
 	local function gotoInitialPosition()
-		local stepsX, stepsY 
-		local time = 600
-		local bike = house:findObject( "bike" )
+		local stepsX, stepsX2, stepsY
+	    local flipX, flipX2, flipY
+	    local time = 600
+	    local bike = house:findObject( "bike" )
 
-		path:hidePath()
-		local function flip()
-		  character.xScale = 1
-		end
+	    flipX = character.stepping.flipX
+	    flipY = character.stepping.flipY
+	    flipX2 = character.stepping.flipX2 
 
-		local function delayedflip()
-			  timer.performWithDelay( 200, flip )
-		end
+	    stepsX = character.stepping.stepsX
+	    stepsY = character.stepping.stepsY
+	    stepsX2 = character.stepping.stepsX2
 
-		local function hideBike()
-			  transition.fadeOut( bike, { time = time } )
-		end
+	    path:hidePath()
 
+	    local function hideBike()
+	        transition.fadeOut( bike, { time = time } )
+	    end
 
-		if ( puzzle.collectedPieces.last == "2" ) then
-		stepsX = 2
-		  stepsY = 3
+	    local function gotoSteps( x, y, time, onComplete, flip )
+	      character.xScale = flip
+	      transition.to( character, { time = math.abs(time), x = character.x + x, y = character.y + y, onComplete = onComplete } )
+	    end
 
-		  transition.to( character, { time = stepsY * time, y = character.y + stepsY * tilesSize,
-		    onComplete = 
-		      function()
-		        character.xScale = -1 
-		        transition.to( character, { time = stepsX * time, x = character.x - stepsX * tilesSize, 
-		          onComplete = 
-		            function()
-		              hideBike()
-		              delayedflip()
-		            end
-		          } )
-		      end
-		    } )
-		elseif ( puzzle.collectedPieces.last == "3" ) then 
-		  stepsX = 4
-		  stepsY = 3
-		  stepsX2 = 2
+	    local function flip()
+	      hideBike()
+	      character.xScale = 1
+	    end
 
-		  character.xScale = -1
-		  transition.to( character, { time = stepsX * time, x = character.x - stepsX * tilesSize,
-		    onComplete = 
-		      function()
-		        transition.to( character, { time = stepsY * time, y = character.y + stepsY * tilesSize,
-		        onComplete = 
-		          function()
-		            transition.to( character, { time = stepsX2 * time, x = character.x - stepsX2 * tilesSize, 
-		              onComplete = 
-		                function()
-		                  gamePanel:updateBikeMaxCount( 3 )
-		                  hideBike()
-		                  delayedflip()
-		                end 
-		              } )
-		          end
-		         } )
-		      end
-		    } )
-		  stepsX = stepsX + stepsX2
-		elseif ( puzzle.collectedPieces.last == "4" ) then 
-		  stepsX = 4
-		  stepsY = 0
-		  character.xScale = -1
-		  transition.to( character, { time = stepsX * time, x = character.x - stepsX * tilesSize, onComplete = hideBike } )
-		end
+	    local function gotoStepsX2()
+	      gotoSteps( stepsX2 * tilesSize, 0, stepsX2 * 600, flip, flipX2 )
+	    end
 
+	    local function gotoStepsY()
+	      gotoSteps( 0, stepsY * tilesSize, stepsY * 600, gotoStepsX2, flipY )
+	    end
 
-		return time * stepsX + time*stepsY
+	    local function gotoStepsX()
+	      gotoSteps( stepsX * tilesSize, 0, stepsX * 600, gotoStepsY, flipX )
+	    end
+
+	    gotoStepsX()
+
+	    return math.abs( time*stepsX ) + math.abs( time*stepsY ) + math.abs( time*stepsX2 )
 	end
 
 	animation["momAnimation"] = momAnimation

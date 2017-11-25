@@ -351,6 +351,10 @@ function M.new( executeInstructions )
 
 				-- Listener da roda de bicicleta é adicionado
 				if ( instructionsTable.last == 1 ) then 
+					bikeWheel.alpha = 1
+					if ( bikeWheel.maxCount ~= math.huge ) then 
+						bikeLimit.alpha = 1
+					end
 					listeners:add( bikeWheel, "touch", spinBikeWheel )
 				end
 
@@ -416,6 +420,11 @@ function M.new( executeInstructions )
 	end
 
   	function M:addDirectionListeners()
+  		directionButtons.right.alpha = 1
+  		directionButtons.left.alpha = 1
+  		directionButtons.down.alpha = 1
+  		directionButtons.up.alpha = 1
+
   		listeners:add( directionButtons.right, "touch", createInstruction )
   		listeners:add( directionButtons.left, "touch", createInstruction )
   		listeners:add( directionButtons.down, "touch", createInstruction )
@@ -445,6 +454,9 @@ function M.new( executeInstructions )
   	end
 
   	function M:addButtonsListeners()
+  		executeButton.alpha = 1
+  		gotoMenuButton.alpha = 1
+
   		listeners:add( executeButton, "tap", M.executeInstructions )
   		listeners:add( gotoMenuButton, "tap", sceneTransition.gotoMenu )
   	end
@@ -454,6 +466,20 @@ function M.new( executeInstructions )
   	end
 
   	function M.stopExecutionListeners()
+  		local nonDraggableLayer = gamePanel:findLayer( "non-draggable" )
+  		for i = 1, nonDraggableLayer.numChildren do
+  			nonDraggableLayer[i].alpha = 0.5
+  		end
+
+  		directionButtons.right.alpha = 0.5
+  		directionButtons.left.alpha = 0.5
+  		directionButtons.down.alpha = 0.5
+  		directionButtons.up.alpha = 0.5
+  		executeButton.alpha = 0.5
+  		bikeWheel.alpha = 0.5
+  		bikeLimit.alpha = 0.5 
+  		gotoMenuButton.alpha = 0.5
+
   		listeners:remove( directionButtons.right, "touch", createInstruction )
   		listeners:remove( directionButtons.left, "touch", createInstruction )
   		listeners:remove( directionButtons.down, "touch", createInstruction )
@@ -464,10 +490,19 @@ function M.new( executeInstructions )
   		listeners:remove( bikeWheel, "touch", spinBikeWheel )
 
   		listeners:remove( gotoMenuButton, "tap", sceneTransition.gotoMenu )
+
   	end
 
   	function M:stopAllListeners( )
-  		listeners:remove( instructionsPanel, "touch", scrollInstructionsPanel )
+  		directionButtons.right.alpha = 0.5
+  		directionButtons.left.alpha = 0.5
+  		directionButtons.down.alpha = 0.5
+  		directionButtons.up.alpha = 0.5
+  		executeButton.alpha = 0.5
+  		bikeWheel.alpha = 0.5
+  		bikeLimit.alpha = 0.5 
+
+  		--listeners:remove( instructionsPanel, "touch", scrollInstructionsPanel )
 
   		listeners:remove( directionButtons.right, "touch", createInstruction )
   		listeners:remove( directionButtons.left, "touch", createInstruction )

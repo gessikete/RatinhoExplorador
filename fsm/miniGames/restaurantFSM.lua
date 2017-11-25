@@ -64,13 +64,10 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 	  	  	{ name = "nextRecipe",  from = "repeat",  to = "recipe1", nextEvent = "checkProgress" },
 	  	  	{ name = "checkProgress",  from = "recipe1",  to = "progress1", nextEvent = "nextRecipe" },
 	  	  	{ name = "nextRecipe",  from = "progress1",  to = "recipe2", nextEvent = "checkProgress" },
-	  	  	{ name = "checkProgress",  from = "recipe2",  to = "progress2", nextEvent = "nextRecipe" },
-	  	  	{ name = "nextRecipe",  from = "progress2",  to = "recipe3", nextEvent = "checkProgress" },
-	  	  	{ name = "checkProgress",  from = "recipe3",  to = "progress3" },-- nextEvent = "nextRecipe" },
+	  	  	{ name = "checkProgress",  from = "recipe2",  to = "progress2"},-- nextEvent = "nextRecipe" },
 
 	  	  	{ name = "showFeedback", from = "progress1", to = "feedbackAnimation", nextEvent = "nextRecipe" },
 	  	  	{ name = "showFeedback", from = "progress2", to = "feedbackAnimation", nextEvent = "nextRecipe" },
-	  	  	{ name = "showFeedback", from = "progress3", to = "feedbackAnimation", nextEvent = "nextRecipe" },
 	  	  	{ name = "repeatLevel", from = "feedbackAnimation", to = "repeat", nextEvent = "nextRecipe" },
 	  	  	--{ name = "checkProgress",  from = "repeat",  to = "progress_repeat", nextEvent = "nextRecipe" },
 
@@ -89,11 +86,11 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 	  	  	on_before_event = 
 	  	      function( self, event, from, to ) 
 	  	        if ( ( messageBubble ) and ( messageBubble.text ) ) then
-			        messageBubble.text:removeSelf()
-			        messageBubble.text = nil
-			        transition.cancel( messageBubble.blinkingDart )
-			        messageBubble.blinkingDart.alpha = 0
-			        messageBubble.blinkingDart = nil
+			        if ( messageBubble.blinkingDart ) then 
+				        transition.cancel( messageBubble.blinkingDart )
+				        messageBubble.blinkingDart.alpha = 0
+				        messageBubble.blinkingDart = nil
+			    	end
 			    end
 	  	      end,
 
@@ -127,20 +124,24 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 	  	      function( self, event, from, to ) 
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
-	  	        
+	  	        local bubbleChar
+
 	  	        if ( messageBubble == "brotherBubble" ) then 
-	  	        	if ( character == restaurant:findObject( "Ada" ) ) then 
+	  	        	if ( character == restaurant:findObject( "ada" ) ) then 
 	  	        		messageBubble = restaurant:findObject( "turingBubble" )
+	  	        		bubbleChar = restaurant:findObject( "turing" )
 	  	        	else
 	  	        		messageBubble = restaurant:findObject( "adaBubble" )
+	  	        		bubbleChar = restaurant:findObject( "ada" )
 	  	        	end
 	  	        else 
 	  	        	messageBubble = restaurant:findObject( "cookBubble" )
+	  	        	bubbleChar = restaurant:findObject( "cook" )
 	  	        end
 
 	  	        local function closure() 
 	  	          	gamePanel.stopExecutionListeners()
-	  	          	gameFlow.showText( messageBubble, message[ msg ] ) 
+	  	          	gameFlow.showText( messageBubble, message[ msg ], bubbleChar ) 
 	  	        end
 
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
@@ -155,19 +156,23 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 	  	      function( self, event, from, to ) 
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
-	  	        
+	  	        local bubbleChar
+
 	  	        if ( messageBubble == "brotherBubble" ) then 
-	  	        	if ( character == restaurant:findObject( "Ada" ) ) then 
+	  	        	if ( character == restaurant:findObject( "ada" ) ) then 
 	  	        		messageBubble = restaurant:findObject( "turingBubble" )
+	  	        		bubbleChar = restaurant:findObject( "turing" )
 	  	        	else
 	  	        		messageBubble = restaurant:findObject( "adaBubble" )
+	  	        		bubbleChar = restaurant:findObject( "ada" )
 	  	        	end
 	  	        else 
 	  	        	messageBubble = restaurant:findObject( "cookBubble" )
+	  	        	bubbleChar = restaurant:findObject( "cook" )
 	  	        end
 
 	  	        local function closure() 
-	  	          	gameFlow.showText( messageBubble, message[ msg ] ) 
+	  	          	gameFlow.showText( messageBubble, message[ msg ], bubbleChar ) 
 	  	          	gamePanel.stopExecutionListeners()
 	  	        end
 
@@ -182,18 +187,22 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 	  	      function( self, event, from, to )
 	  	        local messageBubble, msg, animationName = self.current:match( "([^,]+)_([^,]+)_([^,]+)" ) 
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+				local bubbleChar
 
 	  	        if ( messageBubble == "brotherBubble" ) then 
-	  	        	if ( character == restaurant:findObject( "Ada" ) ) then 
+	  	        	if ( character == restaurant:findObject( "ada" ) ) then 
 	  	        		messageBubble = restaurant:findObject( "turingBubble" )
+	  	        		bubbleChar = restaurant:findObject( "turing" )
 	  	        	else
 	  	        		messageBubble = restaurant:findObject( "adaBubble" )
+	  	        		bubbleChar = restaurant:findObject( "ada" )
 	  	        	end
 	  	        else 
 	  	        	messageBubble = restaurant:findObject( "cookBubble" )
+	  	        	bubbleChar = restaurant:findObject( "cook" )
 	  	        end
 
-	  	        gameFlow.showText( messageBubble, message[ msg ] )
+	  	        gameFlow.showText( messageBubble, message[ msg ], bubbleChar )
 	  	        gamePanel.stopExecutionListeners()
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
 	  	          	timer.performWithDelay( wait, animation[animationName] )
@@ -212,14 +221,16 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 	  	        end
 
 	  	        if ( ( messageBubble ) and ( messageBubble.text ) ) then
-	  	          	transition.fadeOut( messageBubble.text, { time = 400 } )
+	  	        	transition.fadeOut( messageBubble.text, { time = 400 } )
 	  	          	transition.fadeOut( messageBubble, { time = 400 } )
 	  	          	messageBubble.text:removeSelf()
 	  	          	messageBubble.text = nil
-	  	          	transition.cancel( messageBubble.blinkingDart )
-	  	          	messageBubble.blinkingDart.alpha = 0
-	  	          	messageBubble.blinkingDart = nil
-	  	        end
+			        if ( messageBubble.blinkingDart ) then 
+				        transition.cancel( messageBubble.blinkingDart )
+				        messageBubble.blinkingDart.alpha = 0
+				        messageBubble.blinkingDart = nil
+			    	end
+			    end
 	  	        gameFlow.updateFSM()
 	  	      end,
 
@@ -277,7 +288,7 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 
 	  	    on_finishLevel = 
 	  	      function( self, event, from, to ) 
-	  	        transition.cancel()
+	  	        transition.cancel( character )
 	  	        gamePanel:stopAllListeners()
 	  	        character.stepping.point = "exit"
 	  	        timer.performWithDelay( 800, sceneTransition.gotoMap )
@@ -287,19 +298,11 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 	  	      function( self, event, from, to ) 
 	  	        local startingPoint = restaurant:findObject("start")
 
-	  	        print( "ONREPEAT" )
-	  	        --physics.pause()
-	  	        character.ropeJoint:removeSelf()
 	  	        physics.removeBody( character )
-	  	        physics.removeBody( character.rope )
 	  	        character.x = startingPoint.x
 	  	        character.y = startingPoint.y - 3
-	  	        character.rope.x, character.rope.y = character.x, character.y + 4
-	  	        physics.start()
 	  	        physics.addBody( character )
-	  	        physics.addBody( character.rope )
-	  	        character.ropeJoint = physics.newJoint( "rope", character.rope, character, 0, 0 )
-	  	        character.isFixedRotation = true 
+				character.isFixedRotation = true 
 	  	        character.xScale = - 1
 
 	  	        resetCollision()

@@ -18,7 +18,15 @@
                  "gid":6,
                  "height":474,
                  "id":19,
-                 "name":"",
+                 "name":"background",
+                 "properties":
+                    {
+                     "alpha":0
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"int"
+                    },
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -34,31 +42,81 @@
         }, 
         {
          "draworder":"topdown",
-         "name":"buttons",
+         "name":"messageBubble",
          "objects":[
                 {
-                 "gid":3,
-                 "height":117,
-                 "id":16,
-                 "name":"play",
+                 "gid":8,
+                 "height":106,
+                 "id":28,
+                 "name":"messageBubble",
+                 "properties":
+                    {
+                     "alpha":0
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"int"
+                    },
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":117,
-                 "x":357,
-                 "y":133
+                 "width":133.589041095891,
+                 "x":130,
+                 "y":205
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"biographies",
+         "objects":[
+                {
+                 "gid":11,
+                 "height":660,
+                 "id":30,
+                 "name":"adaBio",
+                 "properties":
+                    {
+                     "alpha":0,
+                     "myName":"Ada"
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"int",
+                     "myName":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":825,
+                 "x":-145,
+                 "y":540
                 }, 
                 {
-                 "gid":4,
-                 "height":47,
-                 "id":17,
-                 "name":"gotoMenuButton",
+                 "gid":12,
+                 "height":660,
+                 "id":33,
+                 "name":"turingBio",
+                 "properties":
+                    {
+                     "alpha":0,
+                     "myName":"Turing"
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"int",
+                     "myName":"string"
+                    },
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":45,
-                 "x":7,
-                 "y":287
+                 "width":825,
+                 "x":-145,
+                 "y":540
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -71,16 +129,66 @@
          "name":"avatar",
          "objects":[
                 {
-                 "gid":7,
+                 "gid":10,
                  "height":609,
                  "id":24,
-                 "name":"avatar",
+                 "name":"characters",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":761.25,
                  "x":-152,
                  "y":472
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"playButton",
+         "objects":[
+                {
+                 "gid":3,
+                 "height":87.7367740491186,
+                 "id":16,
+                 "name":"play",
+                 "properties":
+                    {
+                     "alpha":0
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"int"
+                    },
+                 "rotation":1.3121842251122,
+                 "type":"",
+                 "visible":true,
+                 "width":87.7367740491186,
+                 "x":360,
+                 "y":116
+                }, 
+                {
+                 "gid":3,
+                 "height":87.7367740491186,
+                 "id":34,
+                 "name":"playBioButton",
+                 "properties":
+                    {
+                     "alpha":0
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"int"
+                    },
+                 "rotation":1.3121842251122,
+                 "type":"",
+                 "visible":true,
+                 "width":87.7367740491186,
+                 "x":360,
+                 "y":116
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -139,8 +247,80 @@
          "visible":true,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"gotoMenuButtons",
+         "objects":[
+                {
+                 "gid":4,
+                 "height":47,
+                 "id":17,
+                 "name":"gotoMenuButton",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":45,
+                 "x":7,
+                 "y":287
+                }, 
+                {
+                 "gid":4,
+                 "height":47,
+                 "id":35,
+                 "name":"gotoMenuBioButton",
+                 "properties":
+                    {
+                     "alpha":0
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":45,
+                 "x":11,
+                 "y":64
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"goBackButton",
+         "objects":[
+                {
+                 "gid":9,
+                 "height":47,
+                 "id":36,
+                 "name":"goBackButton",
+                 "properties":
+                    {
+                     "alpha":0
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":45,
+                 "x":11,
+                 "y":128
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextobjectid":27,
+ "nextobjectid":37,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",
@@ -158,7 +338,7 @@
          "margin":0,
          "name":"objects",
          "spacing":0,
-         "tilecount":3,
+         "tilecount":5,
          "tileheight":800,
          "tiles":
             {
@@ -179,13 +359,25 @@
                  "image":"images\/new game\/background.png",
                  "imageheight":800,
                  "imagewidth":1200
+                },
+             "7":
+                {
+                 "image":"images\/new game\/bubble.png",
+                 "imageheight":155,
+                 "imagewidth":197
+                },
+             "8":
+                {
+                 "image":"images\/new game\/goBackButton.png",
+                 "imageheight":47,
+                 "imagewidth":45
                 }
             },
          "tilewidth":1200
         }, 
         {
          "columns":0,
-         "firstgid":7,
+         "firstgid":10,
          "grid":
             {
              "height":1,
@@ -202,6 +394,37 @@
              "0":
                 {
                  "image":"images\/new game\/chooseAvatar.png",
+                 "imageheight":1200,
+                 "imagewidth":1500
+                }
+            },
+         "tilewidth":1500
+        }, 
+        {
+         "columns":0,
+         "firstgid":11,
+         "grid":
+            {
+             "height":1,
+             "orientation":"orthogonal",
+             "width":1
+            },
+         "margin":0,
+         "name":"biographies",
+         "spacing":0,
+         "tilecount":2,
+         "tileheight":1200,
+         "tiles":
+            {
+             "0":
+                {
+                 "image":"images\/new game\/biography_ada.png",
+                 "imageheight":1200,
+                 "imagewidth":1500
+                },
+             "1":
+                {
+                 "image":"images\/new game\/biography_turing.png",
                  "imageheight":1200,
                  "imagewidth":1500
                 }

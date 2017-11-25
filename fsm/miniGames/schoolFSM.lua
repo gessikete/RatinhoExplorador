@@ -18,7 +18,6 @@ local message = {}
 
 function M.new( school, character, supplies, listeners, collision, instructionsTable, miniGameData, gameState, gamePanel, path )
 	local schoolFSM
-	--local character = school:findObject( "character" )
 	local teacher = school:findObject( "teacher" )  
 	local tilesSize = 32
 	local messageBubble
@@ -82,18 +81,11 @@ function M.new( school, character, supplies, listeners, collision, instructionsT
 	  	  	on_before_event = 
 	  	      function( self, event, from, to ) 
 	  	        if ( ( messageBubble ) and ( messageBubble.text ) ) then
-	  	        	--messageBubble:removeSelf()
-			        messageBubble.text:removeSelf()
-			        messageBubble.text = nil
-			        transition.cancel( messageBubble.blinkingDart )
-			        messageBubble.blinkingDart.alpha = 0
-			        messageBubble.blinkingDart = nil
-			        --[[if ( messageBubble.listener == true ) then
-			        	messageBubble:removeEventListener( "tap", messageBubble.showSubText )
-			       		messageBubble.listener = false 
-			        end
-
-			        messageBubble = nil]]
+			        if ( messageBubble.blinkingDart ) then 
+				        transition.cancel( messageBubble.blinkingDart )
+				        messageBubble.blinkingDart.alpha = 0
+				        messageBubble.blinkingDart = nil
+			    	end
 			    end
 	  	      end,
 
@@ -127,20 +119,24 @@ function M.new( school, character, supplies, listeners, collision, instructionsT
 	  	      function( self, event, from, to ) 
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
-	  	        
-	  	       if ( messageBubble == "brotherBubble" ) then 
-	  	        	if ( character == school:findObject( "Ada" ) ) then 
+	  	        local bubbleChar
+
+	  	        if ( messageBubble == "brotherBubble" ) then 
+	  	        	if ( character == school:findObject( "ada" ) ) then 
 	  	        		messageBubble = school:findObject( "turingBubble" )
+	  	        		bubbleChar = school:findObject( "turing" )
 	  	        	else
 	  	        		messageBubble = school:findObject( "adaBubble" )
+	  	        		bubbleChar = school:findObject( "ada" )
 	  	        	end
 	  	        else 
 	  	        	messageBubble = school:findObject( "teacherBubble" )
+	  	        	bubbleChar = school:findObject( "teacher" )
 	  	        end
 
 	  	        local function closure() 
 	  	          	gamePanel.stopExecutionListeners()
-	  	          	gameFlow.showText( messageBubble, message[ msg ] ) 
+	  	          	gameFlow.showText( messageBubble, message[ msg ], bubbleChar ) 
 	  	        end
 
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
@@ -155,19 +151,23 @@ function M.new( school, character, supplies, listeners, collision, instructionsT
 	  	      function( self, event, from, to ) 
 	  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
-	  	        
+	  	        local bubbleChar
+
 	  	        if ( messageBubble == "brotherBubble" ) then 
-	  	        	if ( character == school:findObject( "Ada" ) ) then 
+	  	        	if ( character == school:findObject( "ada" ) ) then 
 	  	        		messageBubble = school:findObject( "turingBubble" )
+	  	        		bubbleChar = school:findObject( "turing" )
 	  	        	else
 	  	        		messageBubble = school:findObject( "adaBubble" )
+	  	        		bubbleChar = school:findObject( "ada" )
 	  	        	end
 	  	        else 
 	  	        	messageBubble = school:findObject( "teacherBubble" )
+	  	        	bubbleChar = school:findObject( "teacher" )
 	  	        end
 
 	  	        local function closure() 
-	  	          	gameFlow.showText( messageBubble, message[ msg ] ) 
+	  	          	gameFlow.showText( messageBubble, message[ msg ], bubbleChar ) 
 	  	          	gamePanel.stopExecutionListeners()
 	  	        end
 
@@ -182,18 +182,22 @@ function M.new( school, character, supplies, listeners, collision, instructionsT
 	  	      function( self, event, from, to )
 	  	        local messageBubble, msg, animationName = self.current:match( "([^,]+)_([^,]+)_([^,]+)" ) 
 	  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+	  	        local bubbleChar
 
 	  	        if ( messageBubble == "brotherBubble" ) then 
-	  	        	if ( character == school:findObject( "Ada" ) ) then 
+	  	        	if ( character == school:findObject( "ada" ) ) then 
 	  	        		messageBubble = school:findObject( "turingBubble" )
+	  	        		bubbleChar = school:findObject( "turing" )
 	  	        	else
 	  	        		messageBubble = school:findObject( "adaBubble" )
+	  	        		bubbleChar = school:findObject( "ada" )
 	  	        	end
 	  	        else 
 	  	        	messageBubble = school:findObject( "teacherBubble" )
+	  	        	bubbleChar = school:findObject( "teacher" )
 	  	        end
 
-	  	        gameFlow.showText( messageBubble, message[ msg ] )
+	  	        gameFlow.showText( messageBubble, message[ msg ], bubbleChar )
 	  	        gamePanel.stopExecutionListeners()
 	  	        if ( ( from == "transitionState" ) and ( wait ) ) then 
 	  	          	timer.performWithDelay( wait, animation[animationName] )
@@ -212,14 +216,17 @@ function M.new( school, character, supplies, listeners, collision, instructionsT
 	  	        end
 
 	  	        if ( ( messageBubble ) and ( messageBubble.text ) ) then
-	  	          	transition.fadeOut( messageBubble.text, { time = 400 } )
+	  	        	transition.fadeOut( messageBubble.text, { time = 400 } )
 	  	          	transition.fadeOut( messageBubble, { time = 400 } )
 	  	          	messageBubble.text:removeSelf()
 	  	          	messageBubble.text = nil
-	  	          	transition.cancel( messageBubble.blinkingDart )
-	  	          	messageBubble.blinkingDart.alpha = 0
-	  	          	messageBubble.blinkingDart = nil
-	  	        end
+			        if ( messageBubble.blinkingDart ) then 
+				        transition.cancel( messageBubble.blinkingDart )
+				        messageBubble.blinkingDart.alpha = 0
+				        messageBubble.blinkingDart = nil
+			    	end
+			    end
+
 	  	        gameFlow.updateFSM()
 	  	      end,
 
@@ -268,7 +275,7 @@ function M.new( school, character, supplies, listeners, collision, instructionsT
 
 	  	    on_finishLevel = 
 	  	      function( self, event, from, to ) 
-	  	        transition.cancel()
+	  	        transition.cancel( character )
 	  	        gamePanel:stopAllListeners()
 	  	        character.stepping.point = "exit"
 	  	        timer.performWithDelay( 800, sceneTransition.gotoMap )
@@ -280,17 +287,10 @@ function M.new( school, character, supplies, listeners, collision, instructionsT
 	  	        local chairs = school:findLayer( "chairs" )
 	  	        local tables = school:findLayer( "tables" )
 
-	  	        --physics.pause()
-	  	        character.ropeJoint:removeSelf()
 	  	        physics.removeBody( character )
-	  	        physics.removeBody( character.rope )
 	  	        character.x = startingPoint.x
 	  	        character.y = startingPoint.y - 6
-	  	        character.rope.x, character.rope.y = character.x, character.y + 4
-	  	        physics.start()
 	  	        physics.addBody( character )
-	  	        physics.addBody( character.rope )
-	  	        character.ropeJoint = physics.newJoint( "rope", character.rope, character, 0, 0 )
 	  	        character.isFixedRotation = true 
 	  	        character.xScale = 1
 

@@ -53,6 +53,34 @@ local message =
 
 
 }
+
+local function jumpingLoop( nextLevelCharacter, bubble, msg )
+  local function closure()
+    jumpingLoop( nextLevelCharacter, bubble, msg )
+  end
+
+  if ( nextLevelCharacter.cancelLoop == false ) then
+    transition.to(  nextLevelCharacter, { time = 200, y = nextLevelCharacter.originalY - 8, 
+      onComplete = 
+      function()
+        transition.to(  nextLevelCharacter, { time = 200, y = nextLevelCharacter.originalY, onComplete = closure } )
+      end
+
+      } )
+  end
+end
+
+function setNextLevelCharacter()
+  gameFileData.house.isComplete = true 
+  if ( ( gameFileData.house.isComplete == true ) and ( gameFileData.school.isComplete == false ) ) then 
+      gamePanel:updateBikeMaxCount( 3 )
+      teacher.alpha = 1
+      teacher.originalY = teacher.y 
+      physics.addBody( map:findObject( "teacher sensor" ), { isSensor = true, bodyType = "static" } )
+
+      jumpingLoop( teacher, map:findObject( "teacherBubble" ), message.teacher )
+  end
+end
 -- -----------------------------------------------------------------------------------
 -- Funções de criação
 -- -----------------------------------------------------------------------------------
@@ -87,16 +115,16 @@ local function gotoNextLevel()
       transition.to( teacher, { time = 100, x = teacher.x + 5, onComplete = sceneTransition.gotoSchool } )
       
       if ( ( executeButton.executionsCount == 1 ) and ( executeButton.instructionsCount[#executeButton.instructionsCount] == 3 ) ) then
-        gameFileData.school.previousStars = 3
+        gameFileData.school.previousStars = 3  
       elseif ( gamePanel.bikeWheel.maxCount == 0 ) then
-        gameFileData.school.previousStars = 2
+        gameFileData.school.previousStars = 2 
       else 
         gameFileData.school.previousStars = 1
       end
 
   end 
 end
-
+ 
 -- -----------------------------------------------------------------------------------
 -- Funções que mostram texto
 -- -----------------------------------------------------------------------------------
@@ -114,8 +142,13 @@ local function showSubText( event )
       messageBubble.text = newText
       messageBubble.shownText = messageBubble.shownText + 1
 
-      messageBubble.blinkingDart.x = messageBubble.x + 33
-      messageBubble.blinkingDart.y = messageBubble.y + 12 
+      if ( not messageBubble.message[ messageBubble.shownText ] ) then
+          if ( messageBubble.blinkingDart ) then 
+            transition.cancel( messageBubble.blinkingDart )
+            messageBubble.blinkingDart.alpha = 0
+            messageBubble.blinkingDart = nil
+          end
+      end
 
     else
       transition.fadeOut( messageBubble.text, { time = 400 } )
@@ -123,16 +156,38 @@ local function showSubText( event )
       messageBubble.text:removeSelf()
       messageBubble.text = nil
       listeners:remove( messageBubble, "tap", showSubText )
-
-      transition.cancel( messageBubble.blinkingDart )
-      messageBubble.blinkingDart.alpha = 0
-      messageBubble.blinkingDart = nil
     end
 
     return true
   end
 
-  function showText( bubble, message ) 
+  local function showMessageAgain( event )
+    local target = event.target
+    if ( ( messageBubble ) and ( messageBubble.alpha == 1 ) and ( messageBubble.myName == target.bubble ) ) then 
+      messageBubble.text:removeSelf()
+      messageBubble.options.text = messageBubble.message[1]
+
+      local newText = display.newText( messageBubble.options ) 
+      newText.x = newText.x + newText.width/2
+      newText.y = newText.y + newText.height/2
+
+      messageBubble.text = newText
+      messageBubble.shownText = 1
+
+      if ( not messageBubble.blinkingDart ) then 
+        time = 500
+
+        messageBubble.blinkingDart = map:findObject( "blinkingDart" ) 
+        messageBubble.blinkingDart.x = messageBubble.x + 33
+        messageBubble.blinkingDart.y = messageBubble.y + 12
+
+        messageBubble.blinkingDart.alpha = 1
+        transition.blink( messageBubble.blinkingDart, { time = time } )
+      end
+    end
+  end
+
+  function showText( bubble, message, bubbleChar ) 
     local options = {
         text = " ",
         x = bubble.contentBounds.xMin + 15, 
@@ -149,6 +204,8 @@ local function showSubText( event )
     end
 
     listeners:add( bubble, "tap", showSubText )
+    listeners:add( bubbleChar, "tap", showMessageAgain )
+
 
     local newText = display.newText( options ) 
     newText.x = newText.x + newText.width/2
@@ -178,6 +235,25 @@ local function showSubText( event )
       messageBubble = bubble
     end
   end
+
+local function nextLevelCharacterCollision( nextLevelCharacter, bubble, msg )
+  if ( instructionsTable.last < instructionsTable.executing ) then 
+        nextLevelCharacter.cancelLoop = true
+        instructionsTable.stop = true
+        transition.cancel( character )
+
+        transition.to( character, { time = 0, x = character.x - .45 * tilesSize } )
+        local function closure()
+          showText( bubble, msg, nextLevelCharacter )
+        end
+      
+        transition.to( nextLevelCharacter, { y = nextLevelCharacter.originalY, onComplete = closure } )
+      else
+        transition.cancel()
+        transition.to( character, { x = character.x - .45 * tilesSize } ) 
+          jumpingLoop( nextLevelCharacter, bubble, msg )
+      end  
+end
 -- -----------------------------------------------------------------------------------
 -- Listeners
 -- -----------------------------------------------------------------------------------
@@ -195,12 +271,23 @@ local function onCollision( event )
       gamePanel:stopAllListeners()
       timer.performWithDelay( 800, sceneTransition.gotoHouse )
 
-    elseif ( ( ( obj1.myName == "school" ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.myName == "school" ) ) ) then 
-      transition.cancel()
-      if ( obj1.point ) then character.stepping.point = obj1.point else character.stepping.point = obj2.point end 
-      instructions:destroyInstructionsTable()
-      gamePanel:stopAllListeners()
-      timer.performWithDelay( 800, sceneTransition.gotoSchool ) 
+    elseif ( ( ( obj1.myName == "school" ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.myName == "school" ) ) ) then
+      if ( gameFileData.school.isComplete == true ) then 
+        transition.cancel()
+        if ( obj1.point ) then character.stepping.point = obj1.point else character.stepping.point = obj2.point end 
+        instructions:destroyInstructionsTable()
+        gamePanel:stopAllListeners()
+        timer.performWithDelay( 800, sceneTransition.gotoSchool ) 
+      end
+
+    elseif ( ( ( obj1.myName == "restaurant" ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.myName == "restaurant" ) ) ) then
+      if ( gameFileData.restaurant.isComplete == true ) then 
+        transition.cancel()
+        if ( obj1.point ) then character.stepping.point = obj1.point else character.stepping.point = obj2.point end 
+        instructions:destroyInstructionsTable()
+        gamePanel:stopAllListeners()
+        timer.performWithDelay( 800, sceneTransition.gotoRestaurant ) 
+      end
     -- Colisão entre o personagem e os sensores dos tiles do caminho
     elseif ( ( obj1.isCharacter ) and ( obj2.isPath ) ) then 
       character.stepping.x = obj2.x 
@@ -213,18 +300,23 @@ local function onCollision( event )
       character.stepping.point = "point"
       path:showTile( obj1.myName )
     
-    elseif ( ( obj1.myName == "teacher" ) and ( obj2.isCharacter ) ) then 
-      teacher.cancelLoop = true
-      instructionsTable.stop = true
-      transition.cancel( character ) 
+    elseif ( ( ( obj1.myName == "teacher" ) and ( obj2.isCharacter ) ) or ( ( obj2.myName == "teacher" ) and ( obj1.isCharacter ) ) ) then 
+      nextLevelCharacterCollision( teacher, map:findObject( "teacherBubble" ), message.teacher )
 
-    elseif ( ( obj2.myName == "teacher" ) and ( obj1.isCharacter ) ) then 
-      teacher.cancelLoop = true 
-      instructionsTable.stop = true
-      transition.cancel( character ) 
+    elseif ( ( ( obj1.isCollision ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.isCollision ) ) ) then 
+      local obj
+      if ( obj1.isCollision ) then obj = obj1 else obj = obj2 end 
+      transition.cancel( character )
+      if ( ( obj.direction == "right" ) ) then 
+        transition.to( character, { time = 0, x = character.x + .18 * tilesSize } )
+      elseif ( ( obj.direction == "left" ) ) then 
+        transition.to( character, { time = 0, x = character.x - .18 * tilesSize } )
+      elseif ( ( obj.direction == "up" ) ) then 
+        transition.to( character, { time = 0, y = character.y - .23 * tilesSize } )
+      elseif ( ( obj.direction == "down" ) ) then 
+        transition.to( character, { time = 0, y = character.y + .22 * tilesSize } )
+      end
 
-    elseif ( ( ( obj1.myName == "collision" ) and ( obj2.myName == "rope" ) ) or ( ( obj1.myName == "rope" ) and ( obj2.myName == "collision" ) ) ) then 
-      transition.cancel()
     end
   end
   return true 
@@ -237,12 +329,8 @@ local function destroyMap()
   camera:destroy()
   camera = nil 
   map:removeSelf()
-  character.ropeJoint:removeSelf()
-  character.rope:removeSelf()
 
   map = nil 
-  character.ropeJoint = nil 
-  character.rope = nil 
   character = nil 
 
   path:destroy()
@@ -257,28 +345,6 @@ local function destroyScene()
   destroyMap()
 end
 
-local function jumpingLoop( nextLevelCharacter, bubble, msg )
-  local function closure()
-    jumpingLoop( nextLevelCharacter, bubble, msg )
-  end
-
-  if ( nextLevelCharacter.cancelLoop == false ) then
-    transition.to(  nextLevelCharacter, { y = nextLevelCharacter.y - 8, transition = easing.continuousLoop, onComplete = closure } )
-  else 
-    showText( bubble, msg )
-  end
-end
-
-function setNextLevelCharacter()
-  if ( ( gameFileData.house.isComplete == true ) and ( gameFileData.school.isComplete == false ) ) then 
-      gamePanel:updateBikeMaxCount( 2 )
-      teacher.alpha = 1
-      physics.addBody( teacher, { isSensor = true, bodyType = "static" } )
-      
-      jumpingLoop( teacher, map:findObject( "teacherBubble" ), message.teacher )
-  end
-end
-
 -- -----------------------------------------------------------------------------------
 -- Cenas
 -- -----------------------------------------------------------------------------------
@@ -286,16 +352,16 @@ end
 function scene:create( event )
   sceneGroup = self.view
 
-  persistence.setCurrentFileName("ana")
+  --persistence.setCurrentFileName("ana")
 
   map, character, gamePanel, gameState, path, instructions, instructionsTable, gameFileData = gameScene:set( "map" )
 
   teacher = map:findObject( "teacher" )
   character.alpha = 1
 
-  --[[instructionsTable.direction = { "right", "down", "right" }
-  instructionsTable.steps = { 2, 2, 2 }
-  instructionsTable.last = 3]]
+  --[[instructionsTable.direction = { "right", "down", "right", "right", "right", "left" }
+  instructionsTable.steps = { 2, 2, 2, 1, 1, 1 }
+  instructionsTable.last = 6]]
 
   --[[instructionsTable.direction = { "right", "down", "up", "down", "down", "right", "right" }
   instructionsTable.steps = { 2, 2, 2, 1, 1, 1, 1  }
