@@ -49,7 +49,16 @@ local message =
   { "Olá! Que bom que sua mãe",
   "deixou que você viesse me ajudar.",
   "Os alunos fizeram uma bagunça",
-  "na escola. Venha ver." }
+  "na escola. Venha ver." },
+
+  cook = {
+    "Ah, que bom que você veio me", 
+    "ajudar!",
+    "Preciso fazer uma receita de",
+    "macarrão, mas estou tendo",
+    "dificuldades.",
+    "Vamos lá?" 
+  }
 
 
 }
@@ -79,6 +88,13 @@ function setNextLevelCharacter()
       physics.addBody( map:findObject( "teacher sensor" ), { isSensor = true, bodyType = "static" } )
 
       jumpingLoop( teacher, map:findObject( "teacherBubble" ), message.teacher )
+  elseif ( ( gameFileData.school.isComplete == true ) and ( gameFileData.restaurant.isComplete == false ) ) then 
+      gamePanel:updateBikeMaxCount( 1 )
+      cook.alpha = 1
+      cook.originalY = cook.y 
+      physics.addBody( map:findObject( "cook sensor" ), { isSensor = true, bodyType = "static" } )
+
+      jumpingLoop( cook, map:findObject( "cookBubble" ), message.cook )
   end
 end
 -- -----------------------------------------------------------------------------------
@@ -110,17 +126,29 @@ local function gotoNextLevel()
 
   transition.fadeOut( gamePanel.tiled, { time = 800 } )
   if ( ( gameFileData.house.isComplete == true ) and ( gameFileData.school.isComplete == false ) ) then 
-      teacher.xScale = 1
-      transition.to( character, { time = 100, x = character.x + 5 } )
-      transition.to( teacher, { time = 100, x = teacher.x + 5, onComplete = sceneTransition.gotoSchool } )
-      
-      if ( ( executeButton.executionsCount == 1 ) and ( executeButton.instructionsCount[#executeButton.instructionsCount] == 3 ) ) then
-        gameFileData.school.previousStars = 3  
-      elseif ( gamePanel.bikeWheel.maxCount == 0 ) then
-        gameFileData.school.previousStars = 2 
-      else 
-        gameFileData.school.previousStars = 1
-      end
+    teacher.xScale = 1
+    transition.to( character, { time = 100, x = character.x + 5 } )
+    transition.to( teacher, { time = 100, x = teacher.x + 5, onComplete = sceneTransition.gotoSchool } )
+    
+    if ( ( executeButton.executionsCount == 1 ) and ( executeButton.instructionsCount[#executeButton.instructionsCount] == 3 ) ) then
+      gameFileData.school.previousStars = 3  
+    elseif ( gamePanel.bikeWheel.maxCount == 0 ) then
+      gameFileData.school.previousStars = 2 
+    else 
+      gameFileData.school.previousStars = 1
+    end
+  elseif ( ( gameFileData.school.isComplete == true ) and ( gameFileData.restaurant.isComplete == false ) ) then 
+    cook.xScale = -1
+    transition.to( character, { time = 100, y = character.y + 5 } )
+    transition.to( cook, { time = 100, x = cook.x - 5, onComplete = sceneTransition.gotoRestaurant } )
+    
+    if ( ( executeButton.executionsCount == 1 ) and ( executeButton.instructionsCount[#executeButton.instructionsCount] == 3 ) ) then
+      gameFileData.restaurant.previousStars = 3  
+    elseif ( gamePanel.bikeWheel.maxCount == 0 ) then
+      gameFileData.restaurant.previousStars = 2 
+    else 
+      gameFileData.restaurant.previousStars = 1
+    end
 
   end 
 end
@@ -138,6 +166,9 @@ local function showSubText( event )
       local newText = display.newText( messageBubble.options ) 
       newText.x = newText.x + newText.width/2
       newText.y = newText.y + newText.height/2
+      if ( messageBubble.options.color ) then 
+        newText:setFillColor( messageBubble.options.color[1], messageBubble.options.color[2], messageBubble.options.color[3] )
+      end
 
       messageBubble.text = newText
       messageBubble.shownText = messageBubble.shownText + 1
@@ -170,6 +201,9 @@ local function showSubText( event )
       local newText = display.newText( messageBubble.options ) 
       newText.x = newText.x + newText.width/2
       newText.y = newText.y + newText.height/2
+      if ( messageBubble.options.color ) then 
+        newText:setFillColor( messageBubble.options.color[1], messageBubble.options.color[2], messageBubble.options.color[3] )
+      end
 
       messageBubble.text = newText
       messageBubble.shownText = 1
@@ -199,6 +233,10 @@ local function showSubText( event )
     }
     options.text = message[1]
 
+    if ( bubble.myName == "cookBubble" ) then 
+      options.color = { 0.2, 0.2, 0 }
+    end
+
     if ( bubble.alpha == 0 ) then
       transition.fadeIn( bubble, { time = 400 } )
     end
@@ -210,6 +248,9 @@ local function showSubText( event )
     local newText = display.newText( options ) 
     newText.x = newText.x + newText.width/2
     newText.y = newText.y + newText.height/2
+    if ( options.color ) then 
+      newText:setFillColor( options.color[1], options.color[2], options.color[3] )
+    end
 
     bubble.message = message 
     bubble.text = newText
@@ -242,17 +283,25 @@ local function nextLevelCharacterCollision( nextLevelCharacter, bubble, msg )
         instructionsTable.stop = true
         transition.cancel( character )
 
-        transition.to( character, { time = 0, x = character.x - .45 * tilesSize } )
-        local function closure()
-          showText( bubble, msg, nextLevelCharacter )
-        end
-      
-        transition.to( nextLevelCharacter, { y = nextLevelCharacter.originalY, onComplete = closure } )
-      else
-        transition.cancel()
-        transition.to( character, { x = character.x - .45 * tilesSize } ) 
-          jumpingLoop( nextLevelCharacter, bubble, msg )
-      end  
+    if ( nextLevelCharacter == teacher ) then 
+      transition.to( character, { x = character.x - .45 * tilesSize } )
+    elseif  ( nextLevelCharacter == cook ) then
+      transition.to( character, { time = 100, y = character.y - 0.4 * tilesSize } )
+    end
+    local function closure()
+      showText( bubble, msg, nextLevelCharacter )
+    end
+  
+    transition.to( nextLevelCharacter, { y = nextLevelCharacter.originalY, onComplete = closure } )
+  else
+    transition.cancel()
+    if ( nextLevelCharacter == teacher ) then 
+      transition.to( character, { x = character.x - .45 * tilesSize } )
+    elseif  ( nextLevelCharacter == cook ) then
+      transition.to( character, { time = 100, y = character.y - 0.4 * tilesSize } )
+    end 
+    jumpingLoop( nextLevelCharacter, bubble, msg )
+  end  
 end
 -- -----------------------------------------------------------------------------------
 -- Listeners
@@ -302,6 +351,9 @@ local function onCollision( event )
     
     elseif ( ( ( obj1.myName == "teacher" ) and ( obj2.isCharacter ) ) or ( ( obj2.myName == "teacher" ) and ( obj1.isCharacter ) ) ) then 
       nextLevelCharacterCollision( teacher, map:findObject( "teacherBubble" ), message.teacher )
+
+    elseif ( ( ( obj1.myName == "cook" ) and ( obj2.isCharacter ) ) or ( ( obj2.myName == "cook" ) and ( obj1.isCharacter ) ) ) then
+      nextLevelCharacterCollision( cook, map:findObject( "cookBubble" ), message.cook )
 
     elseif ( ( ( obj1.isCollision ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.isCollision ) ) ) then 
       local obj
@@ -357,15 +409,8 @@ function scene:create( event )
   map, character, gamePanel, gameState, path, instructions, instructionsTable, gameFileData = gameScene:set( "map" )
 
   teacher = map:findObject( "teacher" )
+  cook = map:findObject( "cook" )
   character.alpha = 1
-
-  --[[instructionsTable.direction = { "right", "down", "right", "right", "right", "left" }
-  instructionsTable.steps = { 2, 2, 2, 1, 1, 1 }
-  instructionsTable.last = 6]]
-
-  --[[instructionsTable.direction = { "right", "down", "up", "down", "down", "right", "right" }
-  instructionsTable.steps = { 2, 2, 2, 1, 1, 1, 1  }
-  instructionsTable.last = 7]]
 
   sceneGroup:insert( map )
   sceneGroup:insert( gamePanel.tiled )

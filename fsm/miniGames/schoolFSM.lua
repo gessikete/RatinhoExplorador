@@ -72,9 +72,8 @@ function M.new( school, character, supplies, listeners, collision, instructionsT
 	  	  	{ name = "repeatLevel", from = "feedbackAnimation", to = "repeat", nextEvent = "checkFeedbackWait" },
 	  	  	{ name = "showObligatoryMessage",  from = "feedbackAnimation",  to = "teacherBubble_msg9", nextEvent = "showAnimation" },
 	  	  	{ name = "showAnimation", from = "teacherBubble_msg9", to = "teacherJumpingAnimation", nextEvent = "showObligatoryMessage" },
-	  	  	{ name = "showObligatoryMessage",  from = "teacherJumpingAnimation",  to = "teacherBubble_msg10", nextEvent = "showAnimation" },
-	  	  	{ name = "showAnimation", from = "teacherBubble_msg10", to = "leaveSchoolAnimation", nextEvent = "saveGame" },
-	  	  	{ name = "saveGame",  from = "leaveSchoolAnimation",  to = "save", nextEvent = "finishLevel" },
+	  	  	{ name = "showObligatoryMessage",  from = "teacherJumpingAnimation",  to = "teacherBubble_msg10", nextEvent = "saveGame" },
+	  	  	{ name = "saveGame",  from = "teacherBubble_msg10",  to = "save", nextEvent = "finishLevel" },
 	  	  	{ name = "finishLevel",  from = "save",  to = "finish" },
 	  	  },
 	  	  callbacks = {
@@ -275,10 +274,8 @@ function M.new( school, character, supplies, listeners, collision, instructionsT
 
 	  	    on_finishLevel = 
 	  	      function( self, event, from, to ) 
-	  	        transition.cancel( character )
-	  	        gamePanel:stopAllListeners()
-	  	        character.stepping.point = "exit"
-	  	        timer.performWithDelay( 800, sceneTransition.gotoMap )
+	  	      	gamePanel.restartExecutionListeners()
+	  	      	gamePanel:updateBikeMaxCount( math.huge )
 	  	      end,
 
 	  	    on_repeatLevel = 
@@ -356,7 +353,6 @@ function M.new( school, character, supplies, listeners, collision, instructionsT
 
 	  	    on_checkFeedbackWait = 
 	  	    	function( self, event, from, to ) 
-	  	        	--transition.fadeOut( gamePanel.tiled, { time = 400 } )
 	  	        	if ( M.waitFeedback == false ) then 
 		  	        	gameFlow.updateFSM()
 	  	    		else
@@ -370,9 +366,8 @@ function M.new( school, character, supplies, listeners, collision, instructionsT
 		M.updateFSM = gameFlow.updateFSM
 		M.fsm = schoolFSM
 		animation = schoolAnimations.new( school, character, gamePanel, path, schoolFSM, gameFlow )
-	  	--schoolFSM.showObligatoryMessage()
+
 	  	schoolFSM.showAnimation()
-	  	--schoolFSM.showGamePanel()
 	end
 end
 

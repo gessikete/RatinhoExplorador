@@ -168,9 +168,20 @@ local function onCollision( event )
         timer.performWithDelay( 1000, sceneTransition.gotoMap )
       end
 
-    elseif ( ( obj1.myName == "supply" ) and ( obj2.isCharacter ) ) then
-      supplies.collected[ obj1.number ] = supplies.list[ obj1.number ]
-      transition.fadeOut( supplies.list[ obj1.number ], { time = 400 } )
+    elseif ( ( ( obj1.myName == "supply" ) and ( obj2.isCharacter ) ) or ( ( obj2.myName == "supply" ) and ( obj1.isCharacter ) ) ) then
+      if ( obj1.myName == "supply" ) then obj = obj1 else obj = obj2 end
+      local alreadyCollected = false
+
+      if ( supplies.collected ) then
+        for k, v in pairs( supplies.collected ) do
+          if ( v == obj ) then alreadyCollected = true end 
+        end 
+
+        if ( alreadyCollected == false ) then 
+          supplies.collected[ obj1.number ] = supplies.list[ obj1.number ]
+          transition.fadeOut( supplies.list[ obj1.number ], { time = 400 } )
+        end
+      end
 
     elseif ( ( obj2.myName == "supply" ) and ( obj1.isCharacter ) ) then
       supplies.collected[ obj2.number ] = supplies.list[ obj2.number ]
@@ -224,20 +235,20 @@ local function onCollision( event )
         if ( collision ) then collision.chair = true end 
       end
 
-    elseif ( ( miniGameData.isComplete == false ) and ( ( obj1.myName == "organizer" ) or ( obj2.myName == "organizer" ) ) ) then
+    elseif ( ( ( obj1.myName == "organizer" ) or ( obj2.myName == "organizer" ) ) ) then
       local obj 
       if ( obj1.myName == "organizer" ) then obj = obj1 else obj = obj2 end 
       local list = { }
       
       transition.cancel( character )
-
+    
       if ( collision ) then 
-        if ( instructionsTable.last < instructionsTable.executing ) then 
-          schoolFSM.waitFeedback = true 
-        end
+        schoolFSM.waitFeedback = true 
 
         if ( collision.organizer == false ) then 
           for k, v in pairs( supplies.collected ) do
+            v.x = organizerPositions[obj.number].x 
+            v.y = organizerPositions[obj.number].y
             table.insert( list, v )
           end
         else 
@@ -253,11 +264,18 @@ local function onCollision( event )
             for j = 1, #list - 1  do 
                 transition.fadeOut( list[j], { time = 800 } )
             end
-            transition.fadeOut( list[#list], { time = 800, onComplete = schoolFSM.updateFSM } )
+            transition.fadeOut( list[#list], { time = 800, 
+              onComplete = 
+                function()
+                  if ( instructionsTable.last < instructionsTable.executing ) then 
+                    schoolFSM.updateFSM() 
+                  else 
+                    schoolFSM.waitFeedback = false 
+                  end
+                end
+              } )
             return 
           end  
-          list[i].x = organizerPositions[obj.number].x 
-          list[i].y = organizerPositions[obj.number].y
           list[i]:toFront()
           transition.fadeIn( list[i], { time = 800, 
             onComplete = 
@@ -307,6 +325,14 @@ local function onCollision( event )
         supplies.remaining = remaining
         collision.organizedAll = organizedAll
         collision.organizedNone = organizedNone
+      else
+        if ( ( obj.direction == "right" ) ) then 
+          transition.to( character, { time = 0, x = character.x + .25 * tilesSize } )
+        elseif ( ( obj.direction == "down" ) ) then 
+          transition.to( character, { time = 0, y = character.y + .06 * tilesSize } )
+        else
+          transition.to( character, { time = 0, y = character.y - .35 * tilesSize } )
+        end
       end
     -- Colisão entre o personagem e os sensores dos tiles do caminho
     elseif ( ( obj1.isCharacter ) and ( obj2.isPath ) ) then
@@ -343,7 +369,6 @@ end
 -- Remoções para limpar a tela
 -- -----------------------------------------------------------------------------------
 local function destroyScene()
-  print( "oncol: " .. tostring( onCollision ) )
   gamePanel:destroy()
 
   instructions:destroyInstructionsTable()
@@ -351,7 +376,7 @@ local function destroyScene()
   school:removeSelf()
   school = nil 
 
-  if ( ( schoolFSM.fsm.messageBubble ) and ( schoolFSM.fsm.messageBubble.text ) ) then 
+  if ( ( schoolFSM.fsm ) and ( schoolFSM.fsm.messageBubble ) and ( schoolFSM.fsm.messageBubble.text ) ) then 
     local text = schoolFSM.fsm.messageBubble.text
     text:removeSelf()
   end
@@ -373,7 +398,7 @@ function scene:create( event )
   sceneGroup:insert( school )
   sceneGroup:insert( gamePanel.tiled )
 
-  --miniGameData.isComplete = true 
+  --miniGameData.isComplete = false 
   --miniGameData.onRepeat = false 
 
   if ( miniGameData.onRepeat == true ) then
@@ -384,96 +409,6 @@ function scene:create( event )
   setObstacles()
   path:hidePath()
 
-  -- Sem usar a bicicleta
-  --[[instructionsTable.steps = { 
-    1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1,
-    1, 1
-     }
-  instructionsTable.direction = { 
-  "down", "down",
-  "right", "right", "right", "right", "right", "right", "right", "right", "right",
-  "up", "up", "up", "up",
-  "left", "left", "left", "left", "left", "left", "left", "left",
-  "up", "up",
-  "left", "left" }]]
-
-  --instructionsTable.last = 27
-
-  --[[instructionsTable.steps = { 
-    1, 1, 1,
-    1, 1, 1,
-    1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1,
-    1, 1
-     }
-  instructionsTable.direction = { 
-  "right", "right", "right",
-  "left", "left",
-  "down", "down",
-  "right", "right", "right", "right", "right", "right", "right", "right", "right",
-  "up", "up", "up", "up",
-  "left", "left", "left", "left", "left", "left", "left", "left",
-  "up", "up",
-  "left", "left" }
-
-  instructionsTable.last = 33]]
-
-  -- Perfect
-  --[[instructionsTable.steps = { 2, 9, 4, 8, 2, 2 }
-  instructionsTable.direction = { "down", "right", "up", "left", "up", "left" }
-  instructionsTable.last = 6]]
-
-  --[[instructionsTable.steps = { 2, 3, 3, 8, 2, 2 }
-  instructionsTable.direction = { "down", "right", "up", "left", "up", "left" }
-  instructionsTable.last = 3]]
-
-  --[[instructionsTable.steps = { 4, 3, 4 }
-  instructionsTable.direction = { "right", "up", "down" }
-  instructionsTable.last = 1]]
-
-
-  -- Organizador de baixo
-  --[[instructionsTable.steps = { 2, 9, 4, 10, 1 }
-  instructionsTable.direction = { "down", "right", "up", "left", "up", "left", "up" }
-  instructionsTable.last = 5]]
-
-  -- Organizador de cima 
-  --[[instructionsTable.steps = { 1, 7, 2, 2  }
-  instructionsTable.direction = { "right", "up", "left", "down"  }
-  instructionsTable.last = 4]]
-
-  -- Foi até o organizador mais de uma vez, mas pegou tudo
-  --[[instructionsTable.steps = { 2, 9, 4, 8, 1, 2, 1, 1, 2 }
-  instructionsTable.direction = { "down", "right", "up", "left", "up", "left", "right", "up", "left" }
-  instructionsTable.last = 9]]
-
-  --[[instructionsTable.steps = { 1, 2, 2, 2, 5, 2, 1, 5, 5, 1, 1, 1, 1, 2, 2, 9, 9, 3, 2 }
-  instructionsTable.direction = { "right", "down", "right", "left", "up", "left", "down", "right", "left", "up", "left", "right", "up", "left", "down", "right", "left", "up", "left" }
-  instructionsTable.last = 19]]
-
-  --Coletou todas as peças, mas não levou todas ao organizador
-  --[[instructionsTable.steps = { 1, 2, 2, 2, 5, 2, 1, 5, 5, 1, 1, 1, 1, 2, 2, 9, 9, 3, 2 }
-  instructionsTable.direction = { "right", "down", "right", "left", "up", "left", "down", "right", "left", "up", "left", "right", "up", "left", "down", "right", "left", "up", "left" }
-  instructionsTable.last = 17]]
-
-  --[[instructionsTable.steps = { 1, 4, 2, 4 }
-  instructionsTable.direction = { "right", "up", "right", "left" }
-  instructionsTable.last = 4]]
-
-  --[[instructionsTable.steps = { 1, 3, 2, 4 }
-  instructionsTable.direction = { "right", "up", "right", "left" }
-  instructionsTable.last = 4]]
-
-  --[[instructionsTable.steps = { 2, 9, 4, 8, 2, 2, 3, 2 }
-  instructionsTable.direction = { "down", "right", "up", "left", "up", "left", "right", "up" }
-  instructionsTable.last = 8]]
 end
 
 
@@ -540,7 +475,7 @@ function scene:hide( event )
         miniGameData = originalMiniGameData
       end
     end
-  
+
     gameState:save( miniGameData )
     destroyScene()
     listeners:destroy()

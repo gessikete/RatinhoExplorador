@@ -23,7 +23,7 @@
          "y":0
         }, 
         {
-         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4996, 4997, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5006, 5007, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 33, 34, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 34, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4996, 4997, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 5006, 5007, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 715, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":24,
          "name":"floor2",
          "opacity":1,
@@ -4815,6 +4815,441 @@
         }, 
         {
          "draworder":"topdown",
+         "name":"ingredients sensors",
+         "objects":[
+                {
+                 "height":2,
+                 "id":1011,
+                 "name":"",
+                 "properties":
+                    {
+                     "myName":"ingredient",
+                     "number":1,
+                     "recipe":1
+                    },
+                 "propertytypes":
+                    {
+                     "myName":"string",
+                     "number":"int",
+                     "recipe":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":2,
+                 "x":239,
+                 "y":303
+                }, 
+                {
+                 "height":2,
+                 "id":1012,
+                 "name":"",
+                 "properties":
+                    {
+                     "myName":"ingredient",
+                     "number":2,
+                     "recipe":1
+                    },
+                 "propertytypes":
+                    {
+                     "myName":"string",
+                     "number":"int",
+                     "recipe":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":2,
+                 "x":79,
+                 "y":143
+                }, 
+                {
+                 "height":2,
+                 "id":1013,
+                 "name":"",
+                 "properties":
+                    {
+                     "myName":"ingredient",
+                     "number":3,
+                     "recipe":1
+                    },
+                 "propertytypes":
+                    {
+                     "myName":"string",
+                     "number":"int",
+                     "recipe":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":2,
+                 "x":303,
+                 "y":175
+                }, 
+                {
+                 "height":2,
+                 "id":1014,
+                 "name":"",
+                 "properties":
+                    {
+                     "myName":"ingredient",
+                     "number":1,
+                     "recipe":2
+                    },
+                 "propertytypes":
+                    {
+                     "myName":"string",
+                     "number":"int",
+                     "recipe":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":2,
+                 "x":111,
+                 "y":79
+                }, 
+                {
+                 "height":2,
+                 "id":1015,
+                 "name":"",
+                 "properties":
+                    {
+                     "myName":"ingredient",
+                     "number":2,
+                     "recipe":2
+                    },
+                 "propertytypes":
+                    {
+                     "myName":"string",
+                     "number":"int",
+                     "recipe":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":2,
+                 "x":111,
+                 "y":271
+                }, 
+                {
+                 "height":2,
+                 "id":1017,
+                 "name":"",
+                 "properties":
+                    {
+                     "myName":"ingredient",
+                     "number":3,
+                     "recipe":2
+                    },
+                 "propertytypes":
+                    {
+                     "myName":"string",
+                     "number":"int",
+                     "recipe":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":2,
+                 "x":303,
+                 "y":271
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":false,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"bench",
+         "objects":[
+                {
+                 "height":3,
+                 "id":980,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"up",
+                     "isCollision":true,
+                     "isSensor":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool",
+                     "isSensor":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":105,
+                 "x":157,
+                 "y":168
+                }, 
+                {
+                 "height":8,
+                 "id":998,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"left",
+                     "isCollision":true,
+                     "isSensor":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool",
+                     "isSensor":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":3,
+                 "x":136,
+                 "y":188
+                }, 
+                {
+                 "height":3,
+                 "id":999,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"down",
+                     "isCollision":true,
+                     "isSensor":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool",
+                     "isSensor":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":105,
+                 "x":155,
+                 "y":205
+                }, 
+                {
+                 "height":8,
+                 "id":1000,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"right",
+                     "isCollision":true,
+                     "isSensor":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool",
+                     "isSensor":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":3,
+                 "x":275,
+                 "y":188
+                }, 
+                {
+                 "height":55,
+                 "id":1019,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"left",
+                     "isCollision":true,
+                     "isSensor":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool",
+                     "isSensor":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":3,
+                 "x":360,
+                 "y":141
+                }, 
+                {
+                 "height":3,
+                 "id":1020,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"up",
+                     "isCollision":true,
+                     "isSensor":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool",
+                     "isSensor":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":6,
+                 "x":372,
+                 "y":136
+                }, 
+                {
+                 "height":3,
+                 "id":1021,
+                 "name":"physics",
+                 "properties":
+                    {
+                     "bodyType":"static",
+                     "direction":"down",
+                     "isCollision":true,
+                     "isSensor":true
+                    },
+                 "propertytypes":
+                    {
+                     "bodyType":"string",
+                     "direction":"string",
+                     "isCollision":"bool",
+                     "isSensor":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":6,
+                 "x":372,
+                 "y":205
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":false,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"organizers",
+         "objects":[
+                {
+                 "height":2,
+                 "id":991,
+                 "name":"",
+                 "properties":
+                    {
+                     "myName":2
+                    },
+                 "propertytypes":
+                    {
+                     "myName":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":2,
+                 "x":367,
+                 "y":175
+                }, 
+                {
+                 "height":2,
+                 "id":1022,
+                 "name":"",
+                 "properties":
+                    {
+                     "myName":1
+                    },
+                 "propertytypes":
+                    {
+                     "myName":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":2,
+                 "x":207,
+                 "y":245
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":false,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 227, 228, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 257, 258, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 443, 444, 443, 444, 443, 444, 443, 444, 443, 444, 0, 0, 0, 0, 207, 208, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 473, 474, 473, 474, 473, 474, 473, 474, 473, 474, 0, 0, 0, 0, 237, 238, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 443, 444, 443, 444, 443, 444, 443, 444, 443, 444, 0, 0, 0, 0, 331, 332, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 473, 474, 473, 474, 473, 474, 473, 474, 473, 474, 0, 0, 0, 0, 361, 362, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 327, 328, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 357, 358, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         "height":24,
+         "name":"grids",
+         "opacity":0.970000028610229,
+         "type":"tilelayer",
+         "visible":true,
+         "width":32,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"stove",
+         "objects":[
+                {
+                 "height":6,
+                 "id":990,
+                 "name":"",
+                 "properties":
+                    {
+                     "direction":"left",
+                     "myName":"stove"
+                    },
+                 "propertytypes":
+                    {
+                     "direction":"string",
+                     "myName":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":3,
+                 "x":358,
+                 "y":173
+                }, 
+                {
+                 "gid":5136,
+                 "height":30.96875,
+                 "id":944,
+                 "name":"stove",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":30.030303030303,
+                 "x":353,
+                 "y":192
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "name":"ingredients",
          "objects":[
                 {
@@ -4836,12 +5271,12 @@
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":33,
+                 "x":65,
                  "y":162
                 }, 
                 {
                  "gid":5130,
-                 "height":30,
+                 "height":28,
                  "id":937,
                  "name":"",
                  "properties":
@@ -4857,9 +5292,9 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":30,
-                 "x":96,
-                 "y":287
+                 "width":28,
+                 "x":98,
+                 "y":286
                 }, 
                 {
                  "gid":5131,
@@ -4868,7 +5303,7 @@
                  "name":"",
                  "properties":
                     {
-                     "number":4,
+                     "number":3,
                      "recipe":2
                     },
                  "propertytypes":
@@ -4880,8 +5315,8 @@
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":320,
-                 "y":256
+                 "x":288,
+                 "y":288
                 }, 
                 {
                  "gid":5132,
@@ -4928,42 +5363,8 @@
                  "y":96
                 }, 
                 {
-                 "gid":5135,
-                 "height":30,
-                 "id":942,
-                 "name":"",
-                 "properties":
-                    {
-                     "number":3,
-                     "recipe":2
-                    },
-                 "propertytypes":
-                    {
-                     "number":"int",
-                     "recipe":"int"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":30,
-                 "x":257,
-                 "y":127
-                }, 
-                {
-                 "gid":5136,
-                 "height":33,
-                 "id":944,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":32,
-                 "x":352,
-                 "y":192
-                }, 
-                {
                  "gid":5137,
-                 "height":32,
+                 "height":28,
                  "id":954,
                  "name":"",
                  "properties":
@@ -4979,222 +5380,13 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":32,
-                 "x":224,
-                 "y":320
+                 "width":28,
+                 "x":226,
+                 "y":318
                 }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "draworder":"topdown",
-         "name":"ingredients sensors",
-         "objects":[],
-         "opacity":1,
-         "type":"objectgroup",
-         "visible":true,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "draworder":"topdown",
-         "name":"stove",
-         "objects":[
-                {
-                 "height":6,
-                 "id":990,
-                 "name":"stove",
-                 "properties":
-                    {
-                     "direction":"left",
-                     "myName":"stove"
-                    },
-                 "propertytypes":
-                    {
-                     "direction":"string",
-                     "myName":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":false,
-                 "width":3,
-                 "x":358,
-                 "y":173
-                }],
-         "opacity":1,
-         "type":"objectgroup",
-         "visible":true,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "draworder":"topdown",
-         "name":"bench",
-         "objects":[
-                {
-                 "height":3,
-                 "id":980,
-                 "name":"physics",
-                 "properties":
-                    {
-                     "bodyType":"static",
-                     "direction":"up",
-                     "isSensor":true,
-                     "myName":"ingredient",
-                     "number":2,
-                     "recipe":3
-                    },
-                 "propertytypes":
-                    {
-                     "bodyType":"string",
-                     "direction":"string",
-                     "isSensor":"bool",
-                     "myName":"string",
-                     "number":"int",
-                     "recipe":"int"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":124,
-                 "x":162,
-                 "y":164
-                }, 
-                {
-                 "height":40,
-                 "id":998,
-                 "name":"physics",
-                 "properties":
-                    {
-                     "bodyType":"static",
-                     "direction":"left",
-                     "isSensor":true,
-                     "myName":"ingredient",
-                     "number":1,
-                     "recipe":2
-                    },
-                 "propertytypes":
-                    {
-                     "bodyType":"string",
-                     "direction":"string",
-                     "isSensor":"bool",
-                     "myName":"string",
-                     "number":"int",
-                     "recipe":"int"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":3,
-                 "x":149,
-                 "y":174
-                }, 
-                {
-                 "height":3,
-                 "id":999,
-                 "name":"physics",
-                 "properties":
-                    {
-                     "bodyType":"static",
-                     "direction":"down",
-                     "isOrganizer":true,
-                     "isSensor":true,
-                     "myName":"ingredient",
-                     "number":2,
-                     "recipe":3
-                    },
-                 "propertytypes":
-                    {
-                     "bodyType":"string",
-                     "direction":"string",
-                     "isOrganizer":"bool",
-                     "isSensor":"bool",
-                     "myName":"string",
-                     "number":"int",
-                     "recipe":"int"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":124,
-                 "x":162,
-                 "y":217
-                }, 
-                {
-                 "height":40,
-                 "id":1000,
-                 "name":"physics",
-                 "properties":
-                    {
-                     "bodyType":"static",
-                     "direction":"right",
-                     "isSensor":true,
-                     "myName":"ingredient",
-                     "number":1,
-                     "recipe":2
-                    },
-                 "propertytypes":
-                    {
-                     "bodyType":"string",
-                     "direction":"string",
-                     "isSensor":"bool",
-                     "myName":"string",
-                     "number":"int",
-                     "recipe":"int"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":3,
-                 "x":280,
-                 "y":171
-                }],
-         "opacity":1,
-         "type":"objectgroup",
-         "visible":false,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "draworder":"topdown",
-         "name":"organizers",
-         "objects":[
-                {
-                 "height":2,
-                 "id":991,
-                 "name":"",
-                 "properties":
-                    {
-                     "myName":3
-                    },
-                 "propertytypes":
-                    {
-                     "myName":"int"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":2,
-                 "x":367,
-                 "y":175
-                }],
-         "opacity":1,
-         "type":"objectgroup",
-         "visible":true,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 227, 228, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 257, 258, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 443, 444, 443, 444, 443, 444, 443, 444, 443, 444, 0, 0, 0, 0, 207, 208, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 473, 474, 473, 474, 473, 474, 473, 474, 473, 474, 0, 0, 0, 0, 237, 238, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 443, 444, 443, 444, 443, 444, 443, 444, 443, 444, 0, 0, 0, 0, 331, 332, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 473, 474, 473, 474, 473, 474, 473, 474, 473, 474, 0, 0, 0, 0, 361, 362, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 327, 328, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 357, 358, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         "height":24,
-         "name":"grids",
-         "opacity":0.970000028610229,
-         "type":"tilelayer",
-         "visible":true,
-         "width":32,
          "x":0,
          "y":0
         }, 
@@ -5203,17 +5395,19 @@
          "name":"cook",
          "objects":[
                 {
-                 "gid":2147484247,
+                 "gid":599,
                  "height":49,
                  "id":901,
                  "name":"cook",
                  "properties":
                     {
+                     "alpha":0,
                      "bubble":"cookBubble",
                      "myName":"cook"
                     },
                  "propertytypes":
                     {
+                     "alpha":"int",
                      "bubble":"string",
                      "myName":"string"
                     },
@@ -5221,7 +5415,7 @@
                  "type":"",
                  "visible":true,
                  "width":38,
-                 "x":186,
+                 "x":189,
                  "y":255
                 }, 
                 {
@@ -5247,7 +5441,7 @@
                  "visible":false,
                  "width":3,
                  "x":199,
-                 "y":233
+                 "y":230
                 }, 
                 {
                  "height":3,
@@ -5272,7 +5466,7 @@
                  "visible":false,
                  "width":6,
                  "x":205,
-                 "y":242
+                 "y":240
                 }, 
                 {
                  "height":6,
@@ -5297,7 +5491,7 @@
                  "visible":false,
                  "width":3,
                  "x":214,
-                 "y":233
+                 "y":230
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -5415,7 +5609,7 @@
                  "visible":true,
                  "width":340,
                  "x":50,
-                 "y":22
+                 "y":12
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -5449,7 +5643,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -5538,8 +5732,8 @@
                  "type":"",
                  "visible":true,
                  "width":100,
-                 "x":200,
-                 "y":300
+                 "x":137,
+                 "y":309
                 }, 
                 {
                  "gid":600,
@@ -5560,8 +5754,8 @@
                  "type":"",
                  "visible":true,
                  "width":100,
-                 "x":200,
-                 "y":300
+                 "x":137,
+                 "y":309
                 }, 
                 {
                  "gid":604,
@@ -5587,7 +5781,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -5604,7 +5798,7 @@
                  "visible":false,
                  "width":10,
                  "x":171,
-                 "y":325
+                 "y":337
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -5640,7 +5834,7 @@
                  "gid":590,
                  "height":12,
                  "id":850,
-                 "name":"teacherBlinkingDart",
+                 "name":"cookBlinkingDart",
                  "properties":
                     {
                      "alpha":"0"
@@ -5658,7 +5852,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -5713,10 +5907,22 @@
                  "width":32,
                  "x":384,
                  "y":288
+                }, 
+                {
+                 "gid":711,
+                 "height":32,
+                 "id":1024,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":384,
+                 "y":350
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -5737,12 +5943,12 @@
                     {
                      "alpha":"int"
                     },
-                 "rotation":-5,
+                 "rotation":7,
                  "type":"",
                  "visible":true,
                  "width":90.769376535028,
-                 "x":289,
-                 "y":133.907788513118
+                 "x":308,
+                 "y":128
                 }, 
                 {
                  "gid":5125,
@@ -5757,12 +5963,12 @@
                     {
                      "alpha":"int"
                     },
-                 "rotation":-5,
+                 "rotation":7,
                  "type":"",
                  "visible":true,
                  "width":90.769376535028,
-                 "x":289,
-                 "y":133.907788513118
+                 "x":308,
+                 "y":128
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -5791,12 +5997,12 @@
                      "number":"int",
                      "recipe":"int"
                     },
-                 "rotation":0,
+                 "rotation":7,
                  "type":"",
                  "visible":true,
                  "width":10.8923251842034,
-                 "x":293.538468826751,
-                 "y":74
+                 "x":325,
+                 "y":71
                 }, 
                 {
                  "gid":5127,
@@ -5815,12 +6021,12 @@
                      "number":"int",
                      "recipe":"int"
                     },
-                 "rotation":0,
+                 "rotation":7,
                  "type":"",
                  "visible":true,
                  "width":10.8923251842034,
-                 "x":295.353856357452,
-                 "y":90.338487776305
+                 "x":324,
+                 "y":87
                 }, 
                 {
                  "gid":5127,
@@ -5839,12 +6045,12 @@
                      "number":"int",
                      "recipe":"int"
                     },
-                 "rotation":0,
+                 "rotation":7,
                  "type":"",
                  "visible":true,
                  "width":10.8923251842034,
-                 "x":296.261550122802,
-                 "y":106.67697555261
+                 "x":322,
+                 "y":102
                 }, 
                 {
                  "gid":5127,
@@ -5863,12 +6069,12 @@
                      "number":"int",
                      "recipe":"int"
                     },
-                 "rotation":0,
+                 "rotation":7,
                  "type":"",
                  "visible":true,
                  "width":10.8923251842034,
-                 "x":295.353856357452,
-                 "y":100.323119195158
+                 "x":322,
+                 "y":102
                 }, 
                 {
                  "gid":5127,
@@ -5887,36 +6093,12 @@
                      "number":"int",
                      "recipe":"int"
                     },
-                 "rotation":0,
+                 "rotation":7,
                  "type":"",
                  "visible":true,
                  "width":10.8923251842034,
-                 "x":294.446162592102,
-                 "y":85.800018949554
-                }, 
-                {
-                 "gid":5127,
-                 "height":10.8923251842034,
-                 "id":928,
-                 "name":"2",
-                 "properties":
-                    {
-                     "alpha":0,
-                     "number":4,
-                     "recipe":2
-                    },
-                 "propertytypes":
-                    {
-                     "alpha":"int",
-                     "number":"int",
-                     "recipe":"int"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":10.8923251842034,
-                 "x":297.169243888152,
-                 "y":113.030831910062
+                 "x":324,
+                 "y":87
                 }, 
                 {
                  "gid":5127,
@@ -5935,12 +6117,12 @@
                      "number":"int",
                      "recipe":"int"
                     },
-                 "rotation":0,
+                 "rotation":7,
                  "type":"",
                  "visible":true,
                  "width":10.8923251842034,
-                 "x":293.538468826751,
-                 "y":74
+                 "x":325,
+                 "y":71
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -5969,12 +6151,12 @@
                      "number":"int",
                      "recipe":"int"
                     },
-                 "rotation":-5,
+                 "rotation":9,
                  "type":"",
                  "visible":true,
                  "width":9.0769376535028,
-                 "x":298.076937653503,
-                 "y":102.138506725859
+                 "x":323,
+                 "y":102
                 }, 
                 {
                  "gid":5128,
@@ -5993,12 +6175,12 @@
                      "number":"int",
                      "recipe":"int"
                     },
-                 "rotation":-5,
+                 "rotation":7,
                  "type":"",
                  "visible":true,
                  "width":9.0769376535028,
-                 "x":296.261550122802,
-                 "y":87.615406480254
+                 "x":325,
+                 "y":87
                 }, 
                 {
                  "gid":5128,
@@ -6017,12 +6199,12 @@
                      "number":"int",
                      "recipe":"int"
                     },
-                 "rotation":-3,
+                 "rotation":9,
                  "type":"",
                  "visible":true,
                  "width":9.0769376535028,
-                 "x":298.076937653503,
-                 "y":106.67697555261
+                 "x":323,
+                 "y":102
                 }, 
                 {
                  "gid":5128,
@@ -6041,36 +6223,12 @@
                      "number":"int",
                      "recipe":"int"
                     },
-                 "rotation":-5,
+                 "rotation":7,
                  "type":"",
                  "visible":true,
                  "width":9.0769376535028,
-                 "x":295.353856357452,
-                 "y":74
-                }, 
-                {
-                 "gid":5128,
-                 "height":10.8923251842034,
-                 "id":946,
-                 "name":"2",
-                 "properties":
-                    {
-                     "alpha":0,
-                     "number":4,
-                     "recipe":2
-                    },
-                 "propertytypes":
-                    {
-                     "alpha":"int",
-                     "number":"int",
-                     "recipe":"int"
-                    },
-                 "rotation":-5,
-                 "type":"",
-                 "visible":true,
-                 "width":9.0769376535028,
-                 "x":298.984631418853,
-                 "y":115.753913206113
+                 "x":327,
+                 "y":71
                 }, 
                 {
                  "gid":5128,
@@ -6089,12 +6247,12 @@
                      "number":"int",
                      "recipe":"int"
                     },
-                 "rotation":-3,
+                 "rotation":7,
                  "type":"",
                  "visible":true,
                  "width":9.0769376535028,
-                 "x":297.169243888152,
-                 "y":90.338487776305
+                 "x":325,
+                 "y":87
                 }, 
                 {
                  "gid":5128,
@@ -6113,12 +6271,42 @@
                      "number":"int",
                      "recipe":"int"
                     },
-                 "rotation":-5,
+                 "rotation":7,
                  "type":"",
                  "visible":true,
                  "width":9.0769376535028,
-                 "x":295.353856357452,
-                 "y":74
+                 "x":327,
+                 "y":71
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"pasta",
+         "objects":[
+                {
+                 "gid":5140,
+                 "height":30,
+                 "id":1023,
+                 "name":"pasta",
+                 "properties":
+                    {
+                     "alpha":0
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":30,
+                 "x":353,
+                 "y":223
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -6146,8 +6334,38 @@
          "visible":false,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"hand",
+         "objects":[
+                {
+                 "gid":592,
+                 "height":45,
+                 "id":1025,
+                 "name":"recipeHand",
+                 "properties":
+                    {
+                     "alpha":0
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":50,
+                 "x":287,
+                 "y":81
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextobjectid":1008,
+ "nextobjectid":1026,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",
@@ -6342,7 +6560,7 @@
          "margin":0,
          "name":"recipe",
          "spacing":0,
-         "tilecount":5,
+         "tilecount":4,
          "tileheight":171,
          "tiles":
             {
@@ -6355,12 +6573,6 @@
              "11":
                 {
                  "image":"images\/restaurant\/recipe_2.png",
-                 "imageheight":171,
-                 "imagewidth":170
-                },
-             "12":
-                {
-                 "image":"images\/restaurant\/recipe_3.png",
                  "imageheight":171,
                  "imagewidth":170
                 },
@@ -6391,8 +6603,8 @@
          "margin":0,
          "name":"ingredients",
          "spacing":0,
-         "tilecount":10,
-         "tileheight":33,
+         "tilecount":9,
+         "tileheight":210,
          "tiles":
             {
              "0":
@@ -6407,11 +6619,11 @@
                  "imageheight":32,
                  "imagewidth":32
                 },
-             "10":
+             "11":
                 {
-                 "image":"images\/restaurant\/dough.png",
-                 "imageheight":32,
-                 "imagewidth":32
+                 "image":"images\/restaurant\/pasta.png",
+                 "imageheight":210,
+                 "imagewidth":210
                 },
              "2":
                 {
@@ -6448,15 +6660,9 @@
                  "image":"images\/restaurant\/bowl.png",
                  "imageheight":32,
                  "imagewidth":32
-                },
-             "9":
-                {
-                 "image":"images\/restaurant\/sauce.png",
-                 "imageheight":32,
-                 "imagewidth":32
                 }
             },
-         "tilewidth":32
+         "tilewidth":210
         }],
  "tilewidth":16,
  "type":"map",

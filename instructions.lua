@@ -3,7 +3,7 @@ module(..., package.seeall)
 -- -----------------------------------------------------------------------------------
 -- Declaração das variáveis
 -- -----------------------------------------------------------------------------------
-local M = { gameFlow }
+local M = { updateFSM }
 
 local slowStep = 400
 
@@ -112,7 +112,6 @@ function M.new( tilesSize, character, markedPath, miniGame )
         if ( restartExecutionListeners ) then 
           restartExecutionListeners()
           if ( M.updateFSM ) then
-            print( instructionsTable.last )
             timer.performWithDelay( slowStep, M.updateFSM )
           end
         else print( "Listener nulo (instructions.lua)" )
@@ -134,12 +133,6 @@ function M.new( tilesSize, character, markedPath, miniGame )
     if ( stopExecutionListeners ) then 
       stopExecutionListeners()
       instructionsTable.stop = false 
-      --[[for k, v in pairs( instructionsTable.steps ) do
-        print( "-----" )
-        print( "steps: " .. instructionsTable.steps[k] )
-        print( "dir: " ..  instructionsTable.direction[k] )
-        print( "-----" )
-      end]]
     else print( "Listener nulo (instructions.lua)" )
     end
     -- Desmarca caminho anterior
@@ -153,7 +146,7 @@ function M.new( tilesSize, character, markedPath, miniGame )
 -- Liberação de memória
 -- -------------------------------------------------------------------------------------
   function M:destroyInstructionsTable()
-    if (instructionsTable ) then
+    if ( instructionsTable ) then
       for k0, v0 in pairs( instructionsTable ) do
         if ( type(v0) == "table" ) then 
           for k1, v1 in pairs(v0) do
@@ -164,6 +157,8 @@ function M.new( tilesSize, character, markedPath, miniGame )
       end
       instructionsTable = nil 
     end
+
+    M.updateFSM = nil 
   end
 
   return instructionsTable

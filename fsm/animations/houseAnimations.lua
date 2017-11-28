@@ -130,11 +130,11 @@ function M.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow
 		local hand = gamePanel.bikeHand
 		local bikeWheel = gamePanel.bikeWheel
 		local time = 1500
-		local radius = bikeWheel.radius/2
+		local radius = bikeWheel.radius*.65
 		local maxSteps = 2
 
-		hand.x = bikeWheel.x - radius + 2
-		hand.y = bikeWheel.contentBounds.yMin - 2
+		hand.x = bikeWheel.x - radius + 10
+		hand.y = bikeWheel.contentBounds.yMin + 10
 		hand.alpha = 1
 		 
 		handBikeAnimation( time, hand, radius, hand.x, hand.y, tutorialFSM.current )
@@ -146,11 +146,11 @@ function M.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow
 		local hand = gamePanel.bikeHand
 		local bikeWheel = gamePanel.bikeWheel
 		local time = 1500
-		local radius = bikeWheel.radius/2
+		local radius = bikeWheel.radius*.65
 		local maxSteps = 3
 
-		hand.x = bikeWheel.x - radius + 2
-		hand.y = bikeWheel.contentBounds.yMin - 2
+		hand.x = bikeWheel.x - radius + 10
+		hand.y = bikeWheel.contentBounds.yMin + 10
 		hand.alpha = 1
 		 
 		handBikeAnimation( time, hand, radius, hand.x, hand.y, tutorialFSM.current )

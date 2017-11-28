@@ -207,7 +207,7 @@ local function destroyScene()
     messageBubble.text = nil 
   end
 
-  if ( ( houseFSM.messageBubble ) and ( houseFSM.messageBubble.text ) ) then 
+  if ( ( houseFSM.fsm ) and ( houseFSM.messageBubble ) and ( houseFSM.messageBubble.text ) ) then 
     local text = houseFSM.messageBubble.text
     text:removeSelf()
   end

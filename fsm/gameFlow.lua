@@ -72,6 +72,9 @@ function M.new( miniGameFSM, listeners , miniGame )
       local newText = display.newText( messageBubble.options ) 
       newText.x = newText.x + newText.width/2
       newText.y = newText.y + newText.height/2
+      if ( messageBubble.options.color ) then 
+        newText:setFillColor( messageBubble.options.color[1], messageBubble.options.color[2], messageBubble.options.color[3] )
+      end
 
       messageBubble.text = newText
       messageBubble.shownText = messageBubble.shownText + 1
@@ -127,6 +130,10 @@ function M.new( miniGameFSM, listeners , miniGame )
     }
     options.text = message[1]
 
+    if ( bubble.myName == "cookBubble" ) then 
+      options.color = { 0.2, 0.2, 0 }
+    end
+
     if ( bubble.text ) then  
       bubble.text:removeSelf()
       bubble.text = nil
@@ -151,6 +158,10 @@ function M.new( miniGameFSM, listeners , miniGame )
     bubble.shownText = 1
     bubble.options = options
 
+    if ( bubble.options.color ) then 
+      newText:setFillColor( bubble.options.color[1], bubble.options.color[2], bubble.options.color[3] )
+    end
+
     local time  
     if ( not bubble.blinkingDart ) then 
       if ( miniGameFSM.event == "showObligatoryMessage" ) then 
@@ -162,6 +173,8 @@ function M.new( miniGameFSM, listeners , miniGame )
           bubble.blinkingDart = miniGame:findObject( "momBlinkingDart" ) 
         elseif ( bubble == miniGame:findObject( "teacherBubble" ) ) then
           bubble.blinkingDart = miniGame:findObject( "teacherBlinkingDart" ) 
+        elseif ( bubble == miniGame:findObject( "cookBubble" ) ) then
+          bubble.blinkingDart = miniGame:findObject( "cookBlinkingDart" )
         end
       end
       bubble.blinkingDart.x = bubble.x + 33

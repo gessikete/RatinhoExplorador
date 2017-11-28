@@ -87,7 +87,6 @@ function M.new( executeInstructions )
 
  	instructionsPanel = gamePanel:findObject("instructionsPanel")
 
- 	-----==
   	executeButton = gamePanel:findObject("executeButton")
   	executeButton.executionsCount = 0
   	executeButton.instructionsCount = {}
@@ -96,7 +95,6 @@ function M.new( executeInstructions )
 
   	bikeLimit = gamePanel:findObject( "bikeLimit" )
   	M.bikeLimit = bikeLimit
-  	-----==
 
   	gotoMenuButton = gamePanel:findObject("gotoMenuButton")
   	M.gotoMenuButton = gotoMenuButton
@@ -119,6 +117,8 @@ function M.new( executeInstructions )
 
   	M.firstBox = instructions.boxes[1]
   	M.secondBox = instructions.boxes[2]
+
+  	M.lockDeleteInstruction = true 
 
   	fitScreen.fitGamePanel( gamePanel, gotoMenuButton )
 
@@ -273,6 +273,67 @@ function M.new( executeInstructions )
 		end
 
 		return true 
+	end
+
+	local function betweenBounds( event, box )
+		if ( ( event.x > box.contentBounds.xMin ) and ( event.x < box.contentBounds.xMax ) 
+			and ( event.y > box.contentBounds.yMin ) and ( event.y < box.contentBounds.yMax ) ) then
+			return true 
+		end
+		return false 
+	end
+
+	local function deleteInstruction( boxNumber )
+		local pos = instructions.shownInstruction[boxNumber]
+		local isLastBoxEmpty 
+		local last 
+		local first
+
+		if ( ( M.lockDeleteInstruction == false ) and ( instructionsTable.executing == 1 ) and ( pos ) ) then 
+			instructionsTable:remove( pos )
+
+			if ( instructionsTable.last < instructions.shownBox ) then 
+				last = instructions.shownBox - 1
+				instructions.shownArrow[ instructions.shownBox ].alpha = 0
+				instructions.shownArrow[ instructions.shownBox ] = nil 
+				instructions.shownInstruction[ instructions.shownBox ] = nil
+				instructions.texts[ instructions.shownBox ].text = " "
+				instructions.shownBox =  instructions.shownBox - 1
+
+				if ( instructions.shownBox < #instructions.boxes - 1 ) then 
+					instructions.boxes[ instructions.shownBox + 2 ].alpha = 0
+				end
+				first = boxNumber
+			else 
+				pos = instructions.shownInstruction[1] - 1
+				if ( pos >= 1 ) then 
+					first = 1
+					last = #instructions.boxes
+				else 
+					pos = instructions.shownInstruction[boxNumber]
+					first = boxNumber
+					last = #instructions.boxes
+				end
+
+			end 
+
+			for i = first, last do 
+				local arrow = findInstructionArrow ( pos )
+
+				instructions.shownInstruction[i] = pos 
+				instructions.shownArrow[i].alpha = 0
+				instructions.shownArrow[i] = arrow[i]
+				arrow[i].alpha = 1 
+
+				local dir 
+				if ( instructions.shownArrow[i] == instructions.upArrows[i] ) then dir = "up" end  
+				if ( instructions.shownArrow[i] == instructions.downArrows[i] ) then dir = "down" end 
+				if ( instructions.shownArrow[i] == instructions.leftArrows[i] ) then dir = "left" end 
+				if ( instructions.shownArrow[i] == instructions.rightArrows[i] ) then dir = "right" end 
+				instructions.texts[i].text = pos .. ".  " .. instructionsTable.steps[pos]
+				pos = pos + 1
+			end
+		end
 	end
 
 	-- É o listener para quando o jogador aperta uma seta
@@ -474,19 +535,15 @@ function M.new( executeInstructions )
 			  	listeners:remove( directionButtons.right, "touch", createControlsTutorialInstruction )
 			  	listeners:remove( directionButtons.up, "touch", createControlsTutorialInstruction )
 
-
-			  	---------====
 			  	if ( ( bikeWheel.maxCount ~= math.huge ) and ( instructionsTable.last ~= 1 ) and ( instructionsTable.steps[ instructionsTable.last - 1 ]  > 1 ) )  then
 			  		M:updateBikeMaxCount( bikeWheel.maxCount - 1 )
 			  	end
-			  	---------====
 
 			  	transition.fadeOut( M.directionHand, { time = 450, onComplete = 
       				function() 
         				event.target.executeTutorial()
         			end } )
 
-			  	
 			else
 				-- Caso o movimento de toque acabe e a seta não seja colocada na caixa correta, ela 
 				-- volta para a posição original
@@ -501,23 +558,41 @@ function M.new( executeInstructions )
 
 	-- Faz o scroll das instruções
 	local function scrollInstructionsPanel( event )
-	  local phase = event.phase
-	  local xInstructionsPanel, yInstructionsPanel = instructionsPanel:localToContent( 0, instructionsPanel.height/2 )
+		local phase = event.phase
+		local xInstructionsPanel, yInstructionsPanel = instructionsPanel:localToContent( 0, instructionsPanel.height/2 )
 
-	  if ( phase == "began" ) then
-	    instructionsPanel.touchOffsetY = event.y 
-	  elseif ( phase == "moved" ) then
-	  	if ( instructionsPanel.touchOffsetY ) then 
-			if ( ( instructionsPanel.touchOffsetY - event.y ) < -tilesSize ) then 
-				scrollInstruction( "down" )
-				instructionsPanel.touchOffsetY = event.y 
-			elseif ( ( instructionsPanel.touchOffsetY - event.y ) > tilesSize ) then
-				scrollInstruction( "up" )
-				instructionsPanel.touchOffsetY = event.y
+		if ( phase == "began" ) then
+			instructionsPanel.touchOffsetY = event.y 
+		  	instructionsPanel.originalOffset = event.y 
+		elseif ( phase == "moved" ) then
+				if ( instructionsPanel.touchOffsetY ) then 
+					if ( ( instructionsPanel.touchOffsetY - event.y ) < -tilesSize ) then 
+						scrollInstruction( "down" )
+						instructionsPanel.touchOffsetY = event.y 
+					elseif ( ( instructionsPanel.touchOffsetY - event.y ) > tilesSize ) then
+						scrollInstruction( "up" )
+						instructionsPanel.touchOffsetY = event.y
+					end
+				end 
+		elseif ( phase == "ended" ) then
+			if ( instructionsPanel.originalOffset ) then  
+				if ( math.abs( instructionsPanel.originalOffset - event.y ) < 2 ) then
+					local pos
+					if ( instructions.shownBox >= #instructions.boxes ) then 
+						pos = #instructions.boxes
+					else
+						pos = instructions.shownBox + 1
+					end
+					for i = 1, pos do 
+						if ( betweenBounds( event, instructions.boxes[i] ) == true ) then 
+							deleteInstruction( i )
+							break 
+						end
+					end
+				end
 			end
-		end 
-	  end
-	  return true
+		end
+		return true
 	end
 
 	function M:removegotoMenuButton()
@@ -563,7 +638,7 @@ function M.new( executeInstructions )
   		bikeWheel.executeTutorial = executeTutorial
   	end
 
-  	-----==
+
   	function M.executeInstructions()
   		local bikeCount = 0
 
@@ -622,7 +697,7 @@ function M.new( executeInstructions )
   		if ( M.showButtons ) then 
   			local nonDraggableLayer = gamePanel:findLayer( "non-draggable" )
 	  		for i = 1, nonDraggableLayer.numChildren do
-	  			nonDraggableLayer[i].alpha = 0.5
+	  			nonDraggableLayer[i].alpha = 0.25
 	  		end
 
 	  		directionButtons.right.alpha = 0.5

@@ -139,6 +139,11 @@ function M.new( executeInstructions )
 
 			transition.fadeIn( bikeLimit.text, { time = 400 } ) 
 			transition.fadeIn( bikeLimit, { time = 400 } ) 
+		else 
+			transition.fadeOut( bikeLimit, { time = 400 } ) 
+			if ( bikeLimit.text ) then 
+				transition.fadeOut( bikeLimit.text, { time = 400 } ) 
+			end
 		end
 	end
 
@@ -219,52 +224,51 @@ function M.new( executeInstructions )
 		local last 
 		local first
 
-		instructionsTable:remove( pos )
+		if ( ( instructionsTable.executing == 1 ) and ( pos ) ) then 
+			instructionsTable:remove( pos )
 
-		print( "boxnum: " .. boxNumber )
-		print( "shown: " .. instructions.shownBox )
-		print( "dif: " .. instructions.shownBox - #instructions.boxes )
-		print( "pos: " .. pos )
-		print( "last: " .. instructionsTable.last )
+			if ( instructionsTable.last < instructions.shownBox ) then 
+				last = instructions.shownBox - 1
+				instructions.shownArrow[ instructions.shownBox ].alpha = 0
+				instructions.shownArrow[ instructions.shownBox ] = nil 
+				instructions.shownInstruction[ instructions.shownBox ] = nil
+				instructions.texts[ instructions.shownBox ].text = " "
+				instructions.shownBox =  instructions.shownBox - 1
 
-		if ( instructionsTable.last < instructions.shownBox + 1 ) then 
-			last = instructions.shownBox - 1
-			instructions.shownArrow[ instructions.shownBox ].alpha = 0
-			instructions.shownArrow[ instructions.shownBox ] = nil 
-			instructions.shownInstruction[ instructions.shownBox ] = nil
-			instructions.texts[ instructions.shownBox ].text = " "
-			instructions.shownBox =  instructions.shownBox - 1
-
-			if ( instructions.shownBox < #instructions.boxes - 1 ) then 
-				instructions.boxes[ instructions.shownBox + 2 ].alpha = 0
+				if ( instructions.shownBox < #instructions.boxes - 1 ) then 
+					instructions.boxes[ instructions.shownBox + 2 ].alpha = 0
+				end
+				first = boxNumber
 			else 
-				last = last - 1
+				pos = instructions.shownInstruction[1] - 1
+				if ( pos >= 1 ) then 
+					first = 1
+					last = #instructions.boxes
+				else 
+					pos = instructions.shownInstruction[boxNumber]
+					first = boxNumber
+					last = #instructions.boxes
+				end
+
+			end 
+
+			for i = first, last do 
+				local arrow = findInstructionArrow ( pos )
+
+				instructions.shownInstruction[i] = pos 
+				instructions.shownArrow[i].alpha = 0
+				instructions.shownArrow[i] = arrow[i]
+				arrow[i].alpha = 1 
+
+				local dir 
+				if ( instructions.shownArrow[i] == instructions.upArrows[i] ) then dir = "up" end  
+				if ( instructions.shownArrow[i] == instructions.downArrows[i] ) then dir = "down" end 
+				if ( instructions.shownArrow[i] == instructions.leftArrows[i] ) then dir = "left" end 
+				if ( instructions.shownArrow[i] == instructions.rightArrows[i] ) then dir = "right" end 
+				instructions.texts[i].text = pos .. ".  " .. instructionsTable.steps[pos]
+				pos = pos + 1
 			end
-		else 
-			last = #instructions.boxes - 1
-		end 
-
-		for i = boxNumber, last do 
-			local arrow = findInstructionArrow ( pos )
-
-			instructions.shownArrow[i].alpha = 0
-			instructions.shownArrow[i] = arrow[i]
-			arrow[i].alpha = 1 
-
-			local dir 
-			if ( instructions.shownArrow[i] == instructions.upArrows[i] ) then dir = "up" end  
-			if ( instructions.shownArrow[i] == instructions.downArrows[i] ) then dir = "down" end 
-			if ( instructions.shownArrow[i] == instructions.leftArrows[i] ) then dir = "left" end 
-			if ( instructions.shownArrow[i] == instructions.rightArrows[i] ) then dir = "right" end 
-
-			print( "----" )
-			print( "box: " .. i .. ") text: ".. tostring(instructions.texts[i].text) .. "; dir: " ..  tostring( dir ) )
-			print( "instable: " .. pos .. ") steps: " .. tostring(instructionsTable.steps[pos]) .. "; dir: " .. tostring(instructionsTable.direction[pos] )  )
-
-			instructions.texts[i].text = pos .. ".  " .. instructionsTable.steps[pos]
-			pos = pos + 1
 		end
-
 	end
 
 	-- É o listener para quando o jogador aperta uma seta
@@ -394,7 +398,7 @@ function M.new( executeInstructions )
 					end
 				end 
 		elseif ( phase == "ended" ) then
-			--[[if ( instructionsPanel.originalOffset ) then  
+			if ( instructionsPanel.originalOffset ) then  
 				if ( math.abs( instructionsPanel.originalOffset - event.y ) < 2 ) then
 					local pos
 					if ( instructions.shownBox >= #instructions.boxes ) then 
@@ -409,7 +413,7 @@ function M.new( executeInstructions )
 						end
 					end
 				end
-			end]]
+			end
 		end
 		return true
 	end
@@ -429,6 +433,12 @@ function M.new( executeInstructions )
   		listeners:add( directionButtons.left, "touch", createInstruction )
   		listeners:add( directionButtons.down, "touch", createInstruction )
   		listeners:add( directionButtons.up, "touch", createInstruction )
+  	end
+
+  	function M:resetExecutionButton()
+  		executeButton.executionsCount = 0
+  		executeButton.instructionsCount = { }
+  		executeButton.bikeCount = { }
   	end
 
   	function M.executeInstructions()
@@ -477,7 +487,9 @@ function M.new( executeInstructions )
   		directionButtons.up.alpha = 0.5
   		executeButton.alpha = 0.5
   		bikeWheel.alpha = 0.5
-  		bikeLimit.alpha = 0.5 
+  		if ( bikeLimit.alpha ~= 0 ) then 
+  			bikeLimit.alpha = 0.5 
+  		end
   		gotoMenuButton.alpha = 0.5
 
   		listeners:remove( directionButtons.right, "touch", createInstruction )
@@ -500,7 +512,9 @@ function M.new( executeInstructions )
   		directionButtons.up.alpha = 0.5
   		executeButton.alpha = 0.5
   		bikeWheel.alpha = 0.5
-  		bikeLimit.alpha = 0.5 
+  		if ( bikeLimit.alpha ~= 0 ) then 
+  			bikeLimit.alpha = 0.5 
+  		end
 
   		--listeners:remove( instructionsPanel, "touch", scrollInstructionsPanel )
 
@@ -671,6 +685,32 @@ function M.new( executeInstructions )
 	      instructions.shownInstruction[boxNum] = instructionsTable.last 
 	    end
 	  end
+	end
+
+	function M.createInstruction( direction, steps )
+	  	local box
+	  	local selectedBox
+
+	  	-- Descobre qual é a caixa de instrução que mostrará a nova instrução e as suas posições
+	  	if ( instructions.shownBox < #instructions.boxes ) then
+	  		box = instructions.boxes[ instructions.shownBox + 1 ], instructions.boxes[ instructions.shownBox + 1 ]:localToContent( 0, 0 )
+	  		selectedBox = instructions.selectedBox[ instructions.shownBox + 1 ]
+	  	else
+	  		box = instructions.boxes[ #instructions.boxes ], instructions.boxes[ #instructions.boxes ]:localToContent( 0, 0 )
+	  		selectedBox = instructions.selectedBox[ #instructions.boxes ]
+	  	end
+
+		if ( ( instructions.shownBox >= #instructions.boxes ) and ( instructions.shownInstruction[instructions.shownBox] ~= instructionsTable.last  ) ) then
+			while ( instructions.shownInstruction[instructions.shownBox] ~= instructionsTable.last ) do
+				scrollInstruction("up")
+			end 
+			moveInstruction( 1,  instructions.shownBox, 1, true )
+		elseif ( ( instructions.shownBox >= #instructions.boxes ) and ( instructions.texts[instructions.shownBox].text ~= " " ) ) then
+			moveInstruction( 1,  instructions.shownBox, 1, true )
+		end
+
+		instructionsTable:add( direction, steps )
+		showInstruction( direction, steps)
 	end
 
 	return gamePanel

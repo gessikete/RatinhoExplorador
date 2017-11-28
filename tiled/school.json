@@ -165,7 +165,7 @@
                  "visible":true,
                  "width":340,
                  "x":50,
-                 "y":22
+                 "y":12
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -5891,7 +5891,7 @@
                  "visible":true,
                  "width":3,
                  "x":49,
-                 "y":76
+                 "y":82
                 }, 
                 {
                  "height":3,
@@ -5944,8 +5944,8 @@
                  "type":"physics",
                  "visible":true,
                  "width":8,
-                 "x":38,
-                 "y":73
+                 "x":39,
+                 "y":75
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -6257,7 +6257,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 

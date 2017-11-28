@@ -345,6 +345,7 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 		  	            	messageBubble.text = nil
 		  	            end
 	  	        	end
+	  	        	gamePanel.lockDeleteInstruction = false 
 	  	        end
 
 	  	        gameFlow.updateFSM()

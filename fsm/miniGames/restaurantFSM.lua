@@ -21,7 +21,6 @@ local message = {}
 
 function M.new( restaurant, character, ingredients, listeners, collision, instructionsTable, miniGameData, gameState, gamePanel, path )
 	local restaurantFSM
-	--local character = restaurant:findObject( "character" )
 	local cook = restaurant:findObject( "cook" )  
 	local tilesSize = 32
 	local messageBubble
@@ -46,7 +45,7 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 		organizerHand.originalX = organizerHand.x  
 		organizerHand.originalY = organizerHand.y 
 
-		--gamePanel.tiled.alpha = 0
+		gamePanel.tiled.alpha = 0
 
 		M.waitFeedback = false
 
@@ -56,30 +55,33 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 	  	  initial = "start",
 	  	  events = {
 	  	  	{ name = "showAnimation", from = "start", to = "enterHouseAnimation", nextEvent = "showAnimation" },
-
-	  	  	{ name = "showGamePanel", from = "start", to = "gamePanel", nextEvent = "enableListeners" },
-	  	  	--{ name = "enableListeners",  from = "gamePanel",  to = "restartListeners", nextEvent = "checkFeedbackWait" },
-	  	  	{ name = "enableListeners",  from = "start",  to = "restartListeners", nextEvent = "nextRecipe" },
+	  	  	{ name = "showAnimation", from = "enterHouseAnimation", to = "brotherAnimation", nextEvent = "showObligatoryMessage" },
+	  	  	{ name = "showObligatoryMessage",  from = "brotherAnimation",  to = "brotherBubble_msg1", nextEvent = "showAnimation" },
+	  	  	{ name = "showAnimation",  from = "brotherBubble_msg1",  to = "brotherLeaveAnimation", nextEvent = "showObligatoryMessage" },
+	  	  	{ name = "showObligatoryMessage",  from = "brotherLeaveAnimation",  to = "cookBubble_msg4", nextEvent = "showAnimation" },
+	  	  	{ name = "showAnimation",  from = "cookBubble_msg4",  to = "recipeHandAnimation", nextEvent = "showObligatoryMessage" },
+	  	  	{ name = "showObligatoryMessage",  from = "recipeHandAnimation",  to = "cookBubble_msg5", nextEvent = "showObligatoryMessage" },
+	  	  	{ name = "showObligatoryMessage",  from = "cookBubble_msg5",  to = "cookBubble_msg6", nextEvent = "showGamePanel" },
+	  	  	{ name = "showGamePanel", from = "cookBubble_msg6", to = "gamePanel", nextEvent = "enableListeners" },
+	  	  	{ name = "enableListeners",  from = "gamePanel",  to = "restartListeners", nextEvent = "nextRecipe" },
+	  	  	
 	  	  	{ name = "nextRecipe",  from = "restartListeners",  to = "recipe1", nextEvent = "checkProgress" },
 	  	  	{ name = "nextRecipe",  from = "repeat",  to = "recipe1", nextEvent = "checkProgress" },
-	  	  	{ name = "checkProgress",  from = "recipe1",  to = "progress1", nextEvent = "nextRecipe" },
-	  	  	{ name = "nextRecipe",  from = "progress1",  to = "recipe2", nextEvent = "checkProgress" },
-	  	  	{ name = "checkProgress",  from = "recipe2",  to = "progress2"},-- nextEvent = "nextRecipe" },
+	  	  	{ name = "checkProgress",  from = "recipe1",  to = "progress1", nextEvent = "showObligatoryMessage" },
+	  	  	{ name = "showObligatoryMessage",  from = "progress1",  to = "cookBubble_msg7", nextEvent = "nextRecipe" },
+	  	  	{ name = "nextRecipe",  from = "cookBubble_msg7",  to = "recipe2", nextEvent = "checkProgress" },
+	  	  	{ name = "checkProgress",  from = "recipe2",  to = "progress2", nextEvent = "showFeedback" },
 
 	  	  	{ name = "showFeedback", from = "progress1", to = "feedbackAnimation", nextEvent = "nextRecipe" },
-	  	  	{ name = "showFeedback", from = "progress2", to = "feedbackAnimation", nextEvent = "nextRecipe" },
+	  	  	{ name = "showFeedback", from = "progress2", to = "feedbackAnimation", nextEvent = "showObligatoryMessage" },
+	  	  	{ name = "showObligatoryMessage",  from = "feedbackAnimation",  to = "cookBubble_msg8", nextEvent = "showAnimation" },
+	  	  	{ name = "showAnimation", from = "cookBubble_msg8", to = "cookJumpingAnimation", nextEvent = "showAnimation" },
+	  	  	{ name = "showAnimation", from = "cookJumpingAnimation", to = "cookToStoveAnimation", nextEvent = "showObligatoryMessage" },
 	  	  	{ name = "repeatLevel", from = "feedbackAnimation", to = "repeat", nextEvent = "nextRecipe" },
-	  	  	--{ name = "checkProgress",  from = "repeat",  to = "progress_repeat", nextEvent = "nextRecipe" },
-
-	  	  	--{ name = "checkFeedbackWait",  from = "restartListeners",  to = "checkWait", nextEvent = "showFeedback" },
-	  	  	{ name = "showFeedback",  from = "checkWait",  to = "feedbackAnimation", nextEvent = "showObligatoryMessage" },
-	  	  	{ name = "checkFeedbackWait",  from = "repeat",  to = "checkWait", nextEvent = "showFeedback" },
-	  	  	--{ name = "repeatLevel", from = "feedbackAnimation", to = "repeat", nextEvent = "checkFeedbackWait" },
-	  	  	{ name = "showObligatoryMessage",  from = "feedbackAnimation",  to = "teacherBubble_msg9", nextEvent = "showAnimation" },
-	  	  	{ name = "showAnimation", from = "teacherBubble_msg9", to = "cookJumpingAnimation", nextEvent = "showObligatoryMessage" },
-	  	  	{ name = "showObligatoryMessage",  from = "cookJumpingAnimation",  to = "teacherBubble_msg10", nextEvent = "showAnimation" },
-	  	  	{ name = "showAnimation", from = "teacherBubble_msg10", to = "leaverestaurantAnimation", nextEvent = "saveGame" },
-	  	  	{ name = "saveGame",  from = "leaverestaurantAnimation",  to = "save", nextEvent = "finishLevel" },
+	  	  	{ name = "showObligatoryMessage",  from = "cookToStoveAnimation",  to = "cookBubble_msg9", nextEvent = "showAnimation" },
+	  	  	{ name = "showAnimation", from = "cookBubble_msg9", to = "pastaAnimation", nextEvent = "showObligatoryMessage" },
+	  	  	{ name = "showObligatoryMessage",  from = "pastaAnimation",  to = "cookBubble_msg10", nextEvent = "saveGame" },
+	  	  	{ name = "saveGame",  from = "cookBubble_msg10",  to = "save", nextEvent = "finishLevel" },
 	  	  	{ name = "finishLevel",  from = "save",  to = "finish" },
 	  	  },
 	  	  callbacks = {
@@ -102,8 +104,6 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 	  	          	local animationWait
 	  	          	if ( self.current == "brotherAnimation" ) then 
 	  	          		animationWait = animation[self.current]( miniGameData.previousStars, message )
-	  	          	elseif ( self.current == "leaverestaurantAnimation" ) then 
-	  	          		animationWait = animation[self.current]( collision.obj )
 	  	          	else 
 	  	          		animationWait = animation[self.current]()
 	  	          	end
@@ -241,7 +241,9 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 	  	          	local stars = 0
 	  	          	local msg = 1 
 
-	  	          	print( "feedback" )
+	  	          	local bikeCount = gamePanel.executeButton.bikeCount
+	  	          	local instructionsCount = gamePanel.executeButton.instructionsCount
+
 	  	          	if ( ( collision.wrongIngredient == true ) and ( collision.collectedAll == true ) ) then 
 	  	          		stars = 0
 	  	          		msg = 4 
@@ -250,28 +252,23 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 	  	          		msg = 2
 	  	          	elseif ( ( collision.collectedAll == false ) or ( collision.organizer == false ) ) then 
 	  	          		stars = 0
-	  	          		msg = 1
 	  	          	elseif ( collision.inOrder == false ) then
 	  	          		stars = 0
 	  	          		msg = 3 
-	  	          	elseif ( ( instructionsTable.last == 6 ) and ( collision.table == false ) and ( collision.table == false ) ) then
+	  	          	elseif ( ( instructionsCount[1] <= 5 ) and ( instructionsCount[2] <= 7 ) and ( ( ( collisionsList[1].otherObjects == false ) and ( ( collisionsList[2].otherObjects == false ) ) ) ) ) then
 	  	          	    stars = 3
-	  	          	elseif ( ( instructionsTable.last == 6 ) ) then 
+	  	          	elseif ( ( instructionsCount[1] <= 5 ) and ( instructionsCount[2] <= 7 ) and ( ( ( collisionsList[1].otherObjects == false ) and ( ( collisionsList[2].otherObjects == false ) ) ) ) ) then
 	  	          		stars = 2
-	  	          		msg = 1
-	  	          	elseif ( gamePanel.bikeWheel.maxCount < bikeWheelMaxCount ) then
-	  	          	    stars = 2
-
-	  	          	    if (  ( collision.table == true ) or ( collision.table == true )  ) then
-	  	          	    	msg = 3
-	  	          	    else
-	  	          	    	msg = 2
-	  	          	    end
-	  	          	
+	  	          		msg = 2
+	  	          	elseif ( ( bikeCount[1] > 0  ) and ( bikeCount[2] > 0 ) ) then 
+	  	          		stars = 2
+	  	          		if ( ( collisionsList[1].otherObjects == true ) or ( ( collisionsList[2].otherObjects == true ) ) ) then 
+	  	          			msg = 2
+	  	          		end
 	  	          	else 
 	  	          	    stars = 1
 
-	  	          	    if (  ( collision.table == true ) or ( collision.table == true )  ) then
+	  	          	    if ( ( collisionsList[1].otherObjects == true ) or ( ( collisionsList[2].otherObjects == true ) ) ) then
 	  	          	    	msg = 2
 	  	          	    end
 	  	          	end
@@ -288,10 +285,8 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 
 	  	    on_finishLevel = 
 	  	      function( self, event, from, to ) 
-	  	        transition.cancel( character )
-	  	        gamePanel:stopAllListeners()
-	  	        character.stepping.point = "exit"
-	  	        timer.performWithDelay( 800, sceneTransition.gotoMap )
+	  	      	gamePanel.restartExecutionListeners()
+	  	      	gamePanel:updateBikeMaxCount( math.huge )
 	  	      end,
 
 	  	    on_repeatLevel = 
@@ -300,7 +295,7 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 
 	  	        physics.removeBody( character )
 	  	        character.x = startingPoint.x
-	  	        character.y = startingPoint.y - 3
+	  	        character.y = startingPoint.y - 4
 	  	        physics.addBody( character )
 				character.isFixedRotation = true 
 	  	        character.xScale = - 1
@@ -327,15 +322,12 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 	  	        	v.alpha = 1
 	  	        end
 
-	  	        for k, v in pairs( ingredients.third ) do
-	  	        	v.alpha = 0
-	  	        end
-
 	  	        for k, v in pairs( ingredients.remaining ) do
 	  	        	ingredients.remaining[k] = nil 
 	  	        end
 	  	        ingredients.collected = { }
 	  	        gamePanel:updateBikeMaxCount( bikeWheelMaxCount )
+	  	        gamePanel:resetExecutionButton()
 
 	  	        transition.fadeOut( restaurant:findObject( "recipe2" ), { time = 800 } )
 	  	        transition.fadeOut( restaurant:findObject( "recipe3" ), { time = 800 } )
@@ -351,12 +343,7 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 	  	        		s.alpha = 0
 	  	        	end
 	  	        end
-	  	        gameFlow.updateFSM()  --tirar?
-
-	  	        --[[instructionsTable:reset()
-	  	        instructionsTable.steps = { 5, 1, 9, 2, 1, 1, 4, 3, 1 } 
-			  	instructionsTable.direction = { "up", "right", "left", "right", "up", "left", "down", "right", "up" }
-			  	instructionsTable.last = 9]]
+	  	        gameFlow.updateFSM()
 	  	    end,
 
 	  	    on_enableListeners = 
@@ -364,6 +351,7 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 	  	        if ( to == "restartListeners" ) then 
 	  	        	gamePanel.restartExecutionListeners()
 	  	        end
+	  	        gameFlow.updateFSM()
 	  	    end,
 
 	  	    on_showGamePanel = 
@@ -374,7 +362,6 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 
 	  	    on_checkFeedbackWait = 
 	  	    	function( self, event, from, to ) 
-	  	        	--transition.fadeOut( gamePanel.tiled, { time = 400 } )
 	  	        	if ( M.waitFeedback == false ) then 
 		  	        	gameFlow.updateFSM()
 	  	    		else
@@ -384,7 +371,6 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 
 	  	    on_checkProgress = 
 	  	    	function( self, event, from, to ) 
-	  	        	--transition.fadeOut( gamePanel.tiled, { time = 400 } )
 	  	        	local function wait()
 	  	        		if ( M.waitFeedback == false ) then 
 		  	        		gameFlow.updateFSM()
@@ -393,7 +379,7 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 		  	    		end
 	  	        	end
 
-	  	        	print( "coll all: " .. tostring( collision.collectedAll ) .. "; coll none: " .. tostring( collision.collectedNone) .. " ; wrong: " .. tostring(collision.wrongIngredient) .. " ; organizer: " .. tostring(collision.organizer) )
+	  	        	print( "coll others: " .. tostring(collision.otherObjects) .. "; coll all: " .. tostring( collision.collectedAll ) .. "; coll none: " .. tostring( collision.collectedNone) .. " ; wrong: " .. tostring(collision.wrongIngredient) .. " ; organizer: " .. tostring(collision.organizer) )
 
 	  	    		if ( ( collision.collectedAll == true ) and ( collision.wrongIngredient == false ) and ( collision.organizer == true ) and ( collision.inOrder == true ) )  then 
 	  	    			timer.performWithDelay( 400, wait )
@@ -405,41 +391,25 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 				       	elseif ( self.current == "progress2" ) then 
 				       		ingredientsList = ingredients.second
 				       		uncheck = ingredients.uncheck.second
-				       	elseif ( self.current == "progress3" ) then 
-				       		ingredientsList = ingredients.third
-				       		uncheck = ingredients.uncheck.third
 				       	end
 
 				       	self.nextEvent = "showFeedback"
 				       	if ( collision.collectedNone == true ) then 
 				       		gameFlow.updateFSM()
-				       	elseif ( ( collision.wrongIngredient == true ) or ( collision.organizer == false ) ) then 
+				       	else
 				       		wait()
-				       	else 
-					       	local found
-		  	    			for k, v in pairs( ingredientsList ) do
-		  	    				found = false
-		 
-		  	    				for r, s in pairs( ingredients.collected ) do
-		  	    					if v == s then found = true end 
-		  	    				end 
-
-		  	    				if ( found == false ) then 
-									transition.fadeIn( uncheck[ v.number ], { time = 400, delay = 400 * ( k - 1 ), 
-										onComplete = 
-											function()
-												if ( k == #ingredientsList ) then timer.performWithDelay( 600, wait ) end
-											end
-										} )
-	        					end
-	        				end
 	        			end
 	  	    		end
  	  	    	end,
 
  	  	    on_nextRecipe = 
 	  	    	function( self, event, from, to ) 
-	  	        	table.insert( collisionsList, collision )
+	  	    		local tempCollision = { }
+
+	  	    		for k, v in pairs( collision ) do
+	  	    			tempCollision[k] = v
+	  	    		end
+	  	        	table.insert( collisionsList, tempCollision )
 
 	  	        	gamePanel.restartExecutionListeners()
 
@@ -449,10 +419,9 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 	  	        	elseif ( self.current == "recipe2" ) then 
 	  	        		ingredients.collected = {}
 	  	        		
-	  	        		gamePanel:updateBikeMaxCount( 9 )
+	  	        		gamePanel:updateBikeMaxCount( 6 )
 	  	        		transition.fadeOut( restaurant:findObject( "recipe1" ), { time = 800 } )
 		  				transition.fadeIn( restaurant:findObject( "recipe2" ), { time = 800 } )
-		  				transition.fadeIn( ingredients.third[2], { time = 800 } )
 		  				for k, v in pairs( ingredients.uncheck.first ) do
 			  				v.alpha = 0
 		  				end
@@ -460,21 +429,10 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 			  				v.alpha = 0
 		  				end
 
-		  			elseif ( self.current == "recipe3" ) then 
-	  	        		ingredients.collected = {}
-	  	        		
-	  	        		gamePanel:updateBikeMaxCount( 6 )
-	  	        		transition.fadeOut( restaurant:findObject( "recipe2" ), { time = 800 } )
-		  				transition.fadeIn( restaurant:findObject( "recipe3" ), { time = 800 } )
-		  				transition.fadeIn( ingredients.third[1], { time = 800 } )
-		  				for k, v in pairs( ingredients.uncheck.second ) do
-			  				v.alpha = 0
-		  				end
-		  				for k, v in pairs( ingredients.check.second ) do
-			  				v.alpha = 0
-		  				end
-
-		  				physics.addBody( restaurant:findObject( "stove" ), { bodyType = "static", isSensor = true } )
+		  				--[[instructionsTable:reset()
+		  				instructionsTable.steps = { 2, 5, 6, 6, 6, 1, 3 }
+		  				instructionsTable.direction = { "right", "up", "left", "down", "right", "up", "left" }
+		  				instructionsTable.last = 7]]
 	  	        	end
 
 	  	        	resetCollision()
@@ -485,12 +443,11 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 		gameFlow.new( restaurantFSM, listeners, restaurant )
 		M.updateFSM = gameFlow.updateFSM
 		M.fsm = restaurantFSM
-		animation = restaurantAnimations.new( restaurant, character, gamePanel, path, restaurantFSM, gameFlow )
-	  	--restaurantFSM.showObligatoryMessage()
-	  	--restaurantFSM.showAnimation()
+		animation = restaurantAnimations.new( restaurant, ingredients, character, gamePanel, path, restaurantFSM, gameFlow )
+
+	  	restaurantFSM.showAnimation()
+	  	--character.alpha = 1
 	  	--restaurantFSM.showGamePanel()
-	  	restaurantFSM.enableListeners()
-	  	restaurantFSM.nextRecipe()
 	end
 end
 

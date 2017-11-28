@@ -62,6 +62,7 @@ local function setIngredients()
 	--local ingredientsSensorsLayer
 
 	ingredientsLayer = restaurant:findLayer( "ingredients" )
+  ingredientsSensorsLayer = restaurant:findLayer( "ingredients sensors" )
 	organizersLayer = restaurant:findLayer( "organizers" )
 	checkedLayer = restaurant:findLayer( "check" )
 	uncheckedLayer = restaurant:findLayer( "uncheck" )
@@ -76,6 +77,10 @@ local function setIngredients()
 			ingredients.second[ ingredientsLayer[i].number ] = ingredientsLayer[i]
 		end
 	end
+
+  for i = 1,  ingredientsSensorsLayer.numChildren do
+    physics.addBody( ingredientsSensorsLayer[i], "static", { isSensor = true } )
+  end
 
 	for i = 1, checkedLayer.numChildren do 
 		if ( checkedLayer[i].recipe == 1 ) then 
@@ -126,123 +131,117 @@ local function onCollision( event )
       end
     elseif ( ( obj1.myName == "ingredient" ) or ( obj2.myName == "ingredient" ) ) then 
     	local obj, ingredient, list 
+      if ( restaurantFSM ) then 
       local recipe = restaurantFSM.fsm.current
 
-      print( restaurantFSM.fsm.current )
+    	if ( obj1.myName == "ingredient" ) then obj = obj1 else obj = obj2 end 
+    	if ( obj.recipe == 1 ) then 
+    		ingredient = ingredients.first[ obj.number ]
+    		list = ingredients.first
+    		check = ingredients.check.first[ obj.number ]
+    		uncheck = ingredients.uncheck.first
+    	elseif ( obj.recipe == 2 ) then 
+    		ingredient = ingredients.second[ obj.number ]
+    		list = ingredients.second
+    		check = ingredients.check.second[ obj.number ]
+    		uncheck = ingredients.uncheck.second
+    	end
 
-      	if ( obj1.myName == "ingredient" ) then obj = obj1 else obj = obj2 end 
-      	if ( obj.recipe == 1 ) then 
-      		ingredient = ingredients.first[ obj.number ]
-      		list = ingredients.first
-      		check = ingredients.check.first[ obj.number ]
-      		uncheck = ingredients.uncheck.first[ obj.number ]
-      	elseif ( obj.recipe == 2 ) then 
-      		ingredient = ingredients.second[ obj.number ]
-      		list = ingredients.second
-      		check = ingredients.check.second[ obj.number ]
-      		uncheck = ingredients.uncheck.second[ obj.number ]
-      	end
+      if ( recipe == "recipe" .. ingredient.recipe ) then 
+        local alreadyCollected = false
 
-        if ( recipe == "recipe" .. ingredient.recipe ) then 
+        for i = 1, #ingredients.collected do 
+          if ( ingredients.collected[i] == ingredient ) then
+            alreadyCollected = true 
+          end
+        end 
+
+        if ( alreadyCollected == false ) then 
       	  table.insert( ingredients.collected, ingredient )
-          if ( list[#ingredients.collected] == ingredient ) then 
+          if ( list[ #ingredients.collected ] == ingredient ) then 
             check.alpha = 1
           else
-            uncheck.alpha = 1
+            uncheck[ #ingredients.collected ].alpha = 1
+            uncheck[ obj.number ].alpha = 1
           end 
-        elseif ( recipe == "recipe1" ) then 
-          collision.wrongIngredient = true 
         end
-
-      	transition.cancel( character )
-      	transition.fadeOut( ingredient, { time = 400 } )
-
-      	if ( ( obj.direction == "right" ) ) then 
-          		transition.to( character, { time = 0, x = character.x + .09 * tilesSize } )
-    
-        elseif ( ( obj.direction == "left" ) ) then 
-          		transition.to( character, { time = 0, x = character.x - .16 * tilesSize } )
-
-        elseif ( ( obj.direction == "up" ) ) then 
-          		transition.to( character, { time = 0, y = character.y - .1 * tilesSize } )
-        elseif ( ( obj.direction == "down" ) ) then 
-          		transition.to( character, { time = 0, y = character.y + .07 * tilesSize } )
+      elseif ( recipe == "recipe1" ) then 
+        collision.wrongIngredient = true 
+        for i = 1, #ingredients.uncheck.first do
+          if ( ( ingredients.check.first[i].alpha == 0 ) and ( ingredients.uncheck.first[i].alpha == 0 ) ) then 
+            ingredients.uncheck.first[i].alpha = 1
+            break
+          end
         end
+      end
 
-    elseif ( ( ( obj1.myName == "cook" ) and ( obj2.isCharacter ) ) or ( ( obj2.myName == "cook" ) and ( obj1.isCharacter ) ) or
-           ( ( obj1.myName == "stove" ) and ( obj2.isCharacter ) ) or ( ( obj2.myName == "stove" ) and ( obj1.isCharacter ) ) ) then
-
-    	if ( ( obj1.myName == "cook" ) or ( obj1.myName == "stove" ) ) then obj = obj1 else obj = obj2 end 
-      	local list = { }
-        local recipe = restaurantFSM.fsm.current
+    	transition.fadeOut( ingredient, { time = 400 } )
+      end
+    elseif ( ( ( obj1.myName == "cook" ) and ( obj2.isCharacter ) ) or ( ( obj2.myName == "cook" ) and ( obj1.isCharacter ) ) ) then
+    	if ( obj1.myName == "cook" ) then obj = obj1 else obj = obj2 end 
       
-      	transition.cancel( character )
-        gamePanel.stopExecutionListeners()
-        --instructionsTable:reset()
+      transition.cancel( character )
+      if ( ( obj.direction == "right" ) ) then 
+        transition.to( character, { time = 0, x = character.x + .09 * tilesSize } )
+        cook.xScale = 1
+        cook.characterBlocking = true 
+  
+      elseif ( ( obj.direction == "left" ) ) then 
+        transition.to( character, { time = 0, x = character.x - .16 * tilesSize } )
+        cook.xScale = -1
+        cook.characterBlocking = false 
 
-        if ( ( obj.direction == "right" ) ) then 
-              transition.to( character, { time = 0, x = character.x + .09 * tilesSize } )
+      elseif ( ( obj.direction == "up" ) ) then 
+        transition.to( character, { time = 0, y = character.y - .1 * tilesSize } )
+        cook.characterBlocking = false 
+
+      elseif ( ( obj.direction == "down" ) ) then 
+        transition.to( character, { time = 0, y = character.y + .07 * tilesSize } )
+        cook.characterBlocking = false 
+      end
+
+    	if ( collision ) then 
+        local list = { }
+        local recipe = restaurantFSM.fsm.current
     
-        elseif ( ( obj.direction == "left" ) ) then 
-              transition.to( character, { time = 0, x = character.x - .16 * tilesSize } )
+        if ( ( ( recipe == "recipe1" ) ) or ( ( recipe == "recipe2" ) ) ) then
+          gamePanel.stopExecutionListeners()
+          restaurantFSM.waitFeedback = true 
 
-        elseif ( ( obj.direction == "up" ) ) then 
-              transition.to( character, { time = 0, y = character.y - .1 * tilesSize } )
-        elseif ( ( obj.direction == "down" ) ) then 
-              transition.to( character, { time = 0, y = character.y + .07 * tilesSize } )
-        end
+      		for k, v in pairs( ingredients.collected ) do
+            local cookLayer = restaurant:findLayer( "cook" )
+            cookLayer:insert( v )
+      	  	table.insert( list, v )
+      		end
 
-      	if ( collision ) then 
-	        if ( instructionsTable.last < instructionsTable.executing ) then 
-	          	restaurantFSM.waitFeedback = true 
-	        end
+      		for k, v in pairs( ingredients.remaining ) do
+    	  		if ( v == ingredients.collected[k] ) then
+    	  	  		table.insert( list, v )
+    	  		end
+    			end
 
-	        if ( collision.bench == false ) then 
-	          		for k, v in pairs( ingredients.collected ) do
-	          	  		table.insert( list, v )
-	          		end
-        	else 
-	          		for k, v in pairs( ingredients.remaining ) do
-	          	  		if ( v == ingredients.collected[k] ) then
-	          	  	  		table.insert( list, v )
-	          	  		end
-          			end
-          		end
-        end
-
-        local function showIngredient( i )
-        	local number
+          local function showIngredient( i )
+          	local number
 
           	if ( i > #list ) then 
-          	  	for j = 1, #list - 1  do 
-          	  	    transition.fadeOut( list[j], { time = 800 } )
-          	  	end
-          	  	transition.fadeOut( list[#list], { time = 800, onComplete = restaurantFSM.updateFSM } )
-          	  	--instructionsTable:reset()
-                --===================================
-                --[[if ( recipe == "recipe1" ) then
-    		        	 instructionsTable:reset()
-                   instructionsTable.steps = { 5, 2, 1, 8, 3, 2, 1, 6, 1, 2, 1, 3, 3, 3 } 
-                   instructionsTable.direction = { "right", "up", "down", "left", "up", "left", "up", "right", "up", "left", "up", "left", "down","right" }
-                   instructionsTable.last = 14
-                elseif ( recipe == "recipe2" ) then 
-                    instructionsTable:reset()
-                   instructionsTable.steps = { 2, 3, 2, 1, 2, 1, 3, 1, 1 } 
-                   instructionsTable.direction = { "left", "up", "right", "down", "right", "down", "right", "down", "right" }
-                   instructionsTable.last = 9
-  				      end]]
-                --===================================
-          	  	return 
-          	end 
- 
-          	if ( recipe == "recipe1" ) then 
-          		number = 2
-         	  elseif ( recipe == "recipe2" ) then 
-         		  number = 1
-         	  end 
+        	  	for j = 1, #list - 1  do 
+        	  	    transition.fadeOut( list[j], { time = 800 } )
+        	  	end
+        	  	transition.fadeOut( list[#list], { time = 800, 
+              onComplete = 
+                function()
+                  if ( instructionsTable.last < instructionsTable.executing ) then 
+                    restaurantFSM.updateFSM() 
+                  else 
+                    restaurantFSM.waitFeedback = false 
+                  end
+                end
+              } )
+        	  	return 
+        	  end 
 
-          	list[i].x = organizers[ number ].x 
-          	list[i].y = organizers[ number ].y
+          	list[i].x = organizers[1].x 
+          	list[i].y = organizers[1].y
           	list[i]:toFront()
           	transition.fadeIn( list[i], { time = 800, 
           	  	onComplete = 
@@ -250,43 +249,43 @@ local function onCollision( event )
           	  	    showIngredient( i + 1 )
           	  	  end 
           	} )
-        end
-
-        showIngredient(1)
-        
-        collision.organizer = true 
-        collision.obj = obj 
-        local collectedAll = true 
-        local collectedNone = true 
-        local remaining = { }
-        local ingredientsList
-        local inOrder = true 
-
-        print( "RECIPE: " .. recipe )
-        if ( recipe == "recipe1" ) then 
-        	ingredientsList = ingredients.first 
-       	elseif ( recipe == "recipe2" ) then 
-       		ingredientsList = ingredients.second
-       	end
-
-        for k, v in pairs( ingredientsList ) do 
-          local found = false 
-        	if ( ingredientsList[k] ~=  ingredients.collected[k] ) then inOrder = false end 
-	        for r, s in pairs( ingredients.collected ) do
-            if v == s then found = true end 
           end
 
-          if ( found == true ) then 
-            collectedNone = false 
-          else 
-            remaining[k] = ingredientsList[k]
-            collectedAll = false 
-          end 
+          showIngredient(1)
+          
+          collision.organizer = true 
+          local collectedAll = true 
+          local collectedNone = true 
+          local remaining = { }
+          local ingredientsList
+          local inOrder = true 
+
+          if ( recipe == "recipe1" ) then 
+          	ingredientsList = ingredients.first 
+         	elseif ( recipe == "recipe2" ) then 
+         		ingredientsList = ingredients.second
+         	end
+
+          for k, v in pairs( ingredientsList ) do 
+            local found = false 
+          	if ( ingredientsList[k] ~=  ingredients.collected[k] ) then inOrder = false end 
+  	        for r, s in pairs( ingredients.collected ) do
+              if v == s then found = true end 
+            end
+
+            if ( found == true ) then 
+              collectedNone = false 
+            else 
+              remaining[k] = ingredientsList[k]
+              collectedAll = false 
+            end 
+          end
+          ingredients.remaining = remaining
+          collision.collectedAll = collectedAll
+          collision.collectedNone = collectedNone
+          collision.inOrder = inOrder
         end
-        ingredients.remaining = remaining
-        collision.collectedAll = collectedAll
-        collision.collectedNone = collectedNone
-        collision.inOrder = inOrder
+    end
 
     -- Colisão entre o personagem e os sensores dos tiles do caminho
     elseif ( ( obj1.isCharacter ) and ( obj2.isPath ) ) then
@@ -314,6 +313,10 @@ local function onCollision( event )
       elseif ( ( obj.direction == "down" ) ) then 
         transition.to( character, { time = 0, y = character.y + .22 * tilesSize } )
       end
+
+      if ( collision ) then 
+        collision.otherObjects = true 
+      end
     end
   end 
   return true 
@@ -323,14 +326,17 @@ local function destroyScene()
   gamePanel:destroy()
 
   instructions:destroyInstructionsTable()
+  instructions = nil 
 
   restaurant:removeSelf()
   restaurant = nil 
 
-  if ( ( restaurantFSM.fsm.messageBubble ) and ( restaurantFSM.fsm.messageBubble.text ) ) then 
+  if ( ( restaurantFSM.fsm ) and ( restaurantFSM.fsm.messageBubble ) and ( restaurantFSM.fsm.messageBubble.text ) ) then 
     local text = restaurantFSM.fsm.messageBubble.text
     text:removeSelf()
   end
+
+  restaurantFSM = nil 
 end
 -- -----------------------------------------------------------------------------------
 -- Cenas
@@ -348,7 +354,7 @@ function scene:create( event )
   sceneGroup:insert( restaurant )
   sceneGroup:insert( gamePanel.tiled )
 
-  	--miniGameData.isComplete = true 
+  	--miniGameData.isComplete = false 
   	--miniGameData.onRepeat = false 
 
 	if ( miniGameData.onRepeat == true ) then
@@ -356,59 +362,19 @@ function scene:create( event )
 	    originalMiniGameData = miniGameData
 	end
 
-  	--setObstacles()
-  	path:hidePath()
+	path:hidePath()
 
-  	recipe = 1
+  --[[gamePanel.createInstruction( "left", 8 )
+  gamePanel.createInstruction( "up", 5 )
+  gamePanel.createInstruction( "right", 7 )
+  gamePanel.createInstruction( "down", 3 )
+  gamePanel.createInstruction( "left", 4 )]]
 
-    --[[instructionsTable.steps = { 3, 1, 2, 1, 2, 1, 2, 1, 2, 1, 3, 1, 1, 2, 4   }
-    instructionsTable.direction = { "up", "right", "up", "right", "left", "up", "left", "up", "left", "up", "left", "down", "left", "down", "right"  }
-    instructionsTable.last = 15]]
-
-    --[[instructionsTable.steps = { 1, 1 }
-    instructionsTable.direction = { "up", "left" }
-    instructionsTable.last = 2]]
-
-  	--[[instructionsTable.steps = { 1, 1, 2, 1, 4, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 2, 2 }
-  	instructionsTable.direction = { "up", "right", "up", "left", "up", "right", "down", "left", "down","left", "up", "left", "down", "left", "up", "left", "down", "left", "up", "left", "down", "left" }
-  	instructionsTable.last = 22]]
-
-    --[[instructionsTable.steps = { 7, 4, 2 } 
-    instructionsTable.direction = { "left", "up", "left" }
-    instructionsTable.last = 3]]
-
-  	-- Primeira receita
-  	--[[instructionsTable.steps = { 5, 1, 9, 2, 1, 1, 4, 3, 1 } 
-  	instructionsTable.direction = { "up", "right", "left", "right", "up", "left", "down", "right", "up" }
-  	instructionsTable.last = 9]]
-
-    -- Primeira receita (sem chegar no organizador + item incorreto)
-    --[[instructionsTable.steps = { 5, 1, 9, 2, 1, 1, 1, 2 } 
-    instructionsTable.direction = { "up", "right", "left", "right", "up", "left", "down", "left" }
-    instructionsTable.last = 8]]
-
-    -- Primeira receita (chegando no organizador + item incorreto)
-    --[[instructionsTable.steps = { 5, 1, 9, 2, 1, 1, 1, 2, 2, 4 } 
-    instructionsTable.direction = { "up", "right", "left", "right", "up", "left", "down", "left", "down", "right" }
-    instructionsTable.last = 10]]
-
-    --[[instructionsTable.steps = { 5, 1, 9, 2, 1, 3, 4 } 
-    instructionsTable.direction = { "up", "right", "left", "right", "left", "down", "right" }
-    instructionsTable.last = 7]]
-
-  	-- + Segunda receita
-  	--[[instructionsTable.steps = { 5, 1, 9, 2, 1, 1, 3, 2, 1, 6, 2, 1, 8, 3, 2, 1, 6, 1, 2, 1  } 
-  	instructionsTable.direction = { "up", "right", "left", "right", "up", "left", "down", "right", "down", "right", "up", "down", "left", "up", "left", "up", "left", "up" }
-  	instructionsTable.last = 20]]
-
-  	-- + Segunda receita
-  	--[[instructionsTable.steps = { 5, 1, 9, 2, 1, 1, 4, 3, 0, 5, 2, 1, 8, 3, 3, 1, 6, 1, 2, 1, 3, 3, 3 } 
-  	instructionsTable.direction = { "up", "right", "left", "right", "up", "left", "down", "right", "up", "right", "up", "down", "left", "up", "left", "up", "right", "up", "left", "up", "left", "down", "right" }
-  	instructionsTable.last = 23]]
-
-  	--[[instructionsTable.steps = { 5, 1, 6, 1, 3, 3, 4 } 
-  	instructionsTable.direction = { "up", "right", "left", "up", "left", "down", "right", "up" }
-  	instructionsTable.last = 7]]
+  --[[gamePanel.createInstruction( "left", 10 )
+  gamePanel.createInstruction( "up", 5 )
+  gamePanel.createInstruction( "right", 8 )
+  gamePanel.createInstruction( "down", 3 )
+  gamePanel.createInstruction( "left", 4 )]]
 end
 
 
@@ -430,15 +396,15 @@ function scene:show( event )
       end
 
       brotherPosition = restaurant:findObject( "brother" )
-      if ( miniGameData.previousStars < 6 )  then 
-        brother.x, brother.y = brotherPosition.x, brotherPosition.y
+      if ( ( miniGameData.previousStars == 1 ) or ( miniGameData.previousStars == 2 ) )  then 
+        brother.x, brother.y = brotherPosition.x, brotherPosition.y - 10
         brother.xScale = 1
         brother.alpha = 1
       end
 
       setIngredients()
       --gamePanel.tiled.alpha = 0
-      character.alpha = 1 --TIRAR
+      --character.alpha = 1 --TIRAR
     else
       cook.alpha = 1
       character.alpha = 1
@@ -455,7 +421,7 @@ function scene:show( event )
 	    gamePanel:addButtonsListeners()
 	    gamePanel:addInstructionPanelListeners()
 	    if ( miniGameData.isComplete == false ) then
-		    collision = { bench = false, otherObjects = false, organizer = false, collectedAll = false, collectedNone = true, inOrder = true, wrongIngredient = false }
+		    collision = { obj = false, otherObjects = false, organizer = false, collectedAll = false, collectedNone = true, inOrder = true, wrongIngredient = false }
 		    restaurantFSM.new( restaurant, character, ingredients, listeners, collision, instructionsTable, miniGameData, gameState, gamePanel, path )
 		    restaurantFSM.execute()
 		    instructions.updateFSM = restaurantFSM.updateFSM
@@ -466,17 +432,24 @@ end
 
 -- hide()
 function scene:hide( event )
+  local sceneGroup = self.view
+  local phase = event.phase
 
-	local sceneGroup = self.view
-	local phase = event.phase
+  if ( phase == "will" ) then
+    if ( miniGameData.onRepeat == true ) then
+      miniGameData.onRepeat = false
 
-	if ( phase == "will" ) then
-		-- Code here runs when the scene is on screen (but is about to go off screen)
-
-	elseif ( phase == "did" ) then
-		-- Code here runs immediately after the scene goes entirely off screen
-
-	end
+      if ( miniGameData.isComplete == false ) then 
+        miniGameData = originalMiniGameData
+      end
+    end
+  
+    gameState:save( miniGameData )
+    destroyScene()
+    listeners:destroy()
+  elseif ( phase == "did" ) then
+    composer.removeScene( "restaurant" )
+  end
 end
 
 

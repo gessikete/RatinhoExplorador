@@ -178,11 +178,11 @@ function M.mapProgress( position, miniGame )
 	if ( position == "entrance" ) then 
 		if ( miniGame == "house" ) then return 80, 160
 		elseif ( miniGame == "school" ) then return 240, 160
-		elseif ( miniGame == "restaurant" ) then return 304, 288 end
+		elseif ( miniGame == "restaurant" ) then return 208, 288 end
 	elseif ( position == "exit" ) then 
 		if ( miniGame == "house" ) then return 144, 96
 		elseif ( miniGame == "school" ) then return 336, 160 
-		elseif ( miniGame == "restaurant" ) then return 208, 288 end
+		elseif ( miniGame == "restaurant" ) then return 304, 288 end
 	end
 end
 
@@ -214,7 +214,6 @@ function M.goBackPoint( currentMiniGame, previousMiniGameFile, onRepeat )
 		return startingPointX, startingPointY, entrance, flipped
 	elseif ( currentMiniGame == previousMiniGameFile.currentMiniGame ) then
 		return startingPointX, startingPointY, entrance, flipped
-		--return previousMiniGameFile.character.stepping.x, previousMiniGameFile.character.stepping.y, previousMiniGameFile.character.stepping.point, previousMiniGameFile.character.flipped
 	elseif ( currentMiniGame == "map" ) then 
 		if ( previousMiniGameFile.currentMiniGame == "house" ) then
 			if ( previousMiniGameFile.character.stepping.point == exit  ) then 
@@ -228,6 +227,13 @@ function M.goBackPoint( currentMiniGame, previousMiniGameFile, onRepeat )
 			else 
 				flipped = true 
 				return schoolMapEntranceX, schoolMapEntranceY, entrance, flipped
+			end
+		elseif ( previousMiniGameFile.currentMiniGame == "restaurant" ) then 
+			if ( previousMiniGameFile.character.stepping.point == exit  ) then 
+				return restaurantMapExitX, restaurantMapExitY, exit, flipped
+			else 
+				flipped = true 
+				return restaurantMapEntranceX, restaurantMapEntranceY, entrance, flipped
 			end
 		end
 		return houseMapExitX, houseMapExitY, flipped
