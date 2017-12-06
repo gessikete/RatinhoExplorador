@@ -13,8 +13,8 @@ message["msg2"] = { "Arraste a seta para o retângulo",
 message["msg3"] = { "Muito bem! Arraste mais uma",
                     "seta para pegar a peça ao lado." }
 
-message["msg4"] = { "Agora aperte no botão indicado",
-                    "para andar." }
+message["msg4"] = { "Agora aperte no botão",
+                    "indicado para andar." }
 
 message["msg5"] = { "Parabéns! Agora tente pegar as",
                     "outras peças usando", 
@@ -26,7 +26,7 @@ message["msg6"] = { "Muito bem! Você está perto de",
 
 message["msg7"] = { "Parabéns! Você ga-nhou uma",
                     "bicicleta." }
-
+ 
 message["msg8"] = { "Vamos aprender a usar",
                     "a sua nova bicicleta?" }
 
@@ -66,9 +66,11 @@ message["msg17"] = { "Se você voltar logo para",
 
 message["msg18"] = { "Humpf! Eu ouvi surpresa?",
                      "Acho que eu deveria ganhá-la!",
-                     "Ei, por que não fazemos uma aposta?",
-                     "Se eu chegar antes de você em",
-                     "casa, eu fico com a sua surpresa." }
+                     "Ei, por que não fazemos",
+                     "uma aposta?",
+                     "Se eu chegar antes de",
+                     "você em casa, eu fico",
+                     "com a sua surpresa." }
 
 message["msg19"] = { "Hahaha! Te vejo mais tarde",
                       "com a minha surpresa!" }
@@ -78,4 +80,25 @@ message["msg20"] = { "Esse seu irmão não tem jeito!",
                      "alcançá-lo.",
                      "Até mais tarde." }
 
+message["msg21"] = { "Surpresa!",
+                     " Veja o que você ganhou." }
+
+message["msg22"] = { "Nããão! Eu queria tanto essa",
+                     "surpresa.",
+                     "Mas tenho que admitir, Ada...",
+                     "Você parou para ajudar o",
+                     "cozinheiro e o professor e",
+                     "mesmo assim chegou antes",
+                     "de mim.",
+                     "Parabéns." }
+
+message["msg23"] = { "Haha! Como eu disse,",
+                     "eu cheguei antes!",
+                     "Olha a minha surpresa!" }
+
+message["msg24"] = { "Ada, você pode tentar de novo.",
+                     "Se você se sair melhor,",
+                     "você poderá ganhar a surpresa",
+                     "também." }
+                    
 return message

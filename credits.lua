@@ -1,3 +1,12 @@
+
+local composer = require( "composer" )
+
+local scene = composer.newScene()
+
+-- -----------------------------------------------------------------------------------
+-- Code outside of the scene event functions below will only be executed ONCE unless
+-- the scene is removed entirely (not recycled) via "composer.removeScene()"
+-- -----------------------------------------------------------------------------------
 local composer = require( "composer" )
 
 local scene = composer.newScene()
@@ -10,10 +19,7 @@ local sceneTransition = require "sceneTransition"
 
 local listenersModule = require "listeners"
 
--- -----------------------------------------------------------------------------------
--- Declaração das variáveis
--- -----------------------------------------------------------------------------------
-local menu
+local credits
 
 local newGameButton
 
@@ -22,34 +28,29 @@ local playButton
 local fitScreen = require "fitScreen"
 
 local listeners = listenersModule:new()
+-- -----------------------------------------------------------------------------------
+-- Scene event functions
+-- -----------------------------------------------------------------------------------
 
--- -----------------------------------------------------------------------------------
--- Cenas
--- -----------------------------------------------------------------------------------
 -- create()
 function scene:create( event )
-
 	local sceneGroup = self.view
 	-- Code here runs when the scene is first created but has not yet appeared on screen
 
 	display.setDefault("magTextureFilter", "nearest")
   	display.setDefault("minTextureFilter", "nearest")
-	local menuData = json.decodeFile(system.pathForFile("tiled/menu.json", system.ResourceDirectory))  -- load from json export
+	local creditsData = json.decodeFile(system.pathForFile("tiled/credits.json", system.ResourceDirectory))  -- load from json export
 
-	menu = tiled.new(menuData, "tiled")
+	credits = tiled.new(creditsData, "tiled")
 
-	newGameButton = menu:findObject("new game")
-	playButton = menu:findObject("play")
-	title = menu:findObject("title")
-	info = menu:findObject("info")
+	gotoMenuButton = credits:findObject("gotoMenuButton")
 
-	sceneGroup:insert( menu )
+	sceneGroup:insert( credits )
 
-	fitScreen.fitMenu( menu, newGameButton, playButton, title )
+	--fitScreen.fitcredits( credits, newGameButton, playButton, title )
 
-	listeners:add( playButton, "tap",  sceneTransition.gotoChooseGameFile )
-	listeners:add( newGameButton, "tap", sceneTransition.gotoNewGame )
-	listeners:add( info, "tap", sceneTransition.gotoCredits )
+	listeners:add( gotoMenuButton, "tap",  sceneTransition.gotoMenu )
+
 end
 
 
@@ -60,25 +61,25 @@ function scene:show( event )
 	local phase = event.phase
 
 	if ( phase == "will" ) then
-		
+		-- Code here runs when the scene is still off screen (but is about to come on screen)
 
 	elseif ( phase == "did" ) then
-		
+		-- Code here runs when the scene is entirely on screen
+
 	end
 end
 
 
 -- hide()
 function scene:hide( event )
-
 	local sceneGroup = self.view
 	local phase = event.phase
 
 	if ( phase == "will" ) then
 		listeners:destroy()
 	elseif ( phase == "did" ) then
-		menu:removeSelf()
-		composer.removeScene( "menu" )
+		credits:removeSelf()
+		composer.removeScene( "credits" )
 	end
 end
 

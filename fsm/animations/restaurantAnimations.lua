@@ -31,12 +31,12 @@ function M.new( restaurant, ingredients, character, gamePanel, path, restaurantF
 	  	character.y = startingPoint.y - 6
 	  	cook.x = character.x - 2
 	  	cook.y = character.y 
-	  	cook.alpha = 1
 	  	cook.xScale = -1
 	  	character.xScale = -1
 
 	  	path:hidePath()
 	  	transition.fadeIn( character, { delay = time * 2 } )
+	  	transition.fadeIn( cook, { time = 400 } )
 		transition.to( character, { delay = time * 2, time = time * 2, x = character.x - tilesSize * 2,
 			onComplete =
 				function()
@@ -68,7 +68,7 @@ function M.new( restaurant, ingredients, character, gamePanel, path, restaurantF
 		local time = 1500
 
 		gameFlow.updateFSM()
-		transition.to( brother, { rotation = 7, time = time, y = brother.y - 5, transition = easing.inBounce,
+		transition.to( brother, { rotation = -7, time = time, y = brother.y - 5, transition = easing.inBounce,
 		onComplete =  
 		  function()
 		    transition.to( brother, { rotation = 0, time = time, y = brother.y + 5, transition = easing.outBounce } )
@@ -105,11 +105,9 @@ function M.new( restaurant, ingredients, character, gamePanel, path, restaurantF
 		elseif ( stars == 2 ) then 
 			message["msg1"] = message["msg2"]
 			brotherJumpingAnimation()
-		elseif ( stars == 1 ) then
+		elseif ( stars <= 1 ) then
 			message["msg1"] = message["msg3"] 
 			brotherJumpingAnimation()
-		else
-			gameFlow.updateFSM( _, "transitionEvent" )
 		end 
 
 		

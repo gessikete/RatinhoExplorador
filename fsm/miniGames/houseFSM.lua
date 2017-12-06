@@ -4,11 +4,15 @@ local gameFlow = require "fsm.gameFlow"
 
 local feedback = require "fsm.feedback"
 
+local warning = require "warning"
+
 local sceneTransition = require "sceneTransition"
 
 local houseMessages = require "fsm.messages.houseMessages"
 
 local houseAnimations = require "fsm.animations.houseAnimations"
+
+local persistence = require "persistence"
 
 local M = { }
 
@@ -18,7 +22,7 @@ local message = {}
 
 
 function M.new( house, character, listeners, puzzle, miniGameData, gameState, gamePanel, path )
-	local tutorialFSM
+	local houseFSM
 	local mom = house:findObject( "mom" )  
 	local tilesSize = 32
 	local messageBubble
@@ -32,7 +36,7 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 		if ( messageBubble.message[messageBubble.shownText] ) then 
 		    messageBubble.text:removeSelf()
 
-		    if ( ( tutorialFSM.current == "momBubble_msg6" ) and ( messageBubble.message[messageBubble.shownText] == "Mas ainda falta" ) ) then 
+		    if ( ( houseFSM.current == "momBubble_msg6" ) and ( messageBubble.message[messageBubble.shownText] == "Mas ainda falta" ) ) then 
 		      local remainingPieces = puzzle.littlePieces.count - puzzle.collectedPieces.count
 
 		      if ( remainingPieces > 1 ) then
@@ -60,7 +64,7 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 	      	end
 
 		else
-		    if ( tutorialFSM.event == "showObligatoryMessage" ) then
+		    if ( houseFSM.event == "showObligatoryMessage" ) then
 		      transition.fadeOut( messageBubble.text, { time = 400 } )
 		      transition.fadeOut( messageBubble, { time = 400, onComplete = gameFlow.updateFSM } )
 		      messageBubble.text:removeSelf()
@@ -96,7 +100,7 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 		    text = " ",
 		    x = bubble.contentBounds.xMin + 15, 
 		    y = bubble.contentBounds.yMin + 10,
-		    fontSize = 12.5,
+		    fontSize = 12,
 		    width = bubble.width - 27,
 		    height = 0,
 		    align = "left" 
@@ -112,6 +116,10 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 		  	message[3] = "alcançá-la."
 		elseif ( ( message[1] == "Filha, tenho um presente para você." ) and ( character.myName == "Turing" ) ) then
 		  	message[1] = "Filho, tenho um presente para você."
+		elseif ( ( message[3] == "Mas tenho que admitir, Ada..." ) and ( character.myName == "Turing"  ) ) then 
+			message[3] = "Mas tenho que admitir, Turing..."
+		elseif ( ( message[1] == "Ada, você pode tentar de novo." ) and ( character.myName == "Turing"  ) ) then 
+			message[1] = "Turing, você pode tentar de novo."
 		end
 
 		options.text = message[1]
@@ -133,7 +141,7 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 
 		local time 
 		if ( not bubble.blinkingDart ) then 
-		    if ( tutorialFSM.event == "showObligatoryMessage" ) then 
+		    if ( houseFSM.event == "showObligatoryMessage" ) then 
 		      time = 500
 		      bubble.blinkingDart = house:findObject( "obligatoryBlinkingDart" ) 
 		    else
@@ -162,11 +170,127 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 		end
 	end
 
+	function M.completeGame()
+	  	local start = house:findObject( "start" )
+	  	local turingBubble = house:findObject( "turingBubble" )
+	  	local adaBubble = house:findObject( "adaBubble" )
+
+	  	gamePanel.stopExecutionListeners()
+
+	  	turingBubble.x = house:findObject( "brotherEnding" ).x
+	  	turingBubble.y = house:findObject( "brotherEnding" ).y - tilesSize*2
+	  	adaBubble.x = turingBubble.x
+	  	adaBubble.y = turingBubble.y
+	  	--miniGameData.wonSurprise = true 
+	  	houseFSM = fsm.create({
+		  	initial = "start",
+		  	events = {
+		  		{ name = "showAnimation",  from = "start",  to = "enterHouseAnimation", nextEvent = "showObligatoryMessage" },
+		  		{ name = "showObligatoryMessage",  from = "enterHouseAnimation",  to = "momBubble_msg21", nextEvent = "showAnimation" },
+		  	    { name = "showAnimation",  from = "momBubble_msg21",  to = "legoAnimation", nextEvent = "showObligatoryMessage" },
+		  	    { name = "showObligatoryMessage",  from = "legoAnimation",  to = "brotherBubble_msg22", nextEvent = "finishEvent" },
+		  		{ name = "showWarning", from = "brotherBubble_msg22", "resetGame" },
+		  		{ name = "finishEvent", from = "brotherBubble_msg22", to = "finish" },
+		  	},
+		  	callbacks = {
+		  	  	on_before_event = 
+			  	    function( self, event, from, to ) 
+			  	        if ( ( messageBubble ) and ( messageBubble.text ) ) then
+					        if ( messageBubble.blinkingDart ) then 
+						        transition.cancel( messageBubble.blinkingDart )
+						        messageBubble.blinkingDart.alpha = 0
+						        messageBubble.blinkingDart = nil
+					    	end
+					    end
+			  	    end,
+
+		  	    on_showAnimation = 
+			  	    function( self, event, from, to ) 
+			  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+			  	        local animationWait
+
+			  	        if ( ( self.current == "legoAnimation" ) or ( self.current == "enterHouseAnimation" ) ) then 
+			  	        	animationWait = animation[self.current]( miniGameData.wonSurprise )
+			  	        else 
+			  	        	animationWait = animation[self.current]()
+			  	        end
+
+			  	        if ( animationWait ~= math.huge ) then 
+		  	          		timer.performWithDelay( animationWait, gameFlow.updateFSM )
+		  	      	  	end
+			  	    end,
+
+		  	    on_showObligatoryMessage = 
+			  	    function( self, event, from, to ) 
+			  	        local messageBubble, msg = self.current:match( "([^,]+)_([^,]+)" )
+			  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+			  	        local brotherBubble
+			  	        local momBubble = house:findObject( "momBubble" )
+			  	        local bubbleChar
+			  	        local brother
+			  	        
+		  	        	if ( character == house:findObject( "ada" ) ) then 
+		  	        		brotherBubble = house:findObject( "turingBubble" )
+		  	        		brother = house:findObject( "turing" )
+		  	        	else
+		  	        		brotherBubble = house:findObject( "adaBubble" )
+		  	        		brother = house:findObject( "ada" )
+		  	        	end
+
+			  	        if ( messageBubble == "brotherBubble" ) then
+			  	        	messageBubble = brotherBubble
+			  	        	bubbleChar = brother
+			  	        else 
+			  	        	messageBubble = house:findObject( "momBubble" )
+			  	        	bubbleChar = house:findObject( "mom" )
+			  	        end
+
+			  	        if ( msg == "msg22" ) then miniGameData.shownCompletion = true end
+
+			  	        if ( miniGameData.wonSurprise == false ) then 
+			  	        	if ( msg == "msg21" ) then 
+			  	        		msg = "msg23"
+			  	        		messageBubble = brotherBubble
+			  	        		bubbleChar = brother
+			  	        	elseif( msg == "msg22" ) then 
+			  	        		msg = "msg24"
+			  	        		messageBubble = momBubble
+			  	        		bubbleChar = mom 
+			  	        		self.nextEvent = "showWarning"
+			  	        	end
+			  	        end
+
+			  	        M.showText( messageBubble, message[ msg ], bubbleChar ) 
+			  	    end,
+
+			  	on_showWarning = 
+			  	    function( self, event, from, to ) 
+			  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+			  	        gamePanel.tiled:insert( warning.show( "resetGame" ) )
+			  	        gamePanel.restartExecutionListeners()
+			  	    end,
+
+			  	on_finishEvent = 
+			  	    function( self, event, from, to ) 
+			  	        local from, wait, _ = self.from:match( "([^,]+)_([^,]+)_([^,]+)" )
+			  	        gamePanel.restartExecutionListeners()
+			  	        miniGameData.shownCompletion = true 
+			  	    end,
+		  	}
+		})
+
+		gameFlow.new( houseFSM )
+		M.update = gameFlow.updateFSM
+		M.fsm = houseFSM
+		animation = houseAnimations.new( house, character, puzzle, gamePanel, path, houseFSM, gameFlow )
+	  	houseFSM.showAnimation()
+	end
+
 	function M.bikeTutorial()
 	  	local start = house:findObject( "start" )
 
 
-	  	if ( not tutorialFSM ) then 
+	  	if ( not houseFSM ) then 
 	  	  transition.to( character, { time = 0, x = 80, y = 296} )
 	  	  mom.x, mom.y = character.x, character.y - tilesSize
 	  	  gamePanel:showDirectionButtons( false )
@@ -183,7 +307,7 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 	  	gamePanel:updateBikeMaxCount( 3 )
 	  	gamePanel:stopAllListeners()
 
-	  	tutorialFSM = fsm.create({
+	  	houseFSM = fsm.create({
 	  	  initial = "start",
 	  	  events = {
 	  	    {name = "showObligatoryMessage",  from = "start",  to = "momBubble_msg8", nextEvent = "showMessageAndAnimation" },
@@ -425,15 +549,15 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 	  	  }
 	  	})
 
-		gameFlow.new( tutorialFSM )
+		gameFlow.new( houseFSM )
 		M.update = gameFlow.updateFSM
-		M.tutorialFSM = tutorialFSM
-		animation = houseAnimations.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow )
-	  	tutorialFSM.showObligatoryMessage()
+		M.fsm = houseFSM
+		animation = houseAnimations.new( house, character, puzzle, gamePanel, path, houseFSM, gameFlow )
+	  	houseFSM.showObligatoryMessage()
 	end
 
 	function M.controlsTutorial()
-	  	tutorialFSM = fsm.create( {
+	  	houseFSM = fsm.create( {
 	  	  initial = "start",
 	  	  events = {
 	  	    { name = "showAnimation",  from = "start",  to = "momAnimation", nextEvent = "showObligatoryMessage" },
@@ -611,11 +735,27 @@ function M.new( house, character, listeners, puzzle, miniGameData, gameState, ga
 		mom.originalX = mom.x 
 		mom.originalY = mom.y
 	  	
-	  	gameFlow.new( tutorialFSM )
-	  	M.tutorialFSM = tutorialFSM
+	  	gameFlow.new( houseFSM )
+	  	M.fsm = houseFSM
 	  	M.update = gameFlow.updateFSM
-	  	animation = houseAnimations.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow )
-	  	tutorialFSM.showAnimation()
+	  	animation = houseAnimations.new( house, character, puzzle, gamePanel, path, houseFSM, gameFlow )
+	  	houseFSM.showAnimation()
+	end
+
+	function M.destroy( ) 
+		if ( M.messageBubble ) then 
+			if ( M.messageBubble.text ) then 
+				local text = M.messageBubble.text
+				text:removeSelf()
+			end
+		end 
+
+		if ( houseFSM ) then 
+			for k, v in pairs( houseFSM ) do
+				houseFSM[k] = nil 
+			end
+			houseFSM = nil 
+		end
 	end
 end
 

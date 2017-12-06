@@ -56,10 +56,15 @@ local message =
     "ajudar!",
     "Preciso fazer uma receita de",
     "macarrão, mas estou tendo",
-    "dificuldades.",
+    "dificuldades",
     "Vamos lá?" 
-  }
+  },
 
+  mom = {
+    "Ah, que bom que você chegou!",
+    "Vamos entrar em casa para",
+    "ver a surpresa?",
+  }
 
 }
 
@@ -80,21 +85,31 @@ local function jumpingLoop( nextLevelCharacter, bubble, msg )
 end
 
 function setNextLevelCharacter()
-  gameFileData.house.isComplete = true 
+  gameFileData.house.isComplete = true
+
   if ( ( gameFileData.house.isComplete == true ) and ( gameFileData.school.isComplete == false ) ) then 
-      gamePanel:updateBikeMaxCount( 3 )
-      teacher.alpha = 1
-      teacher.originalY = teacher.y 
-      physics.addBody( map:findObject( "teacher sensor" ), { isSensor = true, bodyType = "static" } )
+    gamePanel:updateBikeMaxCount( 3 )
+    teacher.alpha = 1
+    teacher.originalY = teacher.y 
+    physics.addBody( map:findObject( "teacher sensor" ), { isSensor = true, bodyType = "static" } )
 
-      jumpingLoop( teacher, map:findObject( "teacherBubble" ), message.teacher )
+    jumpingLoop( teacher, map:findObject( "teacherBubble" ), message.teacher )
   elseif ( ( gameFileData.school.isComplete == true ) and ( gameFileData.restaurant.isComplete == false ) ) then 
-      gamePanel:updateBikeMaxCount( 1 )
-      cook.alpha = 1
-      cook.originalY = cook.y 
-      physics.addBody( map:findObject( "cook sensor" ), { isSensor = true, bodyType = "static" } )
+    gamePanel:updateBikeMaxCount( 1 )
+    cook.alpha = 1
+    cook.originalY = cook.y 
+    physics.addBody( map:findObject( "cook sensor" ), { isSensor = true, bodyType = "static" } )
 
-      jumpingLoop( cook, map:findObject( "cookBubble" ), message.cook )
+    jumpingLoop( cook, map:findObject( "cookBubble" ), message.cook )
+  elseif ( ( gameFileData.restaurant.isComplete == true ) and ( gameFileData.house.shownCompletion == false ) ) then
+    local characterLayer = map:findLayer( "characters" ) 
+    characterLayer:insert( character )
+    gamePanel:updateBikeMaxCount( 2 )
+    mom.alpha = 1
+    mom.originalY = mom.y 
+    physics.addBody( map:findObject( "mom sensor" ), { isSensor = true, bodyType = "static" } )
+
+    jumpingLoop( mom, map:findObject( "momBubble" ), message.mom )
   end
 end
 -- -----------------------------------------------------------------------------------
@@ -149,7 +164,37 @@ local function gotoNextLevel()
     else 
       gameFileData.restaurant.previousStars = 1
     end
+  elseif ( ( gameFileData.restaurant.isComplete == true ) and ( gameFileData.house.shownCompletion == false ) ) then 
+    local wonCount = 0
+    transition.to( character, { time = 100, y = character.y - 5 } )
+    transition.to( mom, { time = 100, y = mom.y - 5, onComplete = sceneTransition.gotoHouse } )
+    
+    gameFileData.house.isGameComplete = true 
+    if ( ( executeButton.executionsCount == 1 ) and ( executeButton.instructionsCount[#executeButton.instructionsCount] == 2 ) ) then
+      gameFileData.house.previousStars = 3  
+    elseif ( gamePanel.bikeWheel.maxCount == 0 ) then
+      gameFileData.house.previousStars = 2 
+    else 
+      gameFileData.house.previousStars = 1
+    end
 
+    if ( gameFileData.house.previousStars >= 3 ) then 
+      wonCount = wonCount + 1
+    end
+
+    if ( gameFileData.school.previousStars >= 3 ) then 
+      wonCount = wonCount + 1
+    end
+
+    if ( gameFileData.restaurant.previousStars >= 3 ) then 
+      wonCount = wonCount + 1
+    end 
+
+    if ( wonCount >= 2 ) then
+      gameFileData.house.wonSurprise = true 
+    else 
+      gameFileData.house.wonSurprise = false
+    end
   end 
 end
  
@@ -279,19 +324,24 @@ local function showSubText( event )
 
 local function nextLevelCharacterCollision( nextLevelCharacter, bubble, msg )
   if ( instructionsTable.last < instructionsTable.executing ) then 
-        nextLevelCharacter.cancelLoop = true
-        instructionsTable.stop = true
-        transition.cancel( character )
+    local cancelLoop = nextLevelCharacter.cancelLoop
+    nextLevelCharacter.cancelLoop = true
+    instructionsTable.stop = true
+    transition.cancel( character )
 
     if ( nextLevelCharacter == teacher ) then 
       transition.to( character, { x = character.x - .45 * tilesSize } )
     elseif  ( nextLevelCharacter == cook ) then
       transition.to( character, { time = 100, y = character.y - 0.4 * tilesSize } )
+    elseif  ( nextLevelCharacter == mom ) then
+      transition.to( character, { time = 100, y = character.y + 0.05 * tilesSize } )
     end
     local function closure()
-      showText( bubble, msg, nextLevelCharacter )
+      if ( cancelLoop == false ) then 
+        showText( bubble, msg, nextLevelCharacter )
+      end
     end
-  
+    
     transition.to( nextLevelCharacter, { y = nextLevelCharacter.originalY, onComplete = closure } )
   else
     transition.cancel()
@@ -299,6 +349,8 @@ local function nextLevelCharacterCollision( nextLevelCharacter, bubble, msg )
       transition.to( character, { x = character.x - .45 * tilesSize } )
     elseif  ( nextLevelCharacter == cook ) then
       transition.to( character, { time = 100, y = character.y - 0.4 * tilesSize } )
+    elseif  ( nextLevelCharacter == mom ) then
+      transition.to( character, { time = 100, y = character.y + 0.05 * tilesSize } )
     end 
     jumpingLoop( nextLevelCharacter, bubble, msg )
   end  
@@ -315,10 +367,15 @@ local function onCollision( event )
   if ( event.phase == "began" ) then
     if ( ( ( obj1.myName == "house" ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.myName == "house" ) ) ) then 
       transition.cancel()
-      if ( obj1.point ) then character.stepping.point = obj1.point else character.stepping.point = obj2.point end 
-      instructions:destroyInstructionsTable()
-      gamePanel:stopAllListeners()
-      timer.performWithDelay( 800, sceneTransition.gotoHouse )
+      local obj
+      if ( obj1.myName == "house" ) then obj = obj1 else obj = obj2 end
+      character.stepping.point = obj.point
+
+      if ( ( obj.point == "exit" ) or ( gameFileData.house.isGameComplete == true ) ) then 
+        instructions:destroyInstructionsTable()
+        gamePanel:stopAllListeners()
+        timer.performWithDelay( 800, sceneTransition.gotoHouse )
+      end
 
     elseif ( ( ( obj1.myName == "school" ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.myName == "school" ) ) ) then
       if ( gameFileData.school.isComplete == true ) then 
@@ -338,16 +395,14 @@ local function onCollision( event )
         timer.performWithDelay( 800, sceneTransition.gotoRestaurant ) 
       end
     -- Colisão entre o personagem e os sensores dos tiles do caminho
-    elseif ( ( obj1.isCharacter ) and ( obj2.isPath ) ) then 
-      character.stepping.x = obj2.x 
-      character.stepping.y = obj2.y 
+    elseif ( ( ( obj1.isCharacter ) and ( obj2.isPath ) ) or ( ( obj2.isCharacter ) and ( obj1.isPath ) ) ) then
+      local obj 
+      if ( obj1.isPath ) then obj = obj1 else obj = obj2 end
+
+      character.stepping.x = obj.x 
+      character.stepping.y = obj.y 
       character.stepping.point = "point"
-      path:showTile( obj2.myName )
-    elseif ( ( obj2.isCharacter ) and ( obj1.isPath ) ) then 
-      character.stepping.x = obj1.x 
-      character.stepping.y = obj1.y 
-      character.stepping.point = "point"
-      path:showTile( obj1.myName )
+      path:showTile( obj.myName )
     
     elseif ( ( ( obj1.myName == "teacher" ) and ( obj2.isCharacter ) ) or ( ( obj2.myName == "teacher" ) and ( obj1.isCharacter ) ) ) then 
       nextLevelCharacterCollision( teacher, map:findObject( "teacherBubble" ), message.teacher )
@@ -355,9 +410,13 @@ local function onCollision( event )
     elseif ( ( ( obj1.myName == "cook" ) and ( obj2.isCharacter ) ) or ( ( obj2.myName == "cook" ) and ( obj1.isCharacter ) ) ) then
       nextLevelCharacterCollision( cook, map:findObject( "cookBubble" ), message.cook )
 
+    elseif ( ( ( obj1.myName == "mom" ) and ( obj2.isCharacter ) ) or ( ( obj2.myName == "mom" ) and ( obj1.isCharacter ) ) ) then
+      nextLevelCharacterCollision( mom, map:findObject( "momBubble" ), message.mom )
+
     elseif ( ( ( obj1.isCollision ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.isCollision ) ) ) then 
       local obj
       if ( obj1.isCollision ) then obj = obj1 else obj = obj2 end 
+      
       transition.cancel( character )
       if ( ( obj.direction == "right" ) ) then 
         transition.to( character, { time = 0, x = character.x + .18 * tilesSize } )
@@ -389,6 +448,12 @@ local function destroyMap()
 end
 
 local function destroyScene()
+  if ( messageBubble ) then
+    if ( messageBubble.text ) then 
+      text = messageBubble.text
+      text:removeSelf()
+    end
+  end
   listeners:remove( Runtime, "collision", onCollision )
   gamePanel:destroy()
 
@@ -410,6 +475,7 @@ function scene:create( event )
 
   teacher = map:findObject( "teacher" )
   cook = map:findObject( "cook" )
+  mom = map:findObject( "mom" )
   character.alpha = 1
 
   sceneGroup:insert( map )
@@ -436,9 +502,9 @@ function scene:show( event )
 
 
   
-    --instructionsTable.direction = {"right","down","right","down","right","right","up","left","right","down","left","down","left","down","left","up","right","up","left","up","right"}
-    --instructionsTable.steps = {5,6,6,2,3,6,6,5,5,6,2,9,7,3,13,6,3,8,4,6,3}
-    --instructionsTable.last = 21
+    --[[instructionsTable.direction = {"left","up"}
+    instructionsTable.steps = {4,5}
+    instructionsTable.last = 2]]
 
     --instructionsTable.direction = {"right","down","right","down","left","down","right","up","right","down","left","down","left","up","left","up","left","up","left","up","right"}
     --instructionsTable.steps = {2,2,2,2,2,2,6,3,3,6,3,3,3,1,3,2,3,2,1,7,4}

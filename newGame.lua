@@ -73,12 +73,17 @@ end
 -- Cria um novo arquivo de jogo 
 local function createFile()	
 	if ( ( textField.text ~= nil ) and ( not tostring( textField.text ):find( "^%s*$" ) ) ) then 
-		if ( persistence.fileExists( textField.text ) == false ) then
-			transition.fadeOut( newGame:findObject( "messageBubble" ), { time = 800 } )
+		if ( ( persistence.fileExists( textField.text ) == true ) ) then
+			transition.fadeIn( newGame:findObject( "duplicateName" ), { time = 800 } )
+			transition.fadeOut( newGame:findObject( "longName" ), { time = 800 } )
+		elseif ( string.len( textField.text ) >= 15 ) then
+			transition.fadeOut( newGame:findObject( "duplicateName" ), { time = 800 } )
+			transition.fadeIn( newGame:findObject( "longName" ), { time = 800 } )
+		else
+			transition.fadeOut( newGame:findObject( "longName" ), { time = 800 } )
+			transition.fadeOut( newGame:findObject( "duplicateName" ), { time = 800 } )
 			persistence.newGameFile( textField.text, character )
 			sceneTransition.gotoHouse()
-		else 
-			transition.fadeIn( newGame:findObject( "messageBubble" ), { time = 800 } )
 		end
 	end
 end

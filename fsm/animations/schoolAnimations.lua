@@ -29,20 +29,20 @@ function M.new( school, character, gamePanel, path, schoolFSM, gameFlow )
 		local time = 800
 
 	  	physics.removeBody( character )
-	  	character.x = startingPoint.x - tilesSize * 2 - 6
+	  	character.x = startingPoint.x - tilesSize * 2 - 3
 	  	character.y = startingPoint.y - 6
 	  	teacher.x = character.x 
 	  	teacher.y = character.y 
-	  	teacher.alpha = 1
-	  	character.alpha = 1
 	  	character.xScale = 1
 
+	  	transition.fadeIn( character, { time = 400 } )
+	  	transition.fadeIn( teacher, { time = 400 } )
 	  	path:hidePath()
 	  	transition.to( teacher, { time = time * 2, x = teacher.x + tilesSize * 2 + 5, 
 	  		onComplete = 
 	  			function()
 	  				transition.to( teacher, { time = time, y = teacher.y - tilesSize } )
-	  				transition.to( character, { time = time * 2, x = character.x + tilesSize * 2 + 6,
+	  				transition.to( character, { time = time * 2, x = character.x + tilesSize * 2 + 3,
 	  				onComplete =
 	  					function()
 	  						physics.addBody( character )
@@ -97,11 +97,9 @@ function M.new( school, character, gamePanel, path, schoolFSM, gameFlow )
 		elseif ( stars == 2 ) then 
 			message["msg1"] = message["msg2"]
 			brotherJumpingAnimation()
-		elseif ( stars == 1 ) then
+		elseif ( stars <= 1 ) then
 			message["msg1"] = message["msg3"] 
 			brotherJumpingAnimation()
-		else
-			gameFlow.updateFSM( _, "transitionEvent" )
 		end 
 
 		

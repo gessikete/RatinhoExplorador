@@ -65,6 +65,7 @@ function M.new( executeInstructions )
   	bikeWheel.quadrant = 1
   	bikeWheel.steps = 1
   	bikeWheel.maxCount = math.huge
+  	bikeWheel.count = math.huge
   	M.bikeWheel = bikeWheel
   	bikeLimit = gamePanel:findObject( "bikeLimit" )
 
@@ -94,6 +95,12 @@ function M.new( executeInstructions )
   	M.executeButton = executeButton
 
   	gotoMenuButton = gamePanel:findObject("gotoMenuButton")
+
+  	if (  display.actualContentWidth > 512 ) then 
+  		gotoMenuButton.x = gotoMenuButton.x - 32 
+  		executeButton.x = executeButton.x - 32
+  		gamePanel.x = gamePanel.x + 32
+  	end
 
   	--fitScreen.fitGamePanel( gamePanel, gotoMenuButton )
 
@@ -125,10 +132,9 @@ function M.new( executeInstructions )
 	  	end
 	end
 
-	function M:updateBikeMaxCount( count )
-		bikeWheel.maxCount = count
-
+	function updateBikeCount( count )
 		if ( bikeWheel.maxCount ~= math.huge ) then 
+			bikeWheel.count = count 
 			if ( bikeLimit.text ) then 
 				bikeLimit.text.text = count 
 			else
@@ -145,6 +151,13 @@ function M.new( executeInstructions )
 				transition.fadeOut( bikeLimit.text, { time = 400 } ) 
 			end
 		end
+	end
+
+	function M:updateBikeMaxCount( count )
+		bikeWheel.maxCount = count
+		bikeWheel.count = count 
+
+		updateBikeCount( count )
 	end
 
 	-- Gira a roda da bicicleta
@@ -167,7 +180,7 @@ function M.new( executeInstructions )
 		
 		elseif ( "moved" == phase ) then
 		  if ( adjustment ) then 
-				if ( bikeWheel.maxCount > 0 ) then  
+				if ( bikeWheel.count > 0 ) then  
 			    	local dx = event.x - centerX 
 			    	local dy = event.y - centerY
 			    	local radius = math.sqrt( math.pow( dx, 2 ) + math.pow( dy, 2 ) )
@@ -225,6 +238,11 @@ function M.new( executeInstructions )
 		local first
 
 		if ( ( instructionsTable.executing == 1 ) and ( pos ) ) then 
+			if ( ( instructionsTable.last ~= 1 ) and ( instructionsTable.steps[pos] > 1 ) ) then 
+				updateBikeCount( bikeWheel.count + 1 )
+			elseif ( instructionsTable.last == 1 ) then 
+				updateBikeCount( bikeWheel.maxCount )
+			end
 			instructionsTable:remove( pos )
 
 			if ( instructionsTable.last < instructions.shownBox ) then 
@@ -366,7 +384,7 @@ function M.new( executeInstructions )
 				selectedBox.alpha = 0
 
 				if ( ( bikeWheel.maxCount ~= math.huge ) and ( instructionsTable.last ~= 1 ) and ( instructionsTable.steps[ instructionsTable.last - 1 ]  > 1 ) )  then
-					M:updateBikeMaxCount( bikeWheel.maxCount - 1 )
+					updateBikeCount( bikeWheel.count - 1 )
 				end
 			else
 				-- Caso o movimento de toque acabe e a seta não seja colocada na caixa correta, ela 
@@ -456,11 +474,16 @@ function M.new( executeInstructions )
 	  		table.insert( executeButton.bikeCount, bikeCount )
 
 	  		if ( instructionsTable.steps[ instructionsTable.last ]  > 1 ) then 
-	  			M:updateBikeMaxCount( bikeWheel.maxCount - 1 )
+	  			updateBikeCount( bikeWheel.count - 1 )
 	  		end
 
 	  		executeInstructions()
   		end
+  	end
+
+  	function M:addGotoMenuButtonListener()
+  		gotoMenuButton.alpha = 1
+  		listeners:add( gotoMenuButton, "tap", sceneTransition.gotoMenu )
   	end
 
   	function M:addButtonsListeners()
@@ -532,6 +555,10 @@ function M.new( executeInstructions )
   		M:addDirectionListeners()
   		M:addButtonsListeners()
 
+  	end
+
+  	function M.hide()
+  		gamePanel.alpha = 0
   	end
 
   	function M:destroy() 

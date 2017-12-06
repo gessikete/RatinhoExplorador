@@ -51,8 +51,6 @@ local miniGameData
 
 local originalMiniGameData
 
-local tutorialFSM
-
 local messageBubble
 
 local animation = {}
@@ -86,14 +84,16 @@ local function onCollision( event )
   local obj2 = event.object2
 
   if ( event.phase == "began" ) then
-    if ( ( obj1.myName == "puzzle" ) and ( obj2.isCharacter ) ) then
-      if ( puzzle.collectedPieces[obj1.puzzleNumber] == nil ) then 
-        puzzle.bigPieces[obj1.puzzleNumber].alpha = 1
-        puzzle.littlePieces[ obj1.puzzleNumber ].alpha = 0
-        puzzle.collectedPieces[ obj1.puzzleNumber ] = puzzle.littlePieces[ obj1.puzzleNumber ]
+    if ( ( ( obj1.myName == "puzzle" ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.myName == "puzzle" ) ) ) then
+      if ( obj1.myName == "puzzle" ) then obj = obj1 else obj = obj2 end 
+
+      if ( puzzle.collectedPieces[obj.puzzleNumber] == nil ) then 
+        puzzle.bigPieces[obj.puzzleNumber].alpha = 1
+        puzzle.littlePieces[ obj.puzzleNumber ].alpha = 0
+        puzzle.collectedPieces[ obj.puzzleNumber ] = puzzle.littlePieces[ obj.puzzleNumber ]
         local remainingPieces = puzzle.littlePieces.count - (puzzle.collectedPieces.count + 1)
 
-        puzzle.collectedPieces.last = obj1.puzzleNumber
+        puzzle.collectedPieces.last = obj.puzzleNumber
         if ( ( puzzle.collectedPieces.count ~= 0 ) and ( remainingPieces > 0 ) ) then
           houseFSM.update()
         elseif ( remainingPieces <= 0 ) then 
@@ -102,21 +102,6 @@ local function onCollision( event )
         puzzle.collectedPieces.count = puzzle.collectedPieces.count + 1
 
       end 
-    elseif ( ( obj1.isCharacter ) and ( obj2.myName == "puzzle" ) ) then 
-      if ( puzzle.collectedPieces[obj2.puzzleNumber] == nil ) then
-        puzzle.bigPieces[obj2.puzzleNumber].alpha = 1
-        puzzle.littlePieces[ obj2.puzzleNumber ]. alpha = 0
-        puzzle.collectedPieces[ obj2.puzzleNumber ] = puzzle.littlePieces[ obj2.puzzleNumber ]
-        local remainingPieces = puzzle.littlePieces.count - (puzzle.collectedPieces.count + 1)
-
-        puzzle.collectedPieces.last = obj2.puzzleNumber
-        if ( ( puzzle.collectedPieces.count ~= 0 ) and ( remainingPieces > 0 ) ) then
-          houseFSM.update()
-        elseif ( remainingPieces <= 0 ) then 
-          houseFSM.update( _, "transitionEvent" )
-        end
-        puzzle.collectedPieces.count = puzzle.collectedPieces.count + 1
-      end
 
     -- Volta para o mapa quando o personagem chega na saída/entrada da casa
     elseif ( ( ( obj1.myName == "exit" ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.myName == "exit" ) ) ) then 
@@ -127,8 +112,8 @@ local function onCollision( event )
         gamePanel:stopAllListeners()
         timer.performWithDelay( 1000, sceneTransition.gotoMap )
 
-      elseif ( ( miniGameData.controlsTutorial == "complete" ) and ( houseFSM.tutorialFSM ) )then
-        local _, animationName = houseFSM.tutorialFSM.current:match( "([^,]+)_([^,]+)" ) 
+      elseif ( ( miniGameData.controlsTutorial == "complete" ) and ( houseFSM.fsm ) ) then
+        local _, animationName = houseFSM.fsm.current:match( "([^,]+)_([^,]+)" ) 
 
         if ( animationName == "handExitAnimation" ) then
           transition.fadeOut( gamePanel.exitHand, { time = 450 } )
@@ -137,7 +122,7 @@ local function onCollision( event )
       end
 
     elseif ( ( ( obj1.myName == "entrance" ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.myName == "entrance" ) ) ) then 
-      if ( miniGameData.isComplete == true ) then
+      if ( miniGameData.isGameComplete == true ) then
         transition.cancel( character )
         character.stepping.point = "entrance"
         instructions:destroyInstructionsTable()
@@ -145,19 +130,12 @@ local function onCollision( event )
         timer.performWithDelay( 1000, sceneTransition.gotoMap )
       end
     -- Colisão entre o personagem e os sensores dos tiles do caminho
-    elseif ( ( obj1.isCharacter ) and ( obj2.isPath ) ) then 
-      character.stepping = obj2
-      character.stepping.x = obj2.x 
-      character.stepping.y = obj2.y 
+    elseif ( ( ( obj1.isCharacter ) and ( obj2.isPath ) ) or ( ( obj2.isCharacter ) and ( obj1.isPath ) ) ) then
+      local obj 
+      if ( obj1.isPath ) then obj = obj1 else obj = obj2 end
+      character.stepping = obj
       character.stepping.point = "point"
-      path:showTile( obj2.myName )
-
-    elseif ( ( obj2.isCharacter ) and ( obj1.isPath ) ) then 
-      character.stepping = obj1
-      character.stepping.x = obj1.x 
-      character.stepping.y = obj1.y 
-      character.stepping.point = "point"
-      path:showTile( obj1.myName )
+      path:showTile( obj.myName )
 
     -- Colisão com os demais objetos e o personagem (rope nesse caso)
     elseif ( ( ( obj1.isCollision ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.isCollision ) ) ) then 
@@ -174,7 +152,7 @@ local function onCollision( event )
         transition.to( character, { time = 0, y = character.y + .22 * tilesSize } )
       end
 
-      if ( ( miniGameData.isComplete == false ) and ( houseFSM.tutorialFSM.current ~= "feedbackAnimation" ) ) then 
+      if ( ( miniGameData.isComplete == false ) and ( houseFSM.fsm.current ~= "feedbackAnimation" ) ) then 
         if ( obj.isWall ) then 
           local message = { "Ei, você não pode andar por aí!", "Cuidado com as paredes." }
           houseFSM.showText( house:findObject( "momBubble" ), message, house:findObject( "mom" ) ) 
@@ -207,11 +185,9 @@ local function destroyScene()
     messageBubble.text = nil 
   end
 
-  if ( ( houseFSM.fsm ) and ( houseFSM.messageBubble ) and ( houseFSM.messageBubble.text ) ) then 
-    local text = houseFSM.messageBubble.text
-    text:removeSelf()
+  if ( ( houseFSM ) and ( houseFSM.destroy ) ) then 
+    houseFSM.destroy()
   end
-  houseFSM.tutorialFSM = nil 
 end
 
 -- -----------------------------------------------------------------------------------
@@ -227,7 +203,6 @@ function scene:create( event )
   --persistence.setCurrentFileName("ana")
 
 	house, character, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "house" )
-  character.alpha = 1
   --miniGameData.controlsTutorial = "complete"
   --miniGameData.bikeTutorial = "complete"
   --miniGameData.isComplete = true
@@ -235,11 +210,17 @@ function scene:create( event )
   sceneGroup:insert( house )
   sceneGroup:insert( gamePanel.tiled )
 
+  --[[print( "shown comp: " .. tostring(miniGameData.shownCompletion) )
+  print( "complete game: " ..  tostring(miniGameData.isGameComplete) )
+  print( "cntrls tutorial " .. miniGameData.controlsTutorial )]]
+
   if ( miniGameData.onRepeat == true ) then
-    miniGameData.controlsTutorial = "incomplete"
-    miniGameData.bikeTutorial = "incomplete"
-    miniGameData.isComplete = false 
-    originalMiniGameData = miniGameData
+    if ( ( miniGameData.isGameComplete == false ) or ( ( miniGameData.isGameComplete == true ) and ( miniGameData.shownCompletion == true ) ) )  then 
+      miniGameData.controlsTutorial = "incomplete"
+      miniGameData.bikeTutorial = "incomplete"
+      miniGameData.isComplete = false 
+      originalMiniGameData = miniGameData
+    end
   end
 
   if ( miniGameData.controlsTutorial == "incomplete" )  then 
@@ -276,18 +257,50 @@ function scene:show( event )
 	local sceneGroup = self.view
 	local phase = event.phase
 
+
+  mom = house:findObject( "mom" )
 	if ( phase == "will" ) then
-    if ( miniGameData.controlsTutorial == "complete" ) then
+    if ( miniGameData.isComplete == true ) then
+      if ( ( miniGameData.isGameComplete  == true ) and ( miniGameData.shownCompletion == false ) ) then 
+        local brother, brotherPosition
+        path:hidePath()
+        if ( character == house:findObject( "ada") ) then 
+          brother = house:findObject( "turing" )
+        else
+          brother = house:findObject( "ada") 
+        end
+
+        brotherPosition = house:findObject( "brotherEnding" )
+        if ( miniGameData.wonSurprise == false )  then 
+          brother.x, brother.y = brotherPosition.x, brotherPosition.y
+          brother.xScale = -1
+          brother.alpha = 1
+        end
+      else 
+        mom.alpha = 1
+        character.alpha = 1
+        gamePanel:addDirectionListeners()
+      end
+    elseif ( miniGameData.controlsTutorial == "complete" ) then
 		  gamePanel:addDirectionListeners()
+    else 
+      gamePanel.bikeWheel.alpha = 0
+      mom.alpha = 1
+      character.alpha = 1
     end
     listeners:add( Runtime, "collision", onCollision )
 
 	elseif ( phase == "did" ) then
-    if ( miniGameData.controlsTutorial == "complete" ) then
+    if ( ( miniGameData.isGameComplete  == true ) and ( miniGameData.shownCompletion == false ) ) then 
+      houseFSM.new( house, character, listeners, _, miniGameData, gameState, gamePanel, path )
+      houseFSM.completeGame()
+    elseif ( miniGameData.controlsTutorial == "complete" ) then
 		  gamePanel:addButtonsListeners()
       gamePanel:addInstructionPanelListeners()
 
       if ( miniGameData.bikeTutorial == "incomplete" ) then
+        mom.alpha = 1
+        character.alpha = 1
         gamePanel:showBikewheel ( false )
         houseFSM.new( house, character, listeners, puzzle, miniGameData, gameState, gamePanel, path )
         houseFSM.bikeTutorial()

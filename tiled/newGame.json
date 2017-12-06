@@ -42,13 +42,13 @@
         }, 
         {
          "draworder":"topdown",
-         "name":"messageBubble",
+         "name":"messages",
          "objects":[
                 {
                  "gid":8,
                  "height":106,
                  "id":28,
-                 "name":"messageBubble",
+                 "name":"duplicateName",
                  "properties":
                     {
                      "alpha":0
@@ -63,6 +63,26 @@
                  "width":133.589041095891,
                  "x":130,
                  "y":205
+                }, 
+                {
+                 "gid":10,
+                 "height":106,
+                 "id":39,
+                 "name":"longName",
+                 "properties":
+                    {
+                     "alpha":0
+                    },
+                 "propertytypes":
+                    {
+                     "alpha":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":133.59,
+                 "x":130,
+                 "y":205
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -75,7 +95,7 @@
          "name":"biographies",
          "objects":[
                 {
-                 "gid":11,
+                 "gid":12,
                  "height":660,
                  "id":30,
                  "name":"adaBio",
@@ -97,7 +117,7 @@
                  "y":540
                 }, 
                 {
-                 "gid":12,
+                 "gid":13,
                  "height":660,
                  "id":33,
                  "name":"turingBio",
@@ -129,7 +149,7 @@
          "name":"avatar",
          "objects":[
                 {
-                 "gid":10,
+                 "gid":11,
                  "height":609,
                  "id":24,
                  "name":"characters",
@@ -320,7 +340,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":37,
+ "nextobjectid":40,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",
@@ -338,7 +358,7 @@
          "margin":0,
          "name":"objects",
          "spacing":0,
-         "tilecount":5,
+         "tilecount":6,
          "tileheight":800,
          "tiles":
             {
@@ -362,7 +382,7 @@
                 },
              "7":
                 {
-                 "image":"images\/new game\/bubble.png",
+                 "image":"images\/new game\/duplicateName.png",
                  "imageheight":155,
                  "imagewidth":197
                 },
@@ -371,13 +391,19 @@
                  "image":"images\/new game\/goBackButton.png",
                  "imageheight":47,
                  "imagewidth":45
+                },
+             "9":
+                {
+                 "image":"images\/new game\/longName.png",
+                 "imageheight":155,
+                 "imagewidth":197
                 }
             },
          "tilewidth":1200
         }, 
         {
          "columns":0,
-         "firstgid":10,
+         "firstgid":11,
          "grid":
             {
              "height":1,
@@ -402,7 +428,7 @@
         }, 
         {
          "columns":0,
-         "firstgid":11,
+         "firstgid":12,
          "grid":
             {
              "height":1,

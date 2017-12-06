@@ -8,7 +8,7 @@ local M = { }
 -- -----------------------------------------------------------------------------------
 function M.fitDefault( screen )
 	if (  display.actualContentWidth > 512 ) then 
-  		screen.x = screen.x - 44
+  		screen.x = screen.x - 32
   	elseif (  display.actualContentWidth == 512 ) then
   		screen.x = screen.x - 16
   	end
@@ -35,13 +35,16 @@ function M.fitSchool( screen )
 end
 
 function M.fitGamePanel( gamePanel, gotoMenuButton )
-  --[[if ( display.actualContentWidth >= 480 ) then
+  --[[if ( display.actualContentWidth > 420 ) then
+    gamePanel.x = gamePanel.x + 16
+  end
+  if ( display.actualContentWidth >= 480 ) then
     gotoMenuButton.x = gotoMenuButton.x
-    gamePanel.x = gamePanel.x + ( display.actualContentWidth - gamePanel.designedWidth ) + 30
+    gamePanel.x = gamePanel.x + 48
 	elseif ( display.actualContentWidth > 420 ) then
 	  gamePanel.x = gamePanel.x + ( display.actualContentWidth - gamePanel.designedWidth ) + 60
-  end
-  	gamePanel.y = gamePanel.y + 20]]
+  end]]
+
 end
 
 function M.fitBackground( background )
@@ -69,7 +72,7 @@ end
 
 function M.fitMap( map )
 	map.x = map.x - 100
-	map.y =  map.y - 32
+	map.y =  map.y - 16
 end
 
 return M

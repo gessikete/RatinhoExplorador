@@ -7,6 +7,10 @@ local M = { }
 -- -----------------------------------------------------------------------------------
 -- Todas as funções de transição
 -- -----------------------------------------------------------------------------------
+function M.gotoCredits()
+	composer.gotoScene( "credits", { time = 800, effect = "crossFade" } )
+end
+
 function M.gotoProgress()
 	composer.gotoScene( "progress", { time = 800, effect = "crossFade" } )
 end
@@ -39,6 +43,8 @@ function M.gotoChooseGameFile()
 	composer.gotoScene( "chooseGameFile", { time = 800, effect = "crossFade" } )
 end
 
-
+function M.gotoWarning()
+	composer.gotoScene( "warning", { time = 800, effect = "crossFade" } )
+end
 
 return M

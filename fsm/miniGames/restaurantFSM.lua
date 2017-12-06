@@ -449,6 +449,20 @@ function M.new( restaurant, character, ingredients, listeners, collision, instru
 	  	--character.alpha = 1
 	  	--restaurantFSM.showGamePanel()
 	end
+
+	function M.destroy( ) 
+		if ( restaurantFSM ) then 
+			if ( restaurantFSM.messageBubble ) and ( restaurantFSM.messageBubble.text ) then 
+				local text = restaurantFSM.messageBubble.text
+				text:removeSelf()
+			end
+
+			for k, v in pairs( restaurantFSM ) do
+				restaurantFSM[k] = nil 
+			end
+			restaurantFSM = nil 
+		end
+	end
 end
 
 return M

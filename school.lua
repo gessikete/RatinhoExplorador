@@ -169,8 +169,9 @@ local function onCollision( event )
       end
 
     elseif ( ( ( obj1.myName == "supply" ) and ( obj2.isCharacter ) ) or ( ( obj2.myName == "supply" ) and ( obj1.isCharacter ) ) ) then
+      local obj
+      local alreadyCollected = false 
       if ( obj1.myName == "supply" ) then obj = obj1 else obj = obj2 end
-      local alreadyCollected = false
 
       if ( supplies.collected ) then
         for k, v in pairs( supplies.collected ) do
@@ -178,63 +179,39 @@ local function onCollision( event )
         end 
 
         if ( alreadyCollected == false ) then 
-          supplies.collected[ obj1.number ] = supplies.list[ obj1.number ]
-          transition.fadeOut( supplies.list[ obj1.number ], { time = 400 } )
+          supplies.collected[ obj.number ] = supplies.list[ obj.number ]
+          transition.fadeOut( supplies.list[ obj.number ], { time = 400 } )
         end
       end
 
-    elseif ( ( obj2.myName == "supply" ) and ( obj1.isCharacter ) ) then
-      supplies.collected[ obj2.number ] = supplies.list[ obj2.number ]
-      transition.fadeOut( supplies.list[ obj2.number ], { time = 400 } )
-
-    elseif ( obj1.myName == "table" ) then    
-      if ( not tables[obj1.number].isPhysics ) then
+    elseif ( ( ( obj1.myName == "table" ) and ( obj2.isCharacter ) ) or ( ( obj2.myName == "table" ) and ( obj1.isCharacter ) ) ) then
+      local obj 
+      if ( obj1.myName == "table" ) then obj = obj1 else obj = obj2 end
+      if ( not tables[obj.number].isPhysics ) then
         transition.cancel( character ) 
         function closure()
-          physics.addBody( tables[obj1.number] )
-          tables[obj1.number].isPhysics = true 
+          physics.addBody( tables[obj.number] )
+          tables[obj.number].isPhysics = true 
         end 
 
         timer.performWithDelay( 100, closure )
         if ( collision ) then collision.table = true end 
       end
 
-    elseif ( obj2.myName == "table" ) then
-      if ( not tables[obj2.number].isPhysics ) then 
+    elseif ( ( ( obj1.myName == "chair" ) and ( obj2.isCharacter ) ) or ( ( obj2.myName == "chair" ) and ( obj1.isCharacter ) ) ) then
+      local obj
+      if ( obj1.myName == "chair" ) then obj = obj1 else obj = obj2 end 
+      if ( not chairs[obj.number].isPhysics ) then 
         transition.cancel( character )
         function closure()
-          physics.addBody( tables[obj2.number] )
-          tables[obj2.number].isPhysics = true 
-        end 
-        timer.performWithDelay( 100, closure )
-        if ( collision ) then collision.table = true end  
-      end 
-
-    elseif ( obj1.myName == "chair" ) then 
-      if ( not chairs[obj1.number].isPhysics ) then 
-        transition.cancel( character )
-        function closure()
-          physics.addBody( chairs[obj1.number] )
-          chairs[obj1.number].isPhysics = true 
+          physics.addBody( chairs[obj.number] )
+          chairs[obj.number].isPhysics = true 
         end 
 
         timer.performWithDelay( 100, closure )
 
         if ( collision ) then collision.chair = true end
       end
-
-    elseif ( obj2.myName == "chair" ) then
-      if ( not chairs[obj2.number].isPhysics ) then 
-        transition.cancel( character )
-        function closure()
-          physics.addBody( chairs[obj2.number] )
-          chairs[obj2.number].isPhysics = true 
-        end
-        timer.performWithDelay( 100, closure )
-
-        if ( collision ) then collision.chair = true end 
-      end
-
     elseif ( ( ( obj1.myName == "organizer" ) or ( obj2.myName == "organizer" ) ) ) then
       local obj 
       if ( obj1.myName == "organizer" ) then obj = obj1 else obj = obj2 end 
@@ -335,17 +312,14 @@ local function onCollision( event )
         end
       end
     -- Colisão entre o personagem e os sensores dos tiles do caminho
-    elseif ( ( obj1.isCharacter ) and ( obj2.isPath ) ) then
-      character.stepping.x = obj2.x 
-      character.stepping.y = obj2.y 
-      character.stepping.point = "point"
-      path:showTile( obj2.myName )
+    elseif ( ( ( obj1.isCharacter ) and ( obj2.isPath ) ) or ( ( obj2.isCharacter ) and ( obj1.isPath ) ) ) then
+      local obj 
+      if ( obj1.isPath ) then obj = obj1 else obj = obj2 end
 
-    elseif ( ( obj2.isCharacter ) and ( obj1.isPath ) ) then 
-      character.stepping.x = obj1.x 
-      character.stepping.y = obj1.y 
+      character.stepping.x = obj.x 
+      character.stepping.y = obj.y 
       character.stepping.point = "point"
-      path:showTile( obj1.myName )
+      path:showTile( obj.myName )
 
     elseif ( ( ( obj1.isCollision ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.isCollision ) ) ) then 
       local obj
@@ -376,9 +350,8 @@ local function destroyScene()
   school:removeSelf()
   school = nil 
 
-  if ( ( schoolFSM.fsm ) and ( schoolFSM.fsm.messageBubble ) and ( schoolFSM.fsm.messageBubble.text ) ) then 
-    local text = schoolFSM.fsm.messageBubble.text
-    text:removeSelf()
+  if ( ( schoolFSM ) and ( schoolFSM.destroy ) ) then 
+    schoolFSM.destroy()
   end
 end
 
@@ -428,7 +401,7 @@ function scene:show( event )
       end
 
       brotherPosition = school:findObject( "brother" )
-      if ( ( miniGameData.previousStars == 1 ) or ( miniGameData.previousStars == 2 ) )  then 
+      if ( miniGameData.previousStars < 3 )  then 
         brother.x, brother.y = brotherPosition.x, brotherPosition.y
         brother.xScale = -1
         brother.alpha = 1

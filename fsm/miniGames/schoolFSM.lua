@@ -369,6 +369,20 @@ function M.new( school, character, supplies, listeners, collision, instructionsT
 
 	  	schoolFSM.showAnimation()
 	end
+
+	function M.destroy( ) 
+		if ( schoolFSM ) then 
+			if ( schoolFSM.messageBubble ) and ( schoolFSM.messageBubble.text ) then 
+				local text = schoolFSM.messageBubble.text
+				text:removeSelf()
+			end
+
+			for k, v in pairs( schoolFSM ) do
+				schoolFSM[k] = nil 
+			end
+			schoolFSM = nil 
+		end
+	end
 end
 
 return M

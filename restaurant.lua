@@ -70,6 +70,7 @@ local function setIngredients()
 	for i = 1, ingredientsLayer.numChildren do 
     ingredientsLayer[i].originalX = ingredientsLayer[i].x 
     ingredientsLayer[i].originalY = ingredientsLayer[i].y
+    ingredientsLayer[i].alpha = 1
 
 		if ( ingredientsLayer[i].recipe == 1 ) then 
 			ingredients.first[ ingredientsLayer[i].number ] = ingredientsLayer[i]
@@ -288,17 +289,14 @@ local function onCollision( event )
     end
 
     -- Colisão entre o personagem e os sensores dos tiles do caminho
-    elseif ( ( obj1.isCharacter ) and ( obj2.isPath ) ) then
-      character.stepping.x = obj2.x 
-      character.stepping.y = obj2.y 
-      character.stepping.point = "point"
-      path:showTile( obj2.myName )
+    elseif ( ( ( obj1.isCharacter ) and ( obj2.isPath ) ) or ( ( obj2.isCharacter ) and ( obj1.isPath ) ) ) then
+      local obj 
+      if ( obj1.isPath ) then obj = obj1 else obj = obj2 end
 
-    elseif ( ( obj2.isCharacter ) and ( obj1.isPath ) ) then 
-      character.stepping.x = obj1.x 
-      character.stepping.y = obj1.y 
+      character.stepping.x = obj.x 
+      character.stepping.y = obj.y 
       character.stepping.point = "point"
-      path:showTile( obj1.myName )
+      path:showTile( obj.myName )
 
     elseif ( ( ( obj1.isCollision ) and ( obj2.isCharacter ) ) or ( ( obj1.isCharacter ) and ( obj2.isCollision ) ) ) then 
       local obj
@@ -331,12 +329,9 @@ local function destroyScene()
   restaurant:removeSelf()
   restaurant = nil 
 
-  if ( ( restaurantFSM.fsm ) and ( restaurantFSM.fsm.messageBubble ) and ( restaurantFSM.fsm.messageBubble.text ) ) then 
-    local text = restaurantFSM.fsm.messageBubble.text
-    text:removeSelf()
+  if ( ( restaurantFSM ) and ( restaurantFSM.destroy ) ) then 
+    restaurantFSM.destroy()
   end
-
-  restaurantFSM = nil 
 end
 -- -----------------------------------------------------------------------------------
 -- Cenas
@@ -396,7 +391,7 @@ function scene:show( event )
       end
 
       brotherPosition = restaurant:findObject( "brother" )
-      if ( ( miniGameData.previousStars == 1 ) or ( miniGameData.previousStars == 2 ) )  then 
+      if ( miniGameData.previousStars < 3 )  then 
         brother.x, brother.y = brotherPosition.x, brotherPosition.y - 10
         brother.xScale = 1
         brother.alpha = 1

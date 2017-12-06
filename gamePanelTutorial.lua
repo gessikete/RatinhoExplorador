@@ -122,6 +122,11 @@ function M.new( executeInstructions )
 
   	fitScreen.fitGamePanel( gamePanel, gotoMenuButton )
 
+  	if (  display.actualContentWidth > 512 ) then 
+  		gotoMenuButton.x = gotoMenuButton.x + 16 
+  		executeButton.x = executeButton.x + 16 
+  	end
+
   	function M:showDirectionButtons( fadeIn )
   		if ( fadeIn == true ) then 
 	  		transition.fadeIn( directionButtons.right, { time = 400 } )
@@ -290,6 +295,9 @@ function M.new( executeInstructions )
 		local first
 
 		if ( ( M.lockDeleteInstruction == false ) and ( instructionsTable.executing == 1 ) and ( pos ) ) then 
+			if ( instructionsTable.steps[pos] > 1 ) then 
+				M:updateBikeMaxCount( 1 )
+			end
 			instructionsTable:remove( pos )
 
 			if ( instructionsTable.last < instructions.shownBox ) then 
@@ -642,21 +650,23 @@ function M.new( executeInstructions )
   	function M.executeInstructions()
   		local bikeCount = 0
 
-  		executeButton.executionsCount = executeButton.executionsCount + 1
-  		table.insert( executeButton.instructionsCount, instructionsTable.last )
-  		
-  		
-  		for i = 1, #instructionsTable.steps do 
-  			if ( instructionsTable.steps[i] ) > 1 then bikeCount = bikeCount + 1 end 
+  		if ( ( instructionsTable.last ~= 0 ) and ( instructionsTable.executing == 1 ) ) then 
+	  		executeButton.executionsCount = executeButton.executionsCount + 1
+	  		table.insert( executeButton.instructionsCount, instructionsTable.last )
+	  		
+	  		
+	  		for i = 1, #instructionsTable.steps do 
+	  			if ( instructionsTable.steps[i]  > 1 ) then bikeCount = bikeCount + 1 end 
+	  		end
+
+	  		table.insert( executeButton.bikeCount, bikeCount )
+
+	  		if ( instructionsTable.steps[ instructionsTable.last ]  > 1 ) then 
+	  			M:updateBikeMaxCount( bikeWheel.maxCount - 1 )
+	  		end
+
+	  		executeInstructions()
   		end
-
-  		table.insert( executeButton.bikeCount, bikeCount )
-
-  		if ( instructionsTable.steps[ instructionsTable.last ]  > 1 ) then 
-  			M:updateBikeMaxCount( bikeWheel.maxCount - 1 )
-  		end
-
-  		executeInstructions()
   	end
 
   	local function executeTutorialInstructions( )
@@ -670,7 +680,7 @@ function M.new( executeInstructions )
  
  		M.stopExecutionListeners()
 
- 		if ( instructionsTable.steps[ instructionsTable.last ]  > 1 ) then 
+ 		if ( ( instructionsTable.last ~= 0 ) and ( instructionsTable.steps[ instructionsTable.last ]  > 1 ) ) then 
   			M:updateBikeMaxCount( bikeWheel.maxCount - 1 )
   		end	
   	end

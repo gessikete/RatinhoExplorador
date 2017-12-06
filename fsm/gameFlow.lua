@@ -56,6 +56,12 @@ function M.new( miniGameFSM, listeners , miniGame )
       elseif ( nextEvent == "nextRecipe" ) then
         miniGameFSM.nextRecipe()
          
+      elseif ( nextEvent == "showWarning" ) then
+        miniGameFSM.showWarning()
+
+      elseif ( nextEvent == "finishEvent" ) then
+        miniGameFSM.finishEvent()
+        
       end
 
     end
@@ -123,7 +129,7 @@ function M.new( miniGameFSM, listeners , miniGame )
         text = " ",
         x = bubble.contentBounds.xMin + 15, 
         y = bubble.contentBounds.yMin + 10,
-        fontSize = 12.5,
+        fontSize = 12,
         width = bubble.width - 27,
         height = 0,
         align = "left" 
@@ -174,7 +180,11 @@ function M.new( miniGameFSM, listeners , miniGame )
         elseif ( bubble == miniGame:findObject( "teacherBubble" ) ) then
           bubble.blinkingDart = miniGame:findObject( "teacherBlinkingDart" ) 
         elseif ( bubble == miniGame:findObject( "cookBubble" ) ) then
-          bubble.blinkingDart = miniGame:findObject( "cookBlinkingDart" )
+          bubble.blinkingDart = miniGame:findObject( "obligatoryBlinkingDart" )
+        elseif ( bubble == miniGame:findObject( "adaBubble" ) ) then
+          bubble.blinkingDart = miniGame:findObject( "obligatoryBlinkingDart" )
+        elseif ( bubble == miniGame:findObject( "turingBubble" ) ) then
+          bubble.blinkingDart = miniGame:findObject( "obligatoryBlinkingDart" )
         end
       end
       bubble.blinkingDart.x = bubble.x + 33

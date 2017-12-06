@@ -12,6 +12,16 @@ GBCDataCabinet.createCabinet( "currentFileName"  )
 -- -----------------------------------------------------------------------------------
 -- Funções referentes à persistência dos arquivos
 -- -----------------------------------------------------------------------------------
+
+function M.setGlobal( mod, name, value )
+	GBCDataCabinet.createCabinet( mod )
+	GBCDataCabinet.set( mod, name, value )
+end
+
+function M.getGlobal( mod, name )
+	return GBCDataCabinet.get( mod, name )
+end
+
 -- Retorna uma lista com os nomes dos arquivos de jogo salvos
 function M.filesNames()
 	if ( GBCDataCabinet.load( "files" ) == true ) then
@@ -22,7 +32,7 @@ end
 -- Retorna um arquivo de jogo com os valores "default" de um jogo novo
 function defaultFile( characterName )
 	local character = { stepping = { x, y, point }, flipped, name } 
-	local house = { isComplete, controlsTutorial, collectedPieces, bikeTutorial, stars, onRepeat, mapRepeat }
+	local house = { isComplete, isGameComplete, wonSurprise, controlsTutorial, collectedPieces, bikeTutorial, stars, onRepeat, mapRepeat }
 	local school = { isComplete, stars, onRepeat, mapRepeat }
 	local restaurant = { isComplete, stars, onRepeat, mapRepeat }
 	local default = { character = character, house = house, restaurant = restaurant, school = school }
@@ -34,6 +44,9 @@ function defaultFile( characterName )
 	default.currentMiniGame = "house" 
 
 	default.house.isComplete = false
+	default.house.isGameComplete = false 
+	default.house.shownCompletion = false 
+	default.house.wonSurprise = false 
 	default.house.controlsTutorial = "incomplete"
 	default.house.bikeTutorial = "incomplete"
 	default.house.stars = 0
@@ -54,6 +67,17 @@ function defaultFile( characterName )
 	default.restaurant.mapRepeat = false
 
 	return default
+end
+
+function M.resetGame()
+	local gameFile = M.loadGameFile()
+	local fileName = M.getCurrentFileName()
+
+	if ( gameFile ) then 
+		newGameFile = defaultFile( gameFile.character.name )
+		GBCDataCabinet.set( fileName, "gameState", defaultFile( gameFile.character.name ) )
+		GBCDataCabinet.save( fileName )
+	end
 end
 
 function M.fileExists( fileName )
@@ -201,7 +225,7 @@ function M.goBackPoint( currentMiniGame, previousMiniGameFile, onRepeat )
 
 	local restaurantMapExitX, restaurantMapExitY = M.mapProgress( "exit", "restaurant" )   
 	local restaurantMapEntranceX, restaurantMapEntranceY =  M.mapProgress( "entrance", "restaurant" )
-	local restaurantExitX, restaurantExitY = 48, 272
+	local restaurantExitX, restaurantExitY = 48, 304
 	local restaurantEntranceX, restaurantEntranceY = 304, 336
 
 	local startingPointX, startingPointY = M.startingPoint( currentMiniGame )
@@ -252,8 +276,7 @@ function M.goBackPoint( currentMiniGame, previousMiniGameFile, onRepeat )
 			return schoolEntranceX, schoolEntranceY, entrance, flipped
 		end 
 	elseif ( currentMiniGame == "restaurant" ) then
-		if ( previousMiniGameFile.character.stepping.point == exit ) then
-			flipped = true 
+		if ( previousMiniGameFile.character.stepping.point == exit ) then 
 			return restaurantExitX, restaurantExitY, exit, flipped
 		else
 			return restaurantEntranceX, restaurantEntranceY, entrance, flipped

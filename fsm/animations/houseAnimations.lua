@@ -2,7 +2,7 @@ local persistence = require "persistence"
 
 local M = { }
 
-function M.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow ) 
+function M.new( house, character, puzzle, gamePanel, path, houseFSM, gameFlow ) 
 	local animation = { }
 	local mom = house:findObject( "mom" )
 	local brother 
@@ -22,7 +22,7 @@ function M.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow
 	end
 
 	local function handDirectionAnimation( time, wait, hand, initialX, initialY, x, y, state )
-		if ( state ~= tutorialFSM.current ) then
+		if ( state ~= houseFSM.current ) then
 		  return
 		else 
 		  hand.x = initialX
@@ -44,7 +44,7 @@ function M.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow
 		hand.alpha = 1
 		 
 
-		handDirectionAnimation( time, wait, hand, hand.originalX, hand.originalY, hand.x, box.y - 5, tutorialFSM.current )
+		handDirectionAnimation( time, wait, hand, hand.originalX, hand.originalY, hand.x, box.y - 5, houseFSM.current )
 		
 		gamePanel:addRightDirectionListener( gameFlow.updateFSM )
 	end
@@ -60,7 +60,7 @@ function M.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow
 		hand.alpha = 1
 		 
 
-		handDirectionAnimation( time, wait, hand, hand.originalX, hand.originalY, hand.x, box.y - 5, tutorialFSM.current )
+		handDirectionAnimation( time, wait, hand, hand.originalX, hand.originalY, hand.x, box.y - 5, houseFSM.current )
 		gamePanel:addRightDirectionListener( gameFlow.updateFSM )
 	end
 
@@ -75,7 +75,7 @@ function M.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow
 		hand.alpha = 1
 		 
 
-		handDirectionAnimation( time, wait, hand, hand.x, hand.y, hand.x, box.y - 5, tutorialFSM.current )
+		handDirectionAnimation( time, wait, hand, hand.x, hand.y, hand.x, box.y - 5, houseFSM.current )
 		gamePanel:addUpDirectionListener( gameFlow.updateFSM )
 	end
 
@@ -92,7 +92,7 @@ function M.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow
 		collision = false
 		transition.fadeIn( executeButton, { time = wait } )
 		transition.fadeIn( gamePanel.gotoMenuButton, { time = wait } )
-		handDirectionAnimation( time, wait, hand, executeButton.contentBounds.xMin + 2, executeButton.y, executeButton.contentBounds.xMin + 10, executeButton.y - 5, tutorialFSM.current )
+		handDirectionAnimation( time, wait, hand, executeButton.contentBounds.xMin + 2, executeButton.y, executeButton.contentBounds.xMin + 10, executeButton.y - 5, houseFSM.current )
 		  
 		gamePanel:addgotoMenuButtonListener()
 		gamePanel:addExecuteButtonListener( gameFlow.updateFSM )
@@ -104,7 +104,7 @@ function M.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow
 	end
 
 	local function handBikeAnimation( time, hand, radius, initialX, initialY, state )
-		if ( state ~= tutorialFSM.current ) then
+		if ( state ~= houseFSM.current ) then
 		  return
 		else 
 
@@ -137,7 +137,7 @@ function M.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow
 		hand.y = bikeWheel.contentBounds.yMin + 10
 		hand.alpha = 1
 		 
-		handBikeAnimation( time, hand, radius, hand.x, hand.y, tutorialFSM.current )
+		handBikeAnimation( time, hand, radius, hand.x, hand.y, houseFSM.current )
 		
 		gamePanel:addBikeTutorialListener( maxSteps, gameFlow.updateFSM )
 	end
@@ -153,7 +153,7 @@ function M.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow
 		hand.y = bikeWheel.contentBounds.yMin + 10
 		hand.alpha = 1
 		 
-		handBikeAnimation( time, hand, radius, hand.x, hand.y, tutorialFSM.current )
+		handBikeAnimation( time, hand, radius, hand.x, hand.y, houseFSM.current )
 		
 		gamePanel:addBikeTutorialListener( maxSteps, gameFlow.updateFSM )
 	end
@@ -170,7 +170,7 @@ function M.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow
 		hand.alpha = 1
 		 
 		gamePanel.executeButton.executionsCount = 0
-		handDirectionAnimation( time, wait, hand, hand.x, hand.y, hand.x, hand.y + 5, tutorialFSM.current )
+		handDirectionAnimation( time, wait, hand, hand.x, hand.y, hand.x, hand.y + 5, houseFSM.current )
 		gamePanel.restartExecutionListeners()
 	end
 
@@ -337,6 +337,97 @@ function M.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow
 	    return math.abs( time*stepsX ) + math.abs( time*stepsY ) + math.abs( time*stepsX2 )
 	end
 
+	local function enterHouseAnimation( wonSurprise )
+		local startingPoint = house:findObject("start")
+		local time = 800
+
+	  	physics.removeBody( character )
+	  	character.x = startingPoint.x - tilesSize * 2 - 3
+	  	character.y = startingPoint.y - 6
+	  	mom.x = character.x 
+	  	mom.y = character.y 
+	  	character.xScale = 1
+
+	  	transition.fadeIn( character, { delay = 1400, time = 400 } )
+	  	transition.fadeIn( mom, { time = 400 } )
+	  	transition.fadeIn( brother, { delay = 3000, time = 400 } )
+	  	path:hidePath()
+	  	transition.to( mom, { time = time * 2, x = mom.x + tilesSize * 2 + 5, 
+	  		onComplete = 
+	  			function()
+	  				transition.to( mom, { time = time, y = mom.y - tilesSize } )
+	  				transition.to( character, { time = time * 2, x = character.x + tilesSize * 2 + 3,
+	  				onComplete =
+	  					function()
+	  						physics.addBody( character )
+						  	character.isFixedRotation = true
+						  	if ( wonSurprise == false ) then 
+						  		timer.performWithDelay( 800, gameFlow.updateFSM )
+						  	end
+	  					end
+	  				} )
+	  			end
+	  		} )
+
+	  	if ( wonSurprise == true ) then 
+	  		brother.xScale = 1
+	  		brother.x = startingPoint.x - tilesSize * 2
+	  		brother.y = startingPoint.y - 6
+	  		transition.to( brother, { delay = 3000, time = time, x = brother.x + tilesSize,
+	  		onComplete =
+	  			function()
+	  				transition.to( brother, { time = time, y = brother.y + tilesSize,
+	  					onComplete = function()
+	  						transition.to( brother, { time = time * 4, x = brother.x + tilesSize * 4,
+	  						onComplete = function()
+	  							brother.xScale = -1
+	  							timer.performWithDelay( 800, gameFlow.updateFSM )
+	  						end
+
+	  						} )
+	  					end
+	  				} )
+	  			end
+
+	  		} )
+	  	end 
+
+	  	return math.huge
+	end
+
+	local function legoAnimation( wonSurprise )
+		local xPos, yPos 
+
+
+		if ( wonSurprise == true ) then
+			xPos = character.x
+			yPos = character.y + 20
+		else 
+			xPos = brother.x
+			yPos = brother.y + 20
+		end 
+
+		local toy = house:findObject( "toy" )
+		transition.fadeIn( toy, { time = 800, 
+			onComplete = 
+				function()
+					transition.scaleTo( toy, { time = 2600, xScale = .25, yScale = .25, x = xPos, y = yPos,
+						onComplete = 
+							function()
+								transition.fadeOut( toy, { time = 800, 
+									onComplete =  
+										function()
+											timer.performWithDelay( 600, gameFlow.updateFSM )
+										end
+									} )
+							end
+					} )
+				end
+			} )
+
+		return math.huge
+	end
+
 	animation["momAnimation"] = momAnimation
 	animation["handDirectionAnimation1"] = handDirectionAnimation1
 	animation["handDirectionAnimation2"] = handDirectionAnimation2
@@ -353,6 +444,8 @@ function M.new( house, character, puzzle, gamePanel, path, tutorialFSM, gameFlow
 	animation["characterLeaveAnimation"] = characterLeaveAnimation
 	animation["bikeAnimation"] = bikeAnimation
 	animation["gotoInitialPosition"] = gotoInitialPosition
+	animation["enterHouseAnimation"] = enterHouseAnimation
+	animation["legoAnimation"] = legoAnimation
 
 	return animation
 end
