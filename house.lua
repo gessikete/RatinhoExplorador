@@ -197,22 +197,10 @@ end
 function scene:create( event )
 	local sceneGroup = self.view
 
-  --print( display.actualContentWidth )
-  --print( display.actualContentHeight )
-
-  --persistence.setCurrentFileName("ana")
-
 	house, character, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "house" )
-  --miniGameData.controlsTutorial = "complete"
-  --miniGameData.bikeTutorial = "complete"
-  --miniGameData.isComplete = true
 
   sceneGroup:insert( house )
   sceneGroup:insert( gamePanel.tiled )
-
-  --[[print( "shown comp: " .. tostring(miniGameData.shownCompletion) )
-  print( "complete game: " ..  tostring(miniGameData.isGameComplete) )
-  print( "cntrls tutorial " .. miniGameData.controlsTutorial )]]
 
   if ( miniGameData.onRepeat == true ) then
     if ( ( miniGameData.isGameComplete == false ) or ( ( miniGameData.isGameComplete == true ) and ( miniGameData.shownCompletion == true ) ) )  then 
@@ -227,29 +215,6 @@ function scene:create( event )
     setPuzzle()
   end
 
-  --[[instructionsTable.steps = { 2, 3, 1, 1, 1, 1, 1 }
-  instructionsTable.direction = { "right", "up", "right", "down", "up", "down", "up" }
-  instructionsTable.last = 7]]
-
-  --[[instructionsTable.steps = { 2, 3, 1 }
-  instructionsTable.direction = { "right", "up", "left" }
-  instructionsTable.last = 3]]
-
-  --[[instructionsTable.steps = { 2, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
-  instructionsTable.direction = { "right", "up", "up", "left", "up", "left", "up", "left", "up", "left", "down", "right", "down", "right", "down", "right" }
-  instructionsTable.last = 16]]
-
-  --[[instructionsTable.steps = { 11, 1, 1, 1 }
-  instructionsTable.direction = { "right", "right", "right", "right" }
-  instructionsTable.last = 4]]
-
-  --[[instructionsTable.steps = { 4, 2, 3, 4 }
-  instructionsTable.direction = { "right", "left", "up", "right" }
-  instructionsTable.last = 4]]
-
-  --[[instructionsTable.steps = { 2, 3, 7 }
-  instructionsTable.direction = { "right", "up", "right" }
-  instructionsTable.last = 3]]
 end
 
 -- show()
@@ -344,7 +309,6 @@ end
 function scene:destroy( event )
 
 	local sceneGroup = self.view
-	--gamePanel:removegotoMenuButton()
 end
 
 

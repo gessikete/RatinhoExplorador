@@ -51,7 +51,6 @@ end
 function scene:create( event )
 
 	local sceneGroup = self.view
-	-- Code here runs when the scene is first created but has not yet appeared on screen
 	display.setDefault("magTextureFilter", "nearest")
   	display.setDefault("minTextureFilter", "nearest")
   	local progressData = json.decodeFile(system.pathForFile("tiled/progress.json", system.ResourceDirectory))
@@ -59,7 +58,6 @@ function scene:create( event )
   	progress = tiled.new( progressData, "tiled" )
   	fitScreen.fitProgress( progress )
 
-  	--persistence.setCurrentFileName( "ana" )
   	miniGamesData = persistence.loadGameFile()
 
   	sceneGroup:insert( progress )
@@ -129,7 +127,6 @@ function scene:hide( event )
 	local phase = event.phase
 
 	if ( phase == "will" ) then
-		-- Code here runs when the scene is on screen (but is about to go off screen)
 
 	elseif ( phase == "did" ) then
 		progress:removeSelf()

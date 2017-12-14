@@ -30,10 +30,6 @@ physics.start()
 physics.setGravity( 0, 0 )
 local listeners = listenersModule:new()
 -- -----------------------------------------------------------------------------------
--- Code outside of the scene event functions below will only be executed ONCE unless
--- the scene is removed entirely (not recycled) via "composer.removeScene()"
--- -----------------------------------------------------------------------------------
--- -----------------------------------------------------------------------------------
 -- Declaração das variáveis
 -- -----------------------------------------------------------------------------------
 local restaurant
@@ -59,7 +55,6 @@ local originalMiniGameData
 
 local function setIngredients()
 	local ingredientsLayer
-	--local ingredientsSensorsLayer
 
 	ingredientsLayer = restaurant:findLayer( "ingredients" )
   ingredientsSensorsLayer = restaurant:findLayer( "ingredients sensors" )
@@ -340,8 +335,6 @@ end
 -- create()
 function scene:create( event )
 	local sceneGroup = self.view
-	
-	--persistence.setCurrentFileName( "ana" )
 
   restaurant, character, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "restaurant" )
 
@@ -349,27 +342,12 @@ function scene:create( event )
   sceneGroup:insert( restaurant )
   sceneGroup:insert( gamePanel.tiled )
 
-  	--miniGameData.isComplete = false 
-  	--miniGameData.onRepeat = false 
-
 	if ( miniGameData.onRepeat == true ) then
 	    miniGameData.isComplete = false 
 	    originalMiniGameData = miniGameData
 	end
 
 	path:hidePath()
-
-  --[[gamePanel.createInstruction( "left", 8 )
-  gamePanel.createInstruction( "up", 5 )
-  gamePanel.createInstruction( "right", 7 )
-  gamePanel.createInstruction( "down", 3 )
-  gamePanel.createInstruction( "left", 4 )]]
-
-  --[[gamePanel.createInstruction( "left", 10 )
-  gamePanel.createInstruction( "up", 5 )
-  gamePanel.createInstruction( "right", 8 )
-  gamePanel.createInstruction( "down", 3 )
-  gamePanel.createInstruction( "left", 4 )]]
 end
 
 
@@ -398,17 +376,10 @@ function scene:show( event )
       end
 
       setIngredients()
-      --gamePanel.tiled.alpha = 0
-      --character.alpha = 1 --TIRAR
     else
       cook.alpha = 1
       character.alpha = 1
       gamePanel:addDirectionListeners()
-      --local suppliesSensorsLayer = school:findLayer( "supplies sensors" )
-
-      --[[for i = 1, suppliesSensorsLayer.numChildren do
-        physics.removeBody( suppliesSensorsLayer[i] )
-      end]]
     end
     listeners:add( Runtime, "collision", onCollision )
 

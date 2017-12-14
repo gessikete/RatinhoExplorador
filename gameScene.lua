@@ -58,8 +58,6 @@ function M:set( miniGame )
   		fit( tileMap )
   	end 
 
-    -- lembrar: o myName (para os listeners) foi definido
-    -- no próprio tiled
     local charName = persistence.loadGameFile().character.name 
     local charLayer = tileMap:findLayer("character")
 

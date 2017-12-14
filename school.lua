@@ -363,16 +363,11 @@ end
 function scene:create( event )
 
   local sceneGroup = self.view
-  
-  --persistence.setCurrentFileName( "ana" )
 
   school, character, gamePanel, gameState, path, instructions, instructionsTable, miniGameData = gameScene:set( "school" )
 
   sceneGroup:insert( school )
   sceneGroup:insert( gamePanel.tiled )
-
-  --miniGameData.isComplete = false 
-  --miniGameData.onRepeat = false 
 
   if ( miniGameData.onRepeat == true ) then
     miniGameData.isComplete = false 

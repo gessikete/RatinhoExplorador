@@ -469,8 +469,6 @@ end
 function scene:create( event )
   sceneGroup = self.view
 
-  --persistence.setCurrentFileName("ana")
-
   map, character, gamePanel, gameState, path, instructions, instructionsTable, gameFileData = gameScene:set( "map" )
 
   teacher = map:findObject( "teacher" )
@@ -490,7 +488,6 @@ function scene:show( event )
   local phase = event.phase
 
   if ( phase == "will" ) then
-    --setCamera()
     listeners:add( Runtime, "collision", onCollision )
     gamePanel:addDirectionListeners()
 
@@ -499,19 +496,6 @@ function scene:show( event )
   elseif ( phase == "did" ) then
     gamePanel:addButtonsListeners()
     gamePanel:addInstructionPanelListeners()
-
-
-  
-    --[[instructionsTable.direction = {"left","up"}
-    instructionsTable.steps = {4,5}
-    instructionsTable.last = 2]]
-
-    --instructionsTable.direction = {"right","down","right","down","left","down","right","up","right","down","left","down","left","up","left","up","left","up","left","up","right"}
-    --instructionsTable.steps = {2,2,2,2,2,2,6,3,3,6,3,3,3,1,3,2,3,2,1,7,4}
-    --instructionsTable.last = 21
-    
-    
-
   end
 end
 
@@ -532,9 +516,7 @@ end
 
 -- destroy()
 function scene:destroy( event )
- 
   local sceneGroup = self.view
-  --gamePanel:removegotoMenuButton()
 end
 
 -- -----------------------------------------------------------------------------------

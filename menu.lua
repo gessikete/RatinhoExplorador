@@ -30,7 +30,6 @@ local listeners = listenersModule:new()
 function scene:create( event )
 
 	local sceneGroup = self.view
-	-- Code here runs when the scene is first created but has not yet appeared on screen
 
 	display.setDefault("magTextureFilter", "nearest")
   	display.setDefault("minTextureFilter", "nearest")
@@ -85,10 +84,7 @@ end
 
 -- destroy()
 function scene:destroy( event )
-
 	local sceneGroup = self.view
-	-- Code here runs prior to the removal of scene's view
-
 end
 
 

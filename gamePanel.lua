@@ -102,8 +102,6 @@ function M.new( executeInstructions )
   		gamePanel.x = gamePanel.x + 32
   	end
 
-  	--fitScreen.fitGamePanel( gamePanel, gotoMenuButton )
-
   	-- -----------------------------------------------------------------------------------
 	-- Listeners do game panel
 	-- -----------------------------------------------------------------------------------
@@ -538,8 +536,6 @@ function M.new( executeInstructions )
   		if ( bikeLimit.alpha ~= 0 ) then 
   			bikeLimit.alpha = 0.5 
   		end
-
-  		--listeners:remove( instructionsPanel, "touch", scrollInstructionsPanel )
 
   		listeners:remove( directionButtons.right, "touch", createInstruction )
   		listeners:remove( directionButtons.left, "touch", createInstruction )

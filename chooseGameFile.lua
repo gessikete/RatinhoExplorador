@@ -37,17 +37,6 @@ local function loadGameFile( event )
 
 	print( "-------------------------------------------------------------------" )
 	print( "ARQUIVO ESCOLHIDO: " .. fileName )
-
-	--[[ Verifica em qual minigame o jogo estava quando foi salvo
-	if ( gameFile.currentMiniGame == "map" ) then
-		timer.performWithDelay( 400, sceneTransition.gotoMap )
-	elseif ( gameFile.currentMiniGame == "house" ) then
-		timer.performWithDelay( 400, sceneTransition.gotoHouse )
-	elseif ( gameFile.currentMiniGame == "school" ) then
-		timer.performWithDelay( 400, sceneTransition.gotoSchool )
-	elseif ( gameFile.currentMiniGame == "restaurant" ) then
-		timer.performWithDelay( 400, sceneTransition.gotoRestaurant )
-	end ]]
 	timer.performWithDelay( 400, sceneTransition.gotoProgress )
 end
 

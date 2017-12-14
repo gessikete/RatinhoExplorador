@@ -35,7 +35,6 @@ local listeners = listenersModule:new()
 -- create()
 function scene:create( event )
 	local sceneGroup = self.view
-	-- Code here runs when the scene is first created but has not yet appeared on screen
 
 	display.setDefault("magTextureFilter", "nearest")
   	display.setDefault("minTextureFilter", "nearest")
@@ -46,8 +45,6 @@ function scene:create( event )
 	gotoMenuButton = credits:findObject("gotoMenuButton")
 
 	sceneGroup:insert( credits )
-
-	--fitScreen.fitcredits( credits, newGameButton, playButton, title )
 
 	listeners:add( gotoMenuButton, "tap",  sceneTransition.gotoMenu )
 
@@ -61,10 +58,8 @@ function scene:show( event )
 	local phase = event.phase
 
 	if ( phase == "will" ) then
-		-- Code here runs when the scene is still off screen (but is about to come on screen)
 
 	elseif ( phase == "did" ) then
-		-- Code here runs when the scene is entirely on screen
 
 	end
 end
@@ -86,10 +81,7 @@ end
 
 -- destroy()
 function scene:destroy( event )
-
 	local sceneGroup = self.view
-	-- Code here runs prior to the removal of scene's view
-
 end
 
 

@@ -749,7 +749,6 @@ function M.new( executeInstructions )
   			bikeWheel.alpha = 0.5
 	  		bikeLimit.alpha = 0.5 
   		end 
-  		--listeners:remove( instructionsPanel, "touch", scrollInstructionsPanel )
 
   		listeners:remove( directionButtons.right, "touch", createInstruction )
   		listeners:remove( directionButtons.left, "touch", createInstruction )
